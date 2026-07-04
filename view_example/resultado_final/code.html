@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>DUEL AT SUNSET - Game Over</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;500;700&amp;family=Courier+Prime:wght@400;500;700&amp;family=Jetbrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@100..900&amp;family=JetBrains+Mono:wght@100..900&amp;family=Space+Mono:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 48;
+        }
+        
+        /* Retro CRT Flicker & Dithering effects */
+        .crt-overlay {
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            background-size: 100% 4px, 3px 100%;
+            pointer-events: none;
+        }
+
+        .dither-bg {
+            background-image: radial-gradient(#3a3331 1px, transparent 1px);
+            background-size: 4px 4px;
+        }
+
+        .pixel-border {
+            box-shadow: 
+                0 -4px 0 0 #3e2723,
+                0 4px 0 0 #3e2723,
+                -4px 0 0 0 #3e2723,
+                4px 0 0 0 #3e2723;
+        }
+
+        .wanted-poster {
+            background-color: #ece0dc; /* surface color */
+            position: relative;
+            image-rendering: pixelated;
+        }
+
+        .wanted-poster::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.1;
+            pointer-events: none;
+        }
+
+        @keyframes flicker {
+            0% { opacity: 0.97; }
+            5% { opacity: 0.95; }
+            10% { opacity: 0.9; }
+            15% { opacity: 0.99; }
+            100% { opacity: 1; }
+        }
+        .flicker { animation: flicker 0.15s infinite; }
+    </style>
+<script id="tailwind-config">tailwind.config = {darkMode: "class", theme: {extend: {colors: {"on-error": "#690005", "surface-container-low": "#201a18", "on-primary-fixed-variant": "#594400", "tertiary-fixed": "#ffdad6", "surface-container-high": "#2f2926", "primary-fixed": "#ffdf96", "inverse-on-surface": "#352f2d", background: "#171210", "on-surface-variant": "#d2c5ac", surface: "#171210", "on-secondary-fixed-variant": "#643c35", "secondary-fixed-dim": "#f2b9af", "primary-container": "#ffc821", "on-secondary-container": "#dfa89e", "on-error-container": "#ffdad6", "on-primary-fixed": "#251a00", error: "#ffb4ab", "on-surface": "#ece0dc", "surface-bright": "#3e3835", "surface-container-highest": "#3a3331", "on-background": "#ece0dc", "on-tertiary-fixed-variant": "#930010", "surface-container": "#241e1c", "on-primary": "#3e2e00", "surface-tint": "#f5bf12", "on-tertiary-fixed": "#410003", "secondary-container": "#643c35", "primary-fixed-dim": "#f5bf12", "tertiary-fixed-dim": "#ffb3ac", "on-primary-container": "#6f5500", "on-secondary": "#4a2720", "surface-dim": "#171210", "surface-container-lowest": "#120d0b", "error-container": "#93000a", "outline-variant": "#4f4633", outline: "#9b8f78", "secondary-fixed": "#ffdad4", "surface-variant": "#3a3331", "on-tertiary": "#680008", "inverse-primary": "#765a00", "inverse-surface": "#ece0dc", primary: "#ffeabd", tertiary: "#ffe6e3", secondary: "#f2b9af", "on-secondary-fixed": "#31120d", "tertiary-container": "#ffc0ba", "on-tertiary-container": "#b1111b"}, borderRadius: {DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px"}, spacing: {"panel-padding": "12px", "pixel-unit": "4px", "margin-sm": "8px", gutter: "16px", "margin-md": "24px"}, fontFamily: {"headline-md": ["Space Mono"], "body-md": ["Courier Prime"], "body-lg": ["Courier Prime"], "headline-lg-mobile": ["Space Mono"], "headline-lg": ["Space Mono"], "label-mono": ["JetBrains Mono"], headline: ["Space Mono"], display: ["Space Mono"], body: ["Courier Prime"], label: ["Jetbrains Mono"]}, fontSize: {"headline-md": ["24px", {lineHeight: "32px", fontWeight: "700"}], "body-md": ["14px", {lineHeight: "20px", fontWeight: "400"}], "body-lg": ["18px", {lineHeight: "24px", fontWeight: "400"}], "headline-lg-mobile": ["24px", {lineHeight: "32px", fontWeight: "700"}], "headline-lg": ["32px", {lineHeight: "40px", letterSpacing: "-1px", fontWeight: "700"}], "label-mono": ["12px", {lineHeight: "16px", fontWeight: "600"}]}}}};</script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface font-body-md overflow-hidden h-screen flex flex-col items-center justify-center">
+<!-- Top Navigation Bar (Shared Component Strategy) -->
+<header class="fixed top-0 w-full z-50 flex justify-between items-center px-gutter h-16 bg-surface border-b-2 border-outline shadow-[4px_4px_0px_0px_rgba(0,0,0,0.5)]">
+<div class="flex items-center gap-4 active:translate-y-1 transition-all">
+<span class="material-symbols-outlined text-primary">menu</span>
+<h1 class="font-headline-md text-headline-md text-primary tracking-tighter">DUEL AT SUNSET</h1>
+</div>
+<div class="active:translate-y-1 transition-all">
+<span class="material-symbols-outlined text-primary">settings</span>
+</div>
+</header>
+<!-- Main Content: Game Over Canvas -->
+<main class="relative z-10 w-full max-w-2xl px-4 py-20 flex flex-col items-center gap-8 overflow-y-auto max-h-screen no-scrollbar">
+<!-- Wanted Poster Container -->
+<div class="wanted-poster w-full p-8 border-4 border-[#3e2723] shadow-[8px_8px_0px_0px_#120d0b] relative">
+<!-- Decorative Corners -->
+<div class="absolute top-2 left-2 w-4 h-4 border-t-4 border-l-4 border-[#3e2723]"></div>
+<div class="absolute top-2 right-2 w-4 h-4 border-t-4 border-r-4 border-[#3e2723]"></div>
+<div class="absolute bottom-2 left-2 w-4 h-4 border-b-4 border-l-4 border-[#3e2723]"></div>
+<div class="absolute bottom-2 right-2 w-4 h-4 border-b-4 border-r-4 border-[#3e2723]"></div>
+<!-- Headline Section -->
+<div class="text-center mb-10">
+<h2 class="font-headline-lg text-headline-lg text-[#3e2723] uppercase mb-2 tracking-widest flicker">
+                    DUELO FINALIZADO
+                </h2>
+<div class="w-full h-1 bg-[#3e2723] mb-4"></div>
+<div class="flex justify-center items-center gap-2">
+<span class="material-symbols-outlined text-[#3e2723]" style="font-variation-settings: 'FILL' 1;">skull</span>
+<p class="font-headline-md text-primary-container uppercase bg-[#3e2723] px-4 py-1 inline-block">
+                        ¡LOS FORAJIDOS HAN GANADO!
+                    </p>
+<span class="material-symbols-outlined text-[#3e2723]" style="font-variation-settings: 'FILL' 1;">skull</span>
+</div>
+</div>
+<!-- Result Table -->
+<div class="bg-white/30 p-2 border-2 border-dashed border-[#3e2723] mb-8">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="border-b-2 border-[#3e2723] text-[#3e2723] font-label-mono text-label-mono">
+<th class="py-2 px-2">PLAYER</th>
+<th class="py-2 px-2">ROLE</th>
+<th class="py-2 px-2 text-right">STATUS</th>
+</tr>
+</thead>
+<tbody class="font-body-md text-[#3e2723]">
+<tr class="border-b border-[#3e2723]/30">
+<td class="py-3 px-2 flex items-center gap-2">
+<span class="material-symbols-outlined text-xs">person</span> KID CURRY
+                            </td>
+<td class="py-3 px-2 uppercase font-bold text-primary-container">Outlaw</td>
+<td class="py-3 px-2 text-right">
+<span class="bg-green-800 text-white px-2 py-0.5 text-xs">ALIVE</span>
+</td>
+</tr>
+<tr class="border-b border-[#3e2723]/30">
+<td class="py-3 px-2 flex items-center gap-2">
+<span class="material-symbols-outlined text-xs">person</span> SLICK WILLY
+                            </td>
+<td class="py-3 px-2 uppercase font-bold text-primary-container">Outlaw</td>
+<td class="py-3 px-2 text-right">
+<span class="bg-red-800 text-white px-2 py-0.5 text-xs">DEAD</span>
+</td>
+</tr>
+<tr class="border-b border-[#3e2723]/30">
+<td class="py-3 px-2 flex items-center gap-2">
+<span class="material-symbols-outlined text-xs">person</span> SHERIFF PAT
+                            </td>
+<td class="py-3 px-2 uppercase font-bold">Sheriff</td>
+<td class="py-3 px-2 text-right">
+<span class="bg-red-800 text-white px-2 py-0.5 text-xs">DEAD</span>
+</td>
+</tr>
+<tr>
+<td class="py-3 px-2 flex items-center gap-2">
+<span class="material-symbols-outlined text-xs">person</span> CALAMITY J.
+                            </td>
+<td class="py-3 px-2 uppercase font-bold text-secondary-fixed-dim">Deputy</td>
+<td class="py-3 px-2 text-right">
+<span class="bg-red-800 text-white px-2 py-0.5 text-xs">DEAD</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Portrait Illustration Area (Visual Interest) -->
+<div class="flex justify-center gap-4 mb-8">
+<div class="w-24 h-32 border-2 border-[#3e2723] p-1 bg-[#d1ada7]">
+<img class="w-full h-full object-cover" data-alt="A pixel art portrait of a gritty wild west outlaw with a bandana and a weathered cowboy hat, rendered in a 16-bit console game style. The color palette uses deep mahoganies, dusty sands, and sunset oranges. The character has a stern, pixelated expression against a dithered parchment background, evoking 90s spaghetti western arcade games." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBNq0exOF_ub_EAX1kv8lPOlK64z8160q3FOezbetXBYkq0kQBPj9x6NJ60eIHy60zIwQKB-xEgQ-95ks-QN4tOmoXP_ybFdM9wPdlK2Og7w31GQZLi0AY0z5CzV-zVSDidlzLUo1GPfu4FLetc0X5G6QtP5zOjG5v5oYYER1md59Z_sGqGvjnOuxIAWX-VHmkk_M1CrLEnNef7Gbofu3bn5qYGF-BDaQqTAN0mWr9K0LAJ4cPWjaL-Ih2atmnIFyLzWbjTkdsAuc0"/>
+</div>
+<div class="w-24 h-32 border-2 border-[#3e2723] p-1 bg-[#d1ada7] rotate-3">
+<img class="w-full h-full object-cover" data-alt="A pixel art portrait of a second outlaw character with a facial scar and a dark wide-brimmed hat, looking directly at the camera with a menacing grin. The 16-bit aesthetic is sharp and non-aliased, featuring visible dithering and a limited color palette of brown, red, and beige. The lighting is harsh, as if from a setting desert sun." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA20NGJFKCxeZArwzXmomVjsVCwU4wRaVLyTXIQ8GenEcVBt03_Fale99Awf6NmxJ9st9usyiXFOY13y3CKnQLgzmWRx0q0MZMdduAo7SP4Yx1MA9fdC05FMZEXgAS7EF583q9fvbH2vGY8awlQca973ej7p2vs8toY0vdmRny0E8zWgSBcIAEZVvPN0wXy2-77l67qh8RT8EKIH7ukI_j-U3k8O8_FAvyiFLAJpzZfNlTDNLDdQLM2X5etpnUtli7uURsyBZ1kLfo"/>
+</div>
+</div>
+<!-- Action Button -->
+<div class="text-center">
+<button class="group relative px-8 py-4 bg-[#3e2723] text-on-surface font-headline-md text-headline-md border-2 border-outline-variant active:translate-y-1 transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,0.5)] hover:bg-primary-container hover:text-on-primary-container">
+                    VOLVER A LA CANTINA
+                    <!-- Hover Highlight -->
+<div class="absolute inset-0 border-2 border-dashed border-primary opacity-0 group-hover:opacity-100 transition-opacity"></div>
+</button>
+</div>
+</div>
+</main>
+<!-- CRT Overlay & Atmosphere -->
+<div class="crt-overlay fixed inset-0 z-50"></div>
+<div class="fixed inset-0 bg-gradient-to-b from-[#3e2723]/20 via-transparent to-black/40 pointer-events-none z-0"></div>
+<!-- Bottom Navigation Bar (Shared Component Strategy) -->
+<nav class="fixed bottom-0 w-full z-50 flex justify-around items-center px-4 py-2 bg-surface-container border-t-2 border-outline shadow-[0px_-4px_0px_0px_rgba(0,0,0,0.5)]">
+<div class="flex flex-col items-center justify-center text-on-surface-variant p-1 active:scale-95 transition-transform hover:bg-secondary-container hover:text-on-secondary-container">
+<span class="material-symbols-outlined">style</span>
+<span class="font-label-mono text-label-mono">MY HAND</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant p-1 active:scale-95 transition-transform hover:bg-secondary-container hover:text-on-secondary-container">
+<span class="material-symbols-outlined">playing_cards</span>
+<span class="font-label-mono text-label-mono">DRAW</span>
+</div>
+<div class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-none border-2 border-dashed border-on-primary-container p-1 active:scale-95 transition-transform">
+<span class="material-symbols-outlined">history_edu</span>
+<span class="font-label-mono text-label-mono">LOG</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant p-1 active:scale-95 transition-transform hover:bg-secondary-container hover:text-on-secondary-container">
+<span class="material-symbols-outlined">grid_view</span>
+<span class="font-label-mono text-label-mono">MENU</span>
+</div>
+</nav>
+<script>
+        // Simple micro-interaction for the button
+        document.querySelector('button').addEventListener('click', () => {
+            document.body.style.opacity = '0';
+            setTimeout(() => {
+                window.location.reload();
+            }, 500);
+        });
+    </script>
+</body></html>

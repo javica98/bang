@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>DUEL AT SUNSET - Elige Tu Destino</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;500;700&amp;family=Courier+Prime:wght@400;500;700&amp;family=Jetbrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 48;
+        }
+        
+        /* Pixel Art Brutalism Texture */
+        .pixel-bg {
+            background-image: radial-gradient(circle, #241e1c 1px, transparent 1px);
+            background-size: 4px 4px;
+        }
+
+        .dither-shadow {
+            box-shadow: 6px 6px 0px 0px rgba(0, 0, 0, 0.6);
+        }
+
+        .card-inner-border {
+            box-shadow: inset 1px 1px 0px #ab8980, inset -1px -1px 0px #3a3331;
+        }
+
+        /* Scanline Effect */
+        .scanlines {
+            background: linear-gradient(
+                to bottom,
+                rgba(18, 16, 16, 0) 50%,
+                rgba(0, 0, 0, 0.1) 50%
+            );
+            background-size: 100% 4px;
+            pointer-events: none;
+        }
+
+        .char-card {
+            transition: transform 0.1s steps(4), box-shadow 0.1s steps(4);
+        }
+
+        .char-card:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 8px 8px 0px 0px rgba(0, 0, 0, 0.8);
+        }
+
+        .char-card.selected {
+            outline: 2px dashed #f5bf12;
+            outline-offset: 4px;
+            background-color: #2f2926;
+        }
+    </style>
+<!-- Inject Tailwind Config -->
+<script id="tailwind-config">tailwind.config = {darkMode: "class", theme: {extend: {colors: {"on-error": "#690005", "surface-container-low": "#201a18", "on-primary-fixed-variant": "#594400", "tertiary-fixed": "#ffdad6", "surface-container-high": "#2f2926", "primary-fixed": "#ffdf96", "inverse-on-surface": "#352f2d", background: "#171210", "on-surface-variant": "#d2c5ac", surface: "#171210", "on-secondary-fixed-variant": "#643c35", "secondary-fixed-dim": "#f2b9af", "primary-container": "#ffc821", "on-secondary-container": "#dfa89e", "on-error-container": "#ffdad6", "on-primary-fixed": "#251a00", error: "#ffb4ab", "on-surface": "#ece0dc", "surface-bright": "#3e3835", "surface-container-highest": "#3a3331", "on-background": "#ece0dc", "on-tertiary-fixed-variant": "#930010", "surface-container": "#241e1c", "on-primary": "#3e2e00", "surface-tint": "#f5bf12", "on-tertiary-fixed": "#410003", "secondary-container": "#643c35", "primary-fixed-dim": "#f5bf12", "tertiary-fixed-dim": "#ffb3ac", "on-primary-container": "#6f5500", "on-secondary": "#4a2720", "surface-dim": "#171210", "surface-container-lowest": "#120d0b", "error-container": "#93000a", "outline-variant": "#4f4633", outline: "#9b8f78", "secondary-fixed": "#ffdad4", "surface-variant": "#3a3331", "on-tertiary": "#680008", "inverse-primary": "#765a00", "inverse-surface": "#ece0dc", primary: "#ffeabd", tertiary: "#ffe6e3", secondary: "#f2b9af", "on-secondary-fixed": "#31120d", "tertiary-container": "#ffc0ba", "on-tertiary-container": "#b1111b"}, borderRadius: {DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px"}, spacing: {"panel-padding": "12px", "pixel-unit": "4px", "margin-sm": "8px", gutter: "16px", "margin-md": "24px"}, fontFamily: {"headline-md": ["Space Mono"], "body-md": ["Courier Prime"], "body-lg": ["Courier Prime"], "headline-lg-mobile": ["Space Mono"], "headline-lg": ["Space Mono"], "label-mono": ["JetBrains Mono"], headline: ["Space Mono"], display: ["Space Mono"], body: ["Courier Prime"], label: ["Jetbrains Mono"]}, fontSize: {"headline-md": ["24px", {lineHeight: "32px", fontWeight: "700"}], "body-md": ["14px", {lineHeight: "20px", fontWeight: "400"}], "body-lg": ["18px", {lineHeight: "24px", fontWeight: "400"}], "headline-lg-mobile": ["24px", {lineHeight: "32px", fontWeight: "700"}], "headline-lg": ["32px", {lineHeight: "40px", letterSpacing: "-1px", fontWeight: "700"}], "label-mono": ["12px", {lineHeight: "16px", fontWeight: "600"}]}}}};</script>
+<style>
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface font-body-md pixel-bg overflow-hidden selection:bg-primary-container selection:text-on-primary-container">
+<!-- Screen Overlay (CRT Effect) -->
+<div class="fixed inset-0 scanlines pointer-events-none z-[100]"></div>
+<!-- Top Navigation (Shell) -->
+<header class="fixed top-0 w-full z-50 flex justify-between items-center px-gutter h-16 bg-surface border-b-2 border-outline shadow-[4px_4px_0px_0px_rgba(0,0,0,0.5)]">
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-primary active:translate-y-1 transition-all">menu</button>
+<h1 class="font-headline-md text-headline-md text-primary tracking-tighter">DUEL AT SUNSET</h1>
+</div>
+<button class="material-symbols-outlined text-primary active:translate-y-1 transition-all">settings</button>
+</header>
+<!-- Main Content Canvas -->
+<main class="min-h-screen pt-20 pb-24 flex flex-col items-center justify-start overflow-y-auto px-4">
+<!-- Header Section -->
+<div class="mb-6 text-center">
+<h2 class="font-headline-lg text-headline-lg text-primary-container mb-2 tracking-widest uppercase dither-shadow inline-block bg-background px-6 py-2 border-2 border-primary-container">
+                ELIGE TU DESTINO
+            </h2>
+<p class="font-label-mono text-label-mono text-outline uppercase tracking-widest mt-2">
+                SOLO UNO SALDRÁ CON VIDA AL AMANECER
+            </p>
+</div>
+<!-- Character Side-by-Side Grid -->
+<div class="flex flex-row gap-3 w-full max-w-4xl justify-center">
+<!-- Character Card 1: WILLY THE KID -->
+<div class="char-card group cursor-pointer bg-surface-container border-2 border-outline dither-shadow p-3 flex flex-col gap-3 w-1/2 max-w-[200px]" onclick="selectChar(this)">
+<!-- Portrait Box -->
+<div class="aspect-square w-full bg-surface-container-highest border border-primary overflow-hidden relative">
+<img alt="Willy the Kid Portrait" class="w-full h-full object-cover pixelated opacity-90 group-hover:opacity-100 transition-opacity" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCwVy5p19o03ruPdBdplPmXaLJ_dfFrwIgXhInoeJTmCnokK9H7JfXYJapEDK6LicmAkRfHdui7QHztZlN-Lgg-c2EKtpzqdJfG5fBi9ucNUl-oEQ9-T_E4B1qnm_oC6XVafwAbIHbASl-5QuuhSazAVMytoTH-uLrcJDH_g7HTuEYpTcp-1rUCSxNRka21WxMc6DcgAwmd8rxXxkghjdgCIk4guyAg1Lt1b5-WY3sfipTC-HbN8lf9W2d-lae-hbO2pMt5Do4wNBw"/>
+</div>
+<!-- Details -->
+<div class="space-y-2">
+<h3 class="font-headline-md text-sm md:text-lg text-on-surface uppercase border-b border-outline-variant leading-tight">WILLY THE KID</h3>
+<!-- Health Row -->
+<div class="flex gap-0.5 items-center">
+<span class="material-symbols-outlined text-[16px] text-tertiary-container" style="font-variation-settings: 'FILL' 1;">favorite</span>
+<span class="material-symbols-outlined text-[16px] text-tertiary-container" style="font-variation-settings: 'FILL' 1;">favorite</span>
+<span class="material-symbols-outlined text-[16px] text-tertiary-container" style="font-variation-settings: 'FILL' 1;">favorite</span>
+<span class="material-symbols-outlined text-[16px] text-tertiary-container" style="font-variation-settings: 'FILL' 1;">favorite</span>
+<span class="font-label-mono text-label-mono text-tertiary-container ml-1">4</span>
+</div>
+<!-- Compact Power Description -->
+<div class="bg-surface-container-low p-2 border border-outline-variant">
+<p class="text-[10px] md:text-[12px] font-body-md text-on-surface-variant leading-tight">
+<span class="text-primary font-bold">HABILIDAD:</span> Puede jugar cualquier número de cartas <span class="text-error italic">BANG!</span>.
+                        </p>
+</div>
+</div>
+</div>
+<!-- Character Card 2: CALAMITY JANET -->
+<div class="char-card group cursor-pointer bg-surface-container border-2 border-outline dither-shadow p-3 flex flex-col gap-3 w-1/2 max-w-[200px]" onclick="selectChar(this)">
+<!-- Portrait Box -->
+<div class="aspect-square w-full bg-surface-container-highest border border-primary overflow-hidden relative">
+<img alt="Calamity Janet Portrait" class="w-full h-full object-cover pixelated opacity-90 group-hover:opacity-100 transition-opacity" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBS58ddaOGk3Vh_1qTUtxb20n3jF9beB2lPzKndB2n5I_EHfbMCy0dprzhTnAk9KgMAXnIOoRUsdJhb-o8l74JhJzYgNx5J7LhW6X8l9l-6nIq-sx-0T9Bo4DzvHw3BLL2JDl3oG0ETblcvg3YL-Fov1fIp-O7jHBkNq1wbVvEQTn9akRSjkPzvEyQ1fAr03ob5b_8IJeg299ltv0fJovcFs_WtYOiV648_Y8qsbjLEOpLUob6ta9e3zRzfm6boCEERHEH7T2vuyGo"/>
+</div>
+<!-- Details -->
+<div class="space-y-2">
+<h3 class="font-headline-md text-sm md:text-lg text-on-surface uppercase border-b border-outline-variant leading-tight">CALAMITY JANET</h3>
+<!-- Health Row -->
+<div class="flex gap-0.5 items-center">
+<span class="material-symbols-outlined text-[16px] text-tertiary-container" style="font-variation-settings: 'FILL' 1;">favorite</span>
+<span class="material-symbols-outlined text-[16px] text-tertiary-container" style="font-variation-settings: 'FILL' 1;">favorite</span>
+<span class="material-symbols-outlined text-[16px] text-tertiary-container" style="font-variation-settings: 'FILL' 1;">favorite</span>
+<span class="material-symbols-outlined text-[16px] text-tertiary-container" style="font-variation-settings: 'FILL' 1;">favorite</span>
+<span class="font-label-mono text-label-mono text-tertiary-container ml-1">4</span>
+</div>
+<!-- Compact Power Description -->
+<div class="bg-surface-container-low p-2 border border-outline-variant">
+<p class="text-[10px] md:text-[12px] font-body-md text-on-surface-variant leading-tight">
+<span class="text-primary font-bold">HABILIDAD:</span> Cartas <span class="text-primary">BANG!</span> sirven como <span class="text-secondary">FALLASTE</span>.
+                        </p>
+</div>
+</div>
+</div>
+</div>
+<!-- Action Prompt -->
+<div class="mt-8 mb-4 w-full flex justify-center">
+<button class="bg-primary-container text-on-primary-container font-headline-md text-lg px-8 py-4 border-4 border-on-primary-container shadow-[6px_6px_0px_0px_rgba(0,0,0,0.5)] active:translate-y-1 active:shadow-none transition-all uppercase tracking-tighter hover:bg-surface-container-high hover:text-primary-container">
+                CONFIRMAR ELECCIÓN
+            </button>
+</div>
+</main>
+<!-- Bottom Navigation (Shell) -->
+<nav class="fixed bottom-0 w-full z-50 flex justify-around items-center px-4 py-2 bg-surface-container border-t-2 border-outline shadow-[0px_-4px_0px_0px_rgba(0,0,0,0.5)]">
+<div class="flex flex-col items-center justify-center text-on-surface-variant p-1 active:scale-95 transition-transform">
+<span class="material-symbols-outlined">style</span>
+<span class="font-label-mono text-[10px]">MY HAND</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant p-1 active:scale-95 transition-transform">
+<span class="material-symbols-outlined">playing_cards</span>
+<span class="font-label-mono text-[10px]">DRAW</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant p-1 active:scale-95 transition-transform">
+<span class="material-symbols-outlined">history_edu</span>
+<span class="font-label-mono text-[10px]">LOG</span>
+</div>
+<div class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-none border-2 border-dashed border-on-primary-container p-1 active:scale-95 transition-transform">
+<span class="material-symbols-outlined">grid_view</span>
+<span class="font-label-mono text-[10px]">MENU</span>
+</div>
+</nav>
+<script>
+        function selectChar(element) {
+            // Remove selection from all cards
+            document.querySelectorAll('.char-card').forEach(card => {
+                card.classList.remove('selected');
+                card.classList.remove('border-primary-container');
+            });
+            
+            // Add selection to clicked card
+            element.classList.add('selected');
+            element.classList.add('border-primary-container');
+            
+            // Trigger feedback
+            element.animate([
+                { transform: 'translate(0, 0)' },
+                { transform: 'translate(1px, 1px)' },
+                { transform: 'translate(0, 0)' }
+            ], {
+                duration: 80,
+                iterations: 1,
+                easing: 'steps(2)'
+            });
+        }
+    </script>
+</body></html>

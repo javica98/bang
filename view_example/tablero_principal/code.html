@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>DUEL AT SUNSET - Main Board</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;500;700&amp;family=Courier+Prime:wght@400;500;700&amp;family=Jetbrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .pixel-border {
+            box-shadow: 
+                0 -4px 0 -2px #3e2723,
+                0 4px 0 -2px #3e2723,
+                -4px 0 0 -2px #3e2723,
+                4px 0 0 -2px #3e2723,
+                0 0 0 2px #3e2723;
+        }
+        .dither-bg {
+            background-image: radial-gradient(#241e1c 25%, transparent 25%), radial-gradient(#241e1c 25%, transparent 25%);
+            background-position: 0 0, 4px 4px;
+            background-size: 8px 8px;
+            background-color: #171210;
+        }
+        .card-fan > div:nth-child(1) { transform: rotate(-10deg) translateY(10px); }
+        .card-fan > div:nth-child(2) { transform: rotate(-5deg) translateY(0px); }
+        .card-fan > div:nth-child(3) { transform: rotate(0deg) translateY(-10px); }
+        .card-fan > div:nth-child(4) { transform: rotate(5deg) translateY(0px); }
+        .card-fan > div:nth-child(5) { transform: rotate(10deg) translateY(10px); }
+        
+        .active-glow {
+            outline: 2px dashed #ff5722;
+            outline-offset: 4px;
+            animation: flicker 2s infinite;
+        }
+        @keyframes flicker {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<script id="tailwind-config">tailwind.config = {darkMode: "class", theme: {extend: {colors: {"on-error": "#690005", "surface-container-low": "#201a18", "on-primary-fixed-variant": "#594400", "tertiary-fixed": "#ffdad6", "surface-container-high": "#2f2926", "primary-fixed": "#ffdf96", "inverse-on-surface": "#352f2d", background: "#171210", "on-surface-variant": "#d2c5ac", surface: "#171210", "on-secondary-fixed-variant": "#643c35", "secondary-fixed-dim": "#f2b9af", "primary-container": "#ffc821", "on-secondary-container": "#dfa89e", "on-error-container": "#ffdad6", "on-primary-fixed": "#251a00", error: "#ffb4ab", "on-surface": "#ece0dc", "surface-bright": "#3e3835", "surface-container-highest": "#3a3331", "on-background": "#ece0dc", "on-tertiary-fixed-variant": "#930010", "surface-container": "#241e1c", "on-primary": "#3e2e00", "surface-tint": "#f5bf12", "on-tertiary-fixed": "#410003", "secondary-container": "#643c35", "primary-fixed-dim": "#f5bf12", "tertiary-fixed-dim": "#ffb3ac", "on-primary-container": "#6f5500", "on-secondary": "#4a2720", "surface-dim": "#171210", "surface-container-lowest": "#120d0b", "error-container": "#93000a", "outline-variant": "#4f4633", outline: "#9b8f78", "secondary-fixed": "#ffdad4", "surface-variant": "#3a3331", "on-tertiary": "#680008", "inverse-primary": "#765a00", "inverse-surface": "#ece0dc", primary: "#ffeabd", tertiary: "#ffe6e3", secondary: "#f2b9af", "on-secondary-fixed": "#31120d", "tertiary-container": "#ffc0ba", "on-tertiary-container": "#b1111b"}, borderRadius: {DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px"}, spacing: {"panel-padding": "12px", "pixel-unit": "4px", "margin-sm": "8px", gutter: "16px", "margin-md": "24px"}, fontFamily: {"headline-md": ["Space Mono"], "body-md": ["Courier Prime"], "body-lg": ["Courier Prime"], "headline-lg-mobile": ["Space Mono"], "headline-lg": ["Space Mono"], "label-mono": ["JetBrains Mono"], headline: ["Space Mono"], display: ["Space Mono"], body: ["Courier Prime"], label: ["Jetbrains Mono"]}, fontSize: {"headline-md": ["24px", {lineHeight: "32px", fontWeight: "700"}], "body-md": ["14px", {lineHeight: "20px", fontWeight: "400"}], "body-lg": ["18px", {lineHeight: "24px", fontWeight: "400"}], "headline-lg-mobile": ["24px", {lineHeight: "32px", fontWeight: "700"}], "headline-lg": ["32px", {lineHeight: "40px", letterSpacing: "-1px", fontWeight: "700"}], "label-mono": ["12px", {lineHeight: "16px", fontWeight: "600"}]}}}};</script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface font-body-md dither-bg min-h-screen overflow-hidden">
+<!-- Top App Bar -->
+<header class="fixed top-0 w-full z-50 flex justify-between items-center px-gutter h-16 bg-surface border-b-2 border-outline-variant shadow-[4px_4px_0px_0px_rgba(0,0,0,0.5)]">
+<button class="text-primary active:translate-y-1 transition-all">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<h1 class="font-headline-md text-headline-md text-primary tracking-tighter">DUEL AT SUNSET</h1>
+<button class="text-primary active:translate-y-1 transition-all" onclick="toggleLog()">
+<span class="material-symbols-outlined">history_edu</span>
+</button>
+</header>
+<main class="pt-20 pb-48 px-4 h-full flex flex-col gap-6">
+<!-- Opponents Circle -->
+<div class="grid grid-cols-3 gap-3">
+<!-- Player 1 (Sheriff) -->
+<div class="bg-surface-container border-2 border-outline p-2 shadow-[2px_2px_0px_0px_rgba(0,0,0,0.5)] relative">
+<div class="absolute -top-2 -right-2 bg-primary-container text-on-primary-container text-[10px] px-1 font-bold border border-black">SHERIFF</div>
+<div class="w-full aspect-square bg-surface-variant border border-outline-variant mb-1 overflow-hidden">
+<img class="w-full h-full object-cover grayscale brightness-75" data-alt="A 64x64 pixel art portrait of a rugged western lawman with a thick mustache and a wide-brimmed hat. The lighting is harsh and dramatic, casting deep shadows over one side of his face, consistent with a high-noon desert sun. The color palette uses earth tones, mahogany, and dusty browns to evoke a 16-bit retro video game aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAUrRBUSAg0Sme3F18M7XVlKpxt7kEsVYiyUgXqDSc-W1EfMCUc-igyyBse5FmMr8Zvq5vF_dVL2bncr423WpKQdC1knkpL6GfW-wrw-makW3Ha4JeNQKujRz6ew6qEcoDW-oNEpncfqeyDtN9AvEjR8rOZIMs83SQCNmmIVRwJnkvh4hfH_lRr06jx5jkcMKzFK6jI3vtI4xDrNU2wovTEVgPRrMM37UtdQPYi0ee_TnrLK3-1a6RbrRD3gnEo2n-Lhnt3fi-2bZI"/>
+</div>
+<div class="flex gap-0.5 mb-1">
+<span class="material-symbols-outlined text-error text-[12px]" style="font-variation-settings: 'FILL' 1;">favorite</span>
+<span class="material-symbols-outlined text-error text-[12px]" style="font-variation-settings: 'FILL' 1;">favorite</span>
+<span class="material-symbols-outlined text-error text-[12px]" style="font-variation-settings: 'FILL' 1;">favorite</span>
+<span class="material-symbols-outlined text-on-surface-variant text-[12px]">favorite</span>
+</div>
+<div class="text-[10px] font-label-mono truncate">REMINGTON [3]</div>
+</div>
+<!-- Player 2 -->
+<div class="bg-surface-container border-2 border-outline p-2 shadow-[2px_2px_0px_0px_rgba(0,0,0,0.5)] active-glow">
+<div class="w-full aspect-square bg-surface-variant border border-outline-variant mb-1 overflow-hidden flex items-center justify-center">
+<span class="material-symbols-outlined text-outline text-4xl">help_outline</span>
+</div>
+<div class="flex gap-0.5 mb-1">
+<span class="material-symbols-outlined text-error text-[12px]" style="font-variation-settings: 'FILL' 1;">favorite</span>
+<span class="material-symbols-outlined text-error text-[12px]" style="font-variation-settings: 'FILL' 1;">favorite</span>
+</div>
+<div class="flex gap-1">
+<span class="material-symbols-outlined text-[12px] text-primary">lock</span>
+<span class="material-symbols-outlined text-[12px] text-primary">door_back</span>
+</div>
+</div>
+<!-- Player 3 -->
+<div class="bg-surface-container border-2 border-outline p-2 shadow-[2px_2px_0px_0px_rgba(0,0,0,0.5)]">
+<div class="w-full aspect-square bg-surface-variant border border-outline-variant mb-1 overflow-hidden">
+<img class="w-full h-full object-cover grayscale brightness-75" data-alt="A 64x64 pixel art character portrait of a mysterious gunslinger with a bandana covering the lower half of their face. Sharp, non-aliased pixel edges define the features against a dithered background of sunset orange. The style is strictly retro-gaming, using a limited palette of sepia and dark browns with vibrant highlight accents." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBIIC03kiKog4qgIUqmrEUhjIb81HXkUdpOPLS7tSE4LKLKl3F_K9GJSHdxhn782M_o1f9PMIowDRc3aMkAhey2M59bQHK0B9LSW7JSVKxAkhS-ewYd20Jubq-BewPk6AgZXQstGmbrFsBU3Tr2mdL0jxhtJNBe6kQG5DvPyzjyWYQZzMpeHeP_8DR4uzRldYV6bcpfJhuKJMQ34GT-qV7UtBESAGq-rsjBj1p-raJzAyqCKuAxB8ky-6XmHSIXgVzx9-Rji_A9zvc"/>
+</div>
+<div class="flex gap-0.5 mb-1">
+<span class="material-symbols-outlined text-error text-[12px]" style="font-variation-settings: 'FILL' 1;">favorite</span>
+</div>
+<div class="text-[10px] font-label-mono truncate">CARBINE [4]</div>
+</div>
+</div>
+<!-- Central Deck Area -->
+<div class="flex-1 flex items-center justify-center gap-8 relative">
+<!-- Draw Pile -->
+<div class="w-24 h-36 bg-surface-container-highest border-2 border-outline shadow-[4px_4px_0px_0px_rgba(0,0,0,0.5)] flex items-center justify-center relative transform -rotate-3">
+<div class="absolute inset-1 border border-dashed border-outline-variant"></div>
+<span class="material-symbols-outlined text-outline text-3xl">style</span>
+</div>
+<!-- Discard Pile -->
+<div class="w-24 h-36 bg-surface-container border-2 border-outline shadow-[4px_4px_0px_0px_rgba(0,0,0,0.5)] flex items-center justify-center relative transform rotate-6">
+<div class="absolute inset-0 p-2">
+<div class="w-full h-full border border-outline-variant flex flex-col items-center justify-center">
+<span class="material-symbols-outlined text-error text-2xl" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
+<div class="text-[10px] font-label-mono mt-1">BANG!</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Player Hand -->
+<div class="fixed bottom-32 left-0 w-full px-4 z-40">
+<div class="card-fan flex justify-center -space-x-8">
+<!-- Card 1 -->
+<div class="w-20 h-32 bg-[#f5e6d3] border-2 border-[#3e2723] p-1 flex flex-col shadow-lg transition-transform active:scale-110">
+<div class="flex justify-between items-start">
+<span class="text-[8px] font-bold text-[#3e2723]">BANG!</span>
+<span class="material-symbols-outlined text-[10px] text-[#3e2723]">flare</span>
+</div>
+<div class="flex-1 border border-[#3e2723] my-1 flex items-center justify-center bg-[#e0d0b8]">
+<span class="material-symbols-outlined text-[#3e2723]">target</span>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="w-20 h-32 bg-[#f5e6d3] border-2 border-[#3e2723] p-1 flex flex-col shadow-lg transition-transform active:scale-110">
+<div class="flex justify-between items-start">
+<span class="text-[8px] font-bold text-[#3e2723]">MISSED!</span>
+<span class="material-symbols-outlined text-[10px] text-[#3e2723]">shield</span>
+</div>
+<div class="flex-1 border border-[#3e2723] my-1 flex items-center justify-center bg-[#e0d0b8]">
+<span class="material-symbols-outlined text-[#3e2723]">person_off</span>
+</div>
+</div>
+<!-- Card 3 (BEER) - Active/Pop-up -->
+<div class="w-20 h-32 bg-[#f5e6d3] border-2 border-[#ff5722] p-1 flex flex-col shadow-xl -translate-y-8 z-10 scale-110 transition-transform active-glow">
+<div class="flex justify-between items-start">
+<span class="text-[8px] font-bold text-[#3e2723]">BEER</span>
+<span class="material-symbols-outlined text-[10px] text-[#ff5722]" style="font-variation-settings: 'FILL' 1;">favorite</span>
+</div>
+<div class="flex-1 border border-[#3e2723] my-1 flex items-center justify-center bg-[#e0d0b8]">
+<span class="material-symbols-outlined text-[#3e2723]">sports_bar</span>
+</div>
+</div>
+<!-- Card 4 -->
+<div class="w-20 h-32 bg-[#f5e6d3] border-2 border-[#3e2723] p-1 flex flex-col shadow-lg transition-transform active:scale-110">
+<div class="flex justify-between items-start">
+<span class="text-[8px] font-bold text-[#3e2723]">BANG!</span>
+<span class="material-symbols-outlined text-[10px] text-[#3e2723]">flare</span>
+</div>
+<div class="flex-1 border border-[#3e2723] my-1 flex items-center justify-center bg-[#e0d0b8]">
+<span class="material-symbols-outlined text-[#3e2723]">target</span>
+</div>
+</div>
+<!-- Card 5 -->
+<div class="w-20 h-32 bg-[#f5e6d3] border-2 border-[#3e2723] p-1 flex flex-col shadow-lg transition-transform active:scale-110">
+<div class="flex justify-between items-start">
+<span class="text-[8px] font-bold text-[#3e2723]">CAT BALOU</span>
+<span class="material-symbols-outlined text-[10px] text-[#3e2723]">backspace</span>
+</div>
+<div class="flex-1 border border-[#3e2723] my-1 flex items-center justify-center bg-[#e0d0b8]">
+<span class="material-symbols-outlined text-[#3e2723]">content_cut</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Prompt Box -->
+<div class="fixed bottom-16 left-0 w-full z-50 bg-black border-t-4 border-outline p-4 shadow-[0px_-4px_0px_0px_rgba(0,0,0,0.8)]">
+<p class="font-label-mono text-white text-center mb-4 leading-tight">
+                ¿Quieres jugar una carta de CERVEZA para recuperar vida?
+            </p>
+<div class="flex gap-4">
+<button class="flex-1 bg-primary-container text-on-primary-container font-headline-md py-3 pixel-border active:translate-y-1 transition-transform">SÍ</button>
+<button class="flex-1 bg-surface-container-highest text-on-surface font-headline-md py-3 pixel-border active:translate-y-1 transition-transform">NO</button>
+</div>
+</div>
+</main>
+<!-- Bottom Nav Bar -->
+<nav class="fixed bottom-0 w-full z-50 flex justify-around items-center px-4 py-2 bg-surface-container border-t-2 border-outline shadow-[0px_-4px_0px_0px_rgba(0,0,0,0.5)]">
+<button class="flex flex-col items-center justify-center text-on-surface-variant p-1 active:scale-95 transition-transform hover:bg-secondary-container hover:text-on-secondary-container">
+<span class="material-symbols-outlined">style</span>
+<span class="font-label-mono text-label-mono">MY HAND</span>
+</button>
+<button class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-none border-2 border-dashed border-on-primary-container p-1 active:scale-95 transition-transform">
+<span class="material-symbols-outlined">playing_cards</span>
+<span class="font-label-mono text-label-mono">DRAW</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant p-1 active:scale-95 transition-transform hover:bg-secondary-container hover:text-on-secondary-container">
+<span class="material-symbols-outlined">history_edu</span>
+<span class="font-label-mono text-label-mono">LOG</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant p-1 active:scale-95 transition-transform hover:bg-secondary-container hover:text-on-secondary-container">
+<span class="material-symbols-outlined">grid_view</span>
+<span class="font-label-mono text-label-mono">MENU</span>
+</button>
+</nav>
+<!-- Log Drawer -->
+<div class="fixed right-0 top-16 bottom-16 w-64 bg-surface-container-low border-l-2 border-outline z-[60] transform translate-x-full transition-transform duration-300 shadow-2xl" id="logDrawer">
+<div class="p-4 border-b border-outline-variant flex justify-between items-center">
+<span class="font-headline-md text-primary text-sm">EVENT LOG</span>
+<button onclick="toggleLog()"><span class="material-symbols-outlined">close</span></button>
+</div>
+<div class="p-4 flex flex-col gap-3 font-body-md text-xs">
+<div class="border-b border-outline-variant pb-2 opacity-80">
+<span class="text-primary-container font-bold">12:01</span> Player 2 robó 2 cartas.
+            </div>
+<div class="border-b border-outline-variant pb-2">
+<span class="text-primary-container font-bold">12:02</span> Sheriff disparó a Forajido 1.
+            </div>
+<div class="border-b border-outline-variant pb-2">
+<span class="text-primary-container font-bold">12:03</span> Forajido 1 usó ¡FALLASTE!.
+            </div>
+<div class="border-b border-outline-variant pb-2 text-primary">
+<span class="text-primary-container font-bold">12:04</span> Es tu turno.
+            </div>
+</div>
+</div>
+<script>
+        function toggleLog() {
+            const drawer = document.getElementById('logDrawer');
+            drawer.classList.toggle('translate-x-full');
+        }
+
+        // Simple touch interaction for hand cards
+        document.querySelectorAll('.card-fan > div').forEach(card => {
+            card.addEventListener('click', () => {
+                document.querySelectorAll('.card-fan > div').forEach(c => {
+                    c.classList.remove('-translate-y-8', 'z-10', 'scale-110', 'active-glow', 'border-[#ff5722]');
+                    c.classList.add('border-[#3e2723]');
+                });
+                card.classList.add('-translate-y-8', 'z-10', 'scale-110', 'active-glow');
+                card.classList.remove('border-[#3e2723]');
+                card.classList.add('border-[#ff5722]');
+            });
+        });
+    </script>
+</body></html>

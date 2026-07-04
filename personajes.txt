@@ -1,0 +1,15 @@
+0;Bart Cassidy;4
+1;Black Jack;4
+2;Calamity Janet;4
+3;El Gringo;3
+4;Jesse Jones;4
+5;Jourdonnais;4
+6;Kit Carlson;4
+7;Lucky Duke;4
+8;Paul Regret;3
+9;Pedro Ramirez;4
+10;Rose Doolan;4
+11;Sid Ketchum;4
+12;Slab the Killer;4
+13;Suzy Lafayette;4
+14;Willy the Kid ;4

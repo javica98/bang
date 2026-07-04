@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Duel at Sunset - Nueva Partida</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;500;700&amp;family=Courier+Prime:wght@400;500;700&amp;family=Jetbrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@100..900&amp;family=JetBrains+Mono:wght@100..900&amp;family=Space+Mono:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        
+        /* Retro Pixel Dithering Effect Overlay */
+        .dither-overlay {
+            background-image: radial-gradient(circle, #000000 1px, transparent 1px);
+            background-size: 4px 4px;
+            opacity: 0.15;
+            pointer-events: none;
+        }
+
+        /* Scanline effect */
+        .scanlines {
+            background: linear-gradient(
+                to bottom,
+                rgba(18, 16, 16, 0) 50%,
+                rgba(0, 0, 0, 0.25) 50%
+            );
+            background-size: 100% 4px;
+            pointer-events: none;
+        }
+
+        .pixel-border {
+            box-shadow: 
+                0 -4px 0 0 #3e2723,
+                0 4px 0 0 #3e2723,
+                -4px 0 0 0 #3e2723,
+                4px 0 0 0 #3e2723;
+        }
+
+        .pixel-shadow {
+            box-shadow: 4px 4px 0px 0px rgba(0,0,0,0.5);
+        }
+
+        .pixel-shadow-active {
+            box-shadow: 0px 0px 0px 0px rgba(0,0,0,0.5);
+            transform: translate(4px, 4px);
+        }
+
+        /* Custom Scrollbar for the pixel aesthetic */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #241e1c;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #ab8980;
+            border: 2px solid #241e1c;
+        }
+    </style>
+<script id="tailwind-config">tailwind.config = {darkMode: "class", theme: {extend: {colors: {"on-error": "#690005", "surface-container-low": "#201a18", "on-primary-fixed-variant": "#594400", "tertiary-fixed": "#ffdad6", "surface-container-high": "#2f2926", "primary-fixed": "#ffdf96", "inverse-on-surface": "#352f2d", background: "#171210", "on-surface-variant": "#d2c5ac", surface: "#171210", "on-secondary-fixed-variant": "#643c35", "secondary-fixed-dim": "#f2b9af", "primary-container": "#ffc821", "on-secondary-container": "#dfa89e", "on-error-container": "#ffdad6", "on-primary-fixed": "#251a00", error: "#ffb4ab", "on-surface": "#ece0dc", "surface-bright": "#3e3835", "surface-container-highest": "#3a3331", "on-background": "#ece0dc", "on-tertiary-fixed-variant": "#930010", "surface-container": "#241e1c", "on-primary": "#3e2e00", "surface-tint": "#f5bf12", "on-tertiary-fixed": "#410003", "secondary-container": "#643c35", "primary-fixed-dim": "#f5bf12", "tertiary-fixed-dim": "#ffb3ac", "on-primary-container": "#6f5500", "on-secondary": "#4a2720", "surface-dim": "#171210", "surface-container-lowest": "#120d0b", "error-container": "#93000a", "outline-variant": "#4f4633", outline: "#9b8f78", "secondary-fixed": "#ffdad4", "surface-variant": "#3a3331", "on-tertiary": "#680008", "inverse-primary": "#765a00", "inverse-surface": "#ece0dc", primary: "#ffeabd", tertiary: "#ffe6e3", secondary: "#f2b9af", "on-secondary-fixed": "#31120d", "tertiary-container": "#ffc0ba", "on-tertiary-container": "#b1111b"}, borderRadius: {DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px"}, spacing: {"panel-padding": "12px", "pixel-unit": "4px", "margin-sm": "8px", gutter: "16px", "margin-md": "24px"}, fontFamily: {"headline-md": ["Space Mono"], "body-md": ["Courier Prime"], "body-lg": ["Courier Prime"], "headline-lg-mobile": ["Space Mono"], "headline-lg": ["Space Mono"], "label-mono": ["JetBrains Mono"], headline: ["Space Mono"], display: ["Space Mono"], body: ["Courier Prime"], label: ["Jetbrains Mono"]}, fontSize: {"headline-md": ["24px", {lineHeight: "32px", fontWeight: "700"}], "body-md": ["14px", {lineHeight: "20px", fontWeight: "400"}], "body-lg": ["18px", {lineHeight: "24px", fontWeight: "400"}], "headline-lg-mobile": ["24px", {lineHeight: "32px", fontWeight: "700"}], "headline-lg": ["32px", {lineHeight: "40px", letterSpacing: "-1px", fontWeight: "700"}], "label-mono": ["12px", {lineHeight: "16px", fontWeight: "600"}]}}}};</script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface min-h-screen font-body-md overflow-x-hidden selection:bg-primary-container selection:text-on-primary-container">
+<!-- ATMOSPHERIC BACKGROUND -->
+<div class="fixed inset-0 z-0 opacity-40 grayscale contrast-125 brightness-50" data-alt="A detailed 16-bit pixel art texture of a weathered wooden saloon wall. The wood planks are dark mahogany and cedar, featuring visible knots, cracks, and digital grain. The lighting is low and warm, as if from a flickering kerosene lamp out of frame, creating a gritty and nostalgic retro gaming atmosphere with sharp, non-aliased pixel edges." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDhoR5Z-Z-HxIJxG6G3o0zBRESq9KKo8-QMTwc9xUAy24SurracP0WPjWgWwTib6W6tsxTyklver_a9JlttpRGp8u8Ji-L0HRbFsyLxIQlfLfWYOQdF3TfE_L325Qhca9u5L8Rxgst0ArjmUhylHj0x_82rhAhygb2hVDMlBu-rCxhD9DV0bEB18LzfucheHE7fxCWe3L_ZMx19DVSxcGEhrtreoNVdNWgLSdL4gCSc-nM1ECFDRP7hKZlgYhdux7ADyrMXsGkZ5WQ')"></div>
+<div class="fixed inset-0 z-1 dither-overlay"></div>
+<div class="fixed inset-0 z-2 scanlines"></div>
+<!-- TOP BAR (From JSON Anchor) -->
+<header class="fixed top-0 w-full z-50 flex justify-between items-center px-gutter h-16 bg-surface border-b-2 border-outline shadow-[4px_4px_0px_0px_rgba(0,0,0,0.5)]">
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-primary active:translate-y-1 transition-all hover:bg-primary-container hover:text-on-primary-container p-2">menu</button>
+<h1 class="font-headline-md text-headline-md text-primary tracking-tighter">DUEL AT SUNSET</h1>
+</div>
+<div class="flex items-center">
+<button class="material-symbols-outlined text-primary active:translate-y-1 transition-all hover:bg-primary-container hover:text-on-primary-container p-2">settings</button>
+</div>
+</header>
+<!-- MAIN CONTENT CANVAS -->
+<main class="relative z-10 pt-24 pb-32 px-4 md:px-gutter max-w-4xl mx-auto flex flex-col items-center">
+<!-- TITLE SECTION -->
+<div class="mb-12 text-center">
+<h2 class="font-headline-lg text-headline-lg text-primary uppercase tracking-widest drop-shadow-[4px_4px_0_#5f1500]">PARTIDA NUEVA</h2>
+<div class="h-1 w-full bg-outline-variant mt-2"></div>
+</div>
+<!-- SETUP PANEL -->
+<section class="w-full bg-surface-container border-2 border-outline p-6 md:p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,0.8)] relative overflow-hidden">
+<!-- Decorative Bezel -->
+<div class="absolute inset-0 border-t border-l border-white/10 pointer-events-none"></div>
+<form class="space-y-10" id="setup-form">
+<!-- Player Count Selector -->
+<div class="flex flex-col items-center gap-4">
+<label class="font-label-mono text-label-mono text-outline uppercase tracking-widest">CANTIDAD DE FORAJIDOS</label>
+<div class="flex items-center gap-6">
+<button class="w-12 h-12 flex items-center justify-center bg-secondary-container border-2 border-outline text-on-secondary-container shadow-[4px_4px_0px_0px_rgba(0,0,0,0.5)] active:translate-y-1 active:shadow-none transition-all" id="minus-btn" type="button">
+<span class="material-symbols-outlined font-bold">remove</span>
+</button>
+<div class="text-6xl font-headline-lg text-primary-container tabular-nums drop-shadow-[2px_2px_0_#000]" id="player-count-display">4</div>
+<button class="w-12 h-12 flex items-center justify-center bg-secondary-container border-2 border-outline text-on-secondary-container shadow-[4px_4px_0px_0px_rgba(0,0,0,0.5)] active:translate-y-1 active:shadow-none transition-all" id="plus-btn" type="button">
+<span class="material-symbols-outlined font-bold">add</span>
+</button>
+</div>
+</div>
+<!-- Player Inputs Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="player-inputs"><div class="group flex flex-col gap-1"><label class="font-label-mono text-[10px] text-outline uppercase ml-1">Pistolero 1</label><input class="w-full bg-background border-4 border-outline p-4 font-headline-md text-primary focus:border-primary-container focus:ring-0 placeholder:opacity-30 transition-colors shadow-inner" placeholder="Billy the Kid" required="" type="text"/></div><div class="group flex flex-col gap-1"><label class="font-label-mono text-[10px] text-outline uppercase ml-1">Pistolero 2</label><input class="w-full bg-background border-4 border-outline p-4 font-headline-md text-primary focus:border-primary-container focus:ring-0 placeholder:opacity-30 transition-colors shadow-inner" placeholder="Calamity Jane" required="" type="text"/></div><div class="group flex flex-col gap-1"><label class="font-label-mono text-[10px] text-outline uppercase ml-1">Pistolero 3</label><input class="w-full bg-background border-4 border-outline p-4 font-headline-md text-primary focus:border-primary-container focus:ring-0 placeholder:opacity-30 transition-colors shadow-inner" placeholder="Doc Holliday" required="" type="text"/></div><div class="group flex flex-col gap-1"><label class="font-label-mono text-[10px] text-outline uppercase ml-1">Pistolero 4</label><input class="w-full bg-background border-4 border-outline p-4 font-headline-md text-primary focus:border-primary-container focus:ring-0 placeholder:opacity-30 transition-colors shadow-inner" placeholder="Jesse James" required="" type="text"/></div></div>
+<!-- Action Button -->
+<div class="pt-6 flex justify-center">
+<button class="group relative px-10 py-5 bg-[#5f1500] border-4 border-[#ab8980] text-primary font-headline-md text-headline-md shadow-[6px_6px_0px_0px_#000] hover:bg-primary-container hover:text-on-primary-container transition-all active:translate-y-1 active:shadow-none" type="submit">
+<span class="relative z-10">BARAJAR Y REPARTIR</span>
+<div class="absolute inset-0 opacity-0 group-hover:opacity-20 bg-white pointer-events-none"></div>
+</button>
+</div>
+</form>
+</section>
+<!-- ATMOSPHERIC ELEMENTS -->
+</main>
+<!-- BOTTOM NAV BAR (From JSON Anchor) -->
+<nav class="fixed bottom-0 w-full z-50 flex justify-around items-center px-4 py-2 bg-surface-container border-t-2 border-outline shadow-[0px_-4px_0px_0px_rgba(0,0,0,0.5)]">
+<button class="flex flex-col items-center justify-center text-on-surface-variant p-1 active:scale-95 transition-transform hover:bg-secondary-container hover:text-on-secondary-container">
+<span class="material-symbols-outlined">style</span>
+<span class="font-label-mono text-label-mono uppercase">MY HAND</span>
+</button>
+<button class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-none border-2 border-dashed border-on-primary-container p-1 active:scale-95 transition-transform">
+<span class="material-symbols-outlined">playing_cards</span>
+<span class="font-label-mono text-label-mono uppercase">DRAW</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant p-1 active:scale-95 transition-transform hover:bg-secondary-container hover:text-on-secondary-container">
+<span class="material-symbols-outlined">history_edu</span>
+<span class="font-label-mono text-label-mono uppercase">LOG</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant p-1 active:scale-95 transition-transform hover:bg-secondary-container hover:text-on-secondary-container">
+<span class="material-symbols-outlined">grid_view</span>
+<span class="font-label-mono text-label-mono uppercase">MENU</span>
+</button>
+</nav>
+<script>
+        const MIN_PLAYERS = 4;
+        const MAX_PLAYERS = 7;
+        let playerCount = 4;
+
+        const display = document.getElementById('player-count-display');
+        const minusBtn = document.getElementById('minus-btn');
+        const plusBtn = document.getElementById('plus-btn');
+        const inputsContainer = document.getElementById('player-inputs');
+
+        const defaultNames = ["Billy the Kid", "Calamity Jane", "Doc Holliday", "Jesse James", "Belle Starr", "Butch Cassidy", "Wyatt Earp"];
+
+        function updateInputs() {
+            inputsContainer.innerHTML = '';
+            for (let i = 0; i < playerCount; i++) {
+                const div = document.createElement('div');
+                div.className = 'group flex flex-col gap-1';
+                
+                const label = document.createElement('label');
+                label.className = 'font-label-mono text-[10px] text-outline uppercase ml-1';
+                label.innerText = `Pistolero ${i + 1}`;
+                
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.required = true;
+                input.placeholder = defaultNames[i % defaultNames.length];
+                input.className = 'w-full bg-background border-4 border-outline p-4 font-headline-md text-primary focus:border-primary-container focus:ring-0 placeholder:opacity-30 transition-colors shadow-inner';
+                
+                div.appendChild(label);
+                div.appendChild(input);
+                inputsContainer.appendChild(div);
+            }
+        }
+
+        minusBtn.addEventListener('click', () => {
+            if (playerCount > MIN_PLAYERS) {
+                playerCount--;
+                display.innerText = playerCount;
+                updateInputs();
+            }
+        });
+
+        plusBtn.addEventListener('click', () => {
+            if (playerCount < MAX_PLAYERS) {
+                playerCount++;
+                display.innerText = playerCount;
+                updateInputs();
+            }
+        });
+
+        // Initialize
+        updateInputs();
+
+        // Prevent form reload and simulate shuffle
+        document.getElementById('setup-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            btn.innerText = "BARAJANDO...";
+            btn.disabled = true;
+            
+            // Simple visual feedback
+            setTimeout(() => {
+                alert("¡Cartas repartidas! El Sheriff empieza el duelo.");
+                btn.innerText = "BARAJAR Y REPARTIR";
+                btn.disabled = false;
+            }, 1500);
+        });
+    </script>
+</body></html>
