@@ -77,6 +77,21 @@ bang/
 
 ---
 
+## Tests
+
+```bash
+pip install -r requirements-dev.txt
+pytest
+```
+
+Los tests viven en `tests/` y cubren, de momento, las clases de estado (`ClasesAux.py`)
+y el cálculo de distancia (`Juego.distancia`). `tests/conftest.py` incluye un `FakeIO`
+(doble de test que responde con valores prescritos en vez de bloquear en `input()`) y
+fábricas (`make_carta`, `make_jugador`, `make_juego`, …) para montar partidas de prueba
+sin depender de `cartas.csv`/`personajes.txt`/`roles.txt`.
+
+---
+
 ## Tecnologías
 
 - Python 3.10+
