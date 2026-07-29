@@ -851,6 +851,7 @@ let numJugadores = 4;
 let pollInterval = null;
 let logCount = 0;
 let isSending = false;
+let gameOver = false;
 let lastPreguntaKey = null;   // evita re-render si la pregunta no cambió
 window._ultimoEstado = null;
 
@@ -884,6 +885,7 @@ async function iniciarPartida() {
     const v = document.getElementById(`nombre-${i}`)?.value.trim();
     nombres.push(v || `Pistolero ${i}`);
   }
+  gameOver = false;
   await fetch('/nueva_partida', {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
@@ -950,6 +952,7 @@ function preguntaKey(preg) {
 }
 
 async function poll() {
+  if (gameOver) return;
   try {
     const res = await fetch('/estado');
     const data = await res.json();
@@ -1277,6 +1280,7 @@ function renderElegirPersonaje(preg) {
 
 // ── GAME OVER ─────────────────────────────────────────
 function renderGameOver(preg) {
+  gameOver = true;
   clearInterval(pollInterval);
   showScreen('screen-gameover');
   document.getElementById('go-ganador').textContent =
