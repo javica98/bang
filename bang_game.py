@@ -309,6 +309,7 @@ class Juego:
         """Quita una carta de la mano sin descartarla (para equiparla a un jugador)."""
         carta = self.jugadores[id_jugador].getCarta(id_carta)
         self.jugadores[id_jugador].pierdeCarta(id_carta)
+        self._hook_mano_vacia(id_jugador)
         return carta
 
     def robar_carta_mano(self, id_origen, id_carta_origen, id_destino):
@@ -521,6 +522,9 @@ class Juego:
     def infligir_dano(self, id_jugador, cantidad=1, id_atacante=None):
         """Inflige `cantidad` puntos de daño y gestiona la muerte si ocurre."""
         jugador = self.jugadores[id_jugador]
+        if cantidad > 1:
+            atacante_nombre = self.jugadores[id_atacante].nombre if id_atacante is not None else "la dinamita"
+            print(f"💥 {jugador.nombre} recibe {cantidad} daño de {atacante_nombre}")
         for _ in range(cantidad):
             jugador.perderVida()
             self._hook_pierde_vida(id_jugador, id_atacante)
@@ -653,11 +657,14 @@ class Juego:
         if id_clase_respuesta == 12 and rival.personaje.nombre == "Calamity Janet":
             clases_validas.append(11)
 
+        nombres_clase = {11: 'Bang', 12: 'Fallaste'}
         for clase in clases_validas:
             tiene, indice = self._buscar_carta_por_clase(rival, clase)
             if tiene:
+                print(f"   ↳ {rival.nombre} usa {nombres_clase.get(clase, 'carta')} y esquiva")
                 self.perder_carta(id_rival, indice)
                 return True
+        print(f"   ↳ {rival.nombre} no tiene {nombres_clase.get(id_clase_respuesta, 'carta')} y recibe daño")
         return False
 
     def anadir_arma(self, id_jugador, id_carta):
@@ -677,6 +684,7 @@ class Juego:
         if carta.idClase == 1:
             jugador.ponerVolcanic()
         jugador.equipaCarta(carta)
+        print(f"⭐ {jugador.nombre} equipa {carta.nombre} (alcance {distancia})")
 
     def poner_carcel(self, id_jugador, id_enemigo, id_carta):
         """Equipa una Cárcel al rival. No se puede encarcelar al Sheriff ni a alguien ya encarcelado."""
@@ -692,6 +700,7 @@ class Juego:
         carta = self.quitar_de_mano(id_jugador, id_carta)
         self.jugadores[id_enemigo].ponerCarcel()
         self.jugadores[id_enemigo].equipaCarta(carta)
+        print(f"🔒 {self.jugadores[id_jugador].nombre} mete a {self.jugadores[id_enemigo].nombre} en la cárcel")
     def poner_dinamita(self, id_jugador, id_carta):
         """Equipa una Dinamita al jugador. Solo puede haber una por jugador."""
         jugador = self.jugadores[id_jugador]
@@ -733,13 +742,12 @@ class Juego:
             for intento in range(intentos_barril):
                 if fallastes_conseguidos >= fallastes_necesarios:
                     break
-                print(f"{enemigo.nombre} intenta esquivar con el barril (intento {intento + 1}/{intentos_barril})")
-                carta = self._desenfundar(id_enemigo)
-                if carta.palo == "Corazones":
+                carta_barril = self._desenfundar(id_enemigo)
+                if carta_barril.palo == "Corazones":
                     fallastes_conseguidos += 1
-                    print(f"{enemigo.nombre} saca {carta.nombre} de Corazones — barril esquiva (Fallaste {fallastes_conseguidos}/{fallastes_necesarios}).")
+                    print(f"   🛢️ {enemigo.nombre}: barril → {carta_barril.nombre} Corazones → esquiva")
                 else:
-                    print(f"{enemigo.nombre} saca {carta.nombre} y el barril no esquiva.")
+                    print(f"   🛢️ {enemigo.nombre}: barril → {carta_barril.nombre} ({carta_barril.palo}) → falla")
 
             while fallastes_conseguidos < fallastes_necesarios:
                 if not self.respuesta(id_enemigo, 12):
@@ -747,8 +755,10 @@ class Juego:
                 fallastes_conseguidos += 1
 
             if fallastes_conseguidos >= fallastes_necesarios:
-                print("¡Pero has fallado!")
+                print(f"🔫 {jugador.nombre} → {enemigo.nombre}: esquivado 🛡️")
             else:
+                vidas_tras = enemigo.vidas - 1
+                print(f"🔫 {jugador.nombre} → {enemigo.nombre}: ¡IMPACTO! ({vidas_tras}❤️)")
                 self.infligir_dano(id_enemigo, id_atacante=id_jugador)
         else:
             print("No puedes hacer más BANGs")
@@ -758,6 +768,7 @@ class Juego:
         if id_enemigo is None:
             print("No hay ningún rival al que retar a un duelo")
             return
+        print(f"⚔️ {self.jugadores[id_jugador].nombre} reta a duelo a {self.jugadores[id_enemigo].nombre}")
         self.perder_carta(id_jugador, id_carta)
         turno_actual = id_enemigo
         turno_rival = id_jugador
@@ -765,22 +776,29 @@ class Juego:
             turno_actual, turno_rival = turno_rival, turno_actual
         id_perdedor = turno_actual
         id_ganador_duelo = turno_rival
+        print(f"⚔️ {self.jugadores[id_ganador_duelo].nombre} gana el duelo — {self.jugadores[id_perdedor].nombre} pierde 1 vida")
         self.infligir_dano(id_perdedor, id_atacante=id_ganador_duelo)
 
     def ametralladora(self, id_jugador, id_carta):
         """Juega una Ametralladora: todos los rivales deben usar un Fallaste o pierden 1 vida."""
+        atacante = self.jugadores[id_jugador]
+        print(f"💣 {atacante.nombre} usa la Ametralladora — ¡todos deben usar Fallaste!")
         self.perder_carta(id_jugador, id_carta)
         for enemigo in self.jugadores:
             if enemigo.idJugador != id_jugador and not enemigo.muerto:
+                print(f"   → {enemigo.nombre} ({enemigo.vidas}❤️)")
                 respuesta = self.respuesta(enemigo.idJugador, 12)
                 if not respuesta:
                     self.infligir_dano(enemigo.idJugador, id_atacante=id_jugador)
 
     def indios(self, id_jugador, id_carta):
         """Juega Indios: todos los rivales deben usar un Bang o pierden 1 vida."""
+        atacante = self.jugadores[id_jugador]
+        print(f"🏹 {atacante.nombre} juega Indios — ¡todos deben usar Bang!")
         self.perder_carta(id_jugador, id_carta)
         for enemigo in self.jugadores:
             if enemigo.idJugador != id_jugador and not enemigo.muerto:
+                print(f"   → {enemigo.nombre} ({enemigo.vidas}❤️)")
                 respuesta = self.respuesta(enemigo.idJugador, 11)
                 if not respuesta:
                     self.infligir_dano(enemigo.idJugador, id_atacante=id_jugador)
@@ -797,9 +815,11 @@ class Juego:
             return
         jugador.ganarVida()
         self.perder_carta(id_jugador, id_carta)
+        print(f"🍺 {jugador.nombre} bebe una Cerveza y recupera 1 vida ({jugador.vidas}/{jugador.vidasMax} ❤️)")
     
     def saloon(self, id_jugador, id_carta):
         """Juega el Saloon: todos los jugadores vivos recuperan 1 vida."""
+        print(f"🍺 {self.jugadores[id_jugador].nombre} juega el Saloon — todos recuperan 1 vida")
         self.perder_carta(id_jugador, id_carta)
         for jugador in self.jugadores:
             if not jugador.muerto:
@@ -814,6 +834,7 @@ class Juego:
         carta = self.quitar_de_mano(id_jugador, id_carta)
         jugador.ponerMustang()
         jugador.equipaCarta(carta)
+        print(f"⭐ {jugador.nombre} equipa Mustang (más difícil de alcanzar)")
 
     def barril(self, id_jugador, id_carta):
         """Equipa el Barril: al recibir un Bang, intenta esquivar automáticamente robando con ♥."""
@@ -824,6 +845,7 @@ class Juego:
         carta = self.quitar_de_mano(id_jugador, id_carta)
         jugador.ponerBarril()
         jugador.equipaCarta(carta)
+        print(f"⭐ {jugador.nombre} equipa Barril (puede esquivar ataques automáticamente)")
 
     def mira_telescopica(self, id_jugador, id_carta):
         """Equipa la Mira Telescópica: reduce en 1 la distancia de ataque del jugador."""
@@ -834,6 +856,7 @@ class Juego:
         carta = self.quitar_de_mano(id_jugador, id_carta)
         jugador.ponerMiraTelescopica()
         jugador.equipaCarta(carta)
+        print(f"⭐ {jugador.nombre} equipa Mira Telescópica (alcanza más lejos)")
 
     def almacen(self, id_jugador, id_carta):
         """Juega el Almacén: reparte N cartas boca arriba (N = jugadores vivos); cada jugador elige 1 en orden."""
@@ -859,12 +882,14 @@ class Juego:
 
     def diligencia(self, id_jugador, id_carta):
         """Juega la Diligencia: el jugador roba 2 cartas del mazo."""
+        print(f"📦 {self.jugadores[id_jugador].nombre} juega Diligencia y roba 2 cartas")
         self.perder_carta(id_jugador, id_carta)
         self.recibe_carta(id_jugador)
         self.recibe_carta(id_jugador)
 
     def wells_fargo(self, id_jugador, id_carta):
         """Juega Wells Fargo: el jugador roba 3 cartas del mazo."""
+        print(f"📦 {self.jugadores[id_jugador].nombre} juega Wells Fargo y roba 3 cartas")
         self.perder_carta(id_jugador, id_carta)
         self.recibe_carta(id_jugador)
         self.recibe_carta(id_jugador)
@@ -882,10 +907,12 @@ class Juego:
         origen, indice = id_carta_rival
         self.perder_carta(id_jugador, id_carta)
         if origen == "mano":
-            self.robar_carta_mano(id_enemigo, indice, id_jugador)
+            carta_robada = self.robar_carta_mano(id_enemigo, indice, id_jugador)
+            print(f"🤚 {self.jugadores[id_jugador].nombre} roba una carta de la mano de {rival.nombre}")
         else:
-            carta = self.quitar_carta_equipada(id_enemigo, indice)
-            self.jugadores[id_jugador].recibeCarta(carta)
+            carta_robada = self.quitar_carta_equipada(id_enemigo, indice)
+            self.jugadores[id_jugador].recibeCarta(carta_robada)
+            print(f"🤚 {self.jugadores[id_jugador].nombre} roba {carta_robada.nombre} (equipada) de {rival.nombre}")
 
     def ingExplosiva(self, id_jugador, id_enemigo, id_carta, id_carta_rival):
         """Juega la Ingeniería Explosiva: descarta una carta de cualquier rival sin límite de distancia."""
@@ -899,19 +926,33 @@ class Juego:
         origen, indice = id_carta_rival
         self.perder_carta(id_jugador, id_carta)
         if origen == "mano":
+            carta_desc = rival.getCarta(indice)
+            print(f"💣 {self.jugadores[id_jugador].nombre} descarta una carta de la mano de {rival.nombre}")
             self.perder_carta(id_enemigo, indice)
         else:
             carta = self.quitar_carta_equipada(id_enemigo, indice)
+            print(f"💣 {self.jugadores[id_jugador].nombre} descarta {carta.nombre} (equipada) de {rival.nombre}")
             self._discard_card(carta)
     
     def usar_carta(self, id_jugador, id_carta):
-        carta = self.jugadores[id_jugador].getCarta(id_carta)
+        jugador = self.jugadores[id_jugador]
+        carta = jugador.getCarta(id_carta)
         clase = carta.idClase
+        # Cartas de ataque/curación ya loguean en sus propios métodos
+        _CLASES_CON_LOG_PROPIO = {11, 12, 13, 14, 15, 16, 17, 18, 19}
+        if clase not in _CLASES_CON_LOG_PROPIO:
+            print(f"🃏 {jugador.nombre} juega {carta.nombre}")
         if clase in {1, 2, 3, 4, 5}:
             self.anadir_arma(id_jugador, id_carta)
             return
         if clase == 6:
-            id_enemigo = self.elegir_rival(id_jugador)
+            validos = [j for j in self.jugadores
+                       if j.idJugador != id_jugador and not j.muerto
+                       and j.rol != "Sheriff" and not j.carcel]
+            if not validos:
+                print("🔒 No hay rivales válidos para la Cárcel (el Sheriff está protegido; el resto ya están encarcelados)")
+                return
+            id_enemigo = self.io.elegir_jugador(validos, "Selecciona un rival para encarcelar")
             self.poner_carcel(id_jugador, id_enemigo, id_carta)
             return
         if clase == 7:
@@ -1051,6 +1092,8 @@ class Juego:
         else:
             self.recibe_carta(id_jugador)
             self.recibe_carta(id_jugador)
+        jugador = self.jugadores[id_jugador]
+        print(f"📥 {jugador.nombre} roba y tiene {len(jugador.cartasMano)} cartas")
 
     def turno_jugador(self, id_jugador):
         """Ejecuta el turno completo de un jugador: dinamita, cárcel, robo y fase de juego.
@@ -1139,6 +1182,8 @@ class Juego:
             indice = int(eleccion) - 1
             if 0 <= indice < len(jugador.cartasMano):
                 self.usar_carta(id_jugador, indice)
+                if self.game_over:
+                    break
                 continue
             print("Escribe un índice de carta válido")
 
@@ -1153,6 +1198,8 @@ class Juego:
             self.turno %= len(self.jugadores)
             if self.turno == sheriff.idJugador:
                 self.ronda += 1
+                vivos_str = ", ".join(f"{j.nombre}({j.vidas}❤️)" for j in self.jugadores if not j.muerto)
+                print(f"\n═══ RONDA {self.ronda} ═══  Vivos: {vivos_str}")
             jugador = self.jugadores[self.turno]
             self.turno += 1
             if jugador.muerto:

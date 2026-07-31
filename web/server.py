@@ -4,11 +4,15 @@ import queue
 import threading
 import builtins
 
+# Save the true original print BEFORE any patching across game restarts
+_ORIG_PRINT = builtins.print
+
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
 from flask import Flask, jsonify, request, render_template
 from bang_game import info_extract, create_players, Juego
 from flask_io import FlaskIO
+from bot_ai import BotAI
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
@@ -56,7 +60,7 @@ def _serialize_estado():
             "id": j.idJugador,
             "nombre": j.nombre,
             "personaje": j.personaje.nombre,
-            "rol": j.rol if (j.muerto or j.rol == "Sheriff") else "?",
+            "rol": j.rol if (j.muerto or j.rol == "Sheriff" or j.idJugador == 0 or juego.game_over) else "?",
             "vidas": j.vidas,
             "vidasMax": j.vidasMax,
             "muerto": j.muerto,
@@ -85,14 +89,28 @@ def _serialize_estado():
             for i, c in enumerate(current.cartasMano)
         ]
 
+    # Mano del jugador humano (player 0) — siempre visible aunque no sea su turno
+    human = juego.jugadores[0] if juego.jugadores else None
+    human_mano = []
+    if human:
+        human_mano = [
+            {"nombre": c.nombre, "tipo": c.tipo, "idClase": c.idClase, "indice": i}
+            for i, c in enumerate(human.cartasMano)
+        ]
+
     # Carta top del descarte — leer referencia una sola vez para evitar race condition:
     # el hilo del juego puede hacer monton_descartes=[] entre el 'if' y el '[-1]'
     descarte_top = None
+    descarte_recientes = []
     try:
-        monton = juego.monton_descartes  # referencia local: segura aunque el atributo cambie
+        monton = juego.monton_descartes
         if monton:
             c = monton[-1]
             descarte_top = {"nombre": c.nombre, "palo": getattr(c, "palo", ""), "numero": getattr(c, "numero", "")}
+            descarte_recientes = [
+                {"nombre": x.nombre, "palo": getattr(x, "palo", ""), "numero": getattr(x, "numero", "")}
+                for x in reversed(monton[-12:])
+            ]
     except (IndexError, AttributeError):
         pass
 
@@ -101,6 +119,8 @@ def _serialize_estado():
         "ronda": juego.ronda,
         "turno_actual": turno_actual,
         "current_jugador_id": current.idJugador if current else None,
+        "human_mano": human_mano,
+        "descarte_recientes": descarte_recientes,
         "game_over": juego.game_over,
         "ganador": juego.ganador,
         "descarte_top": descarte_top,
@@ -123,10 +143,13 @@ def _run_game(num_players, nombres):
 
     io = session["io"]
 
-    orig_print = builtins.print
+    orig_print = _ORIG_PRINT
     def patched_print(*args, **kwargs):
-        orig_print(*args, **kwargs)
         msg = " ".join(str(a) for a in args).strip()
+        try:
+            orig_print(*args, **kwargs)
+        except UnicodeEncodeError:
+            orig_print(msg.encode('ascii', errors='replace').decode('ascii'), **kwargs)
         if msg:
             session["log"].append(msg)
             if len(session["log"]) > 300:
@@ -186,7 +209,11 @@ def nueva_partida():
     session["question_q"] = q
     session["answer_q"] = a
 
-    io = FlaskIO(q, a, session["log"])
+    # Jugador 0 es siempre el humano; el resto son bots
+    human_ids = {0}
+    bots = {i: BotAI(i) for i in range(1, num_players)}
+
+    io = FlaskIO(q, a, session["log"], human_ids=human_ids, bots=bots)
     session["io"] = io
 
     t = threading.Thread(target=_run_game, args=(num_players, nombres), daemon=True)
@@ -218,7 +245,7 @@ def estado():
     return jsonify({
         "estado": _serialize_estado(),
         "pregunta": session["pending"],
-        "log": session["log"][-50:],
+        "log": session["log"][-80:],
         "running": session["running"],
         "error": session.get("error"),
     })

@@ -1,4 +1,15 @@
+import sys
+import time
 from bang_game import DESCRIPCIONES_PERSONAJE
+
+# Always write to the real stdout, bypassing patched_print so bot decisions
+# don't appear in the frontend log.
+def _debug(msg):
+    try:
+        sys.stdout.write(msg + '\n')
+    except UnicodeEncodeError:
+        sys.stdout.write(msg.encode('ascii', errors='replace').decode('ascii') + '\n')
+    sys.stdout.flush()
 
 
 class FlaskIO:
@@ -9,33 +20,63 @@ class FlaskIO:
     una pregunta en ``question_q`` y bloquea el hilo hasta que el cliente envía
     la respuesta a /accion, que la coloca en ``answer_q``.
 
+    Si ``human_ids`` está definido, los jugadores que NO están en ese conjunto
+    son tratados como bots: sus preguntas se responden automáticamente mediante
+    sus instancias de ``BotAI`` sin pasar por el frontend.
+
     Attributes:
         question_q (queue.Queue): Cola de preguntas hacia el cliente.
         answer_q (queue.Queue): Cola de respuestas del cliente.
         log (list): Lista compartida de mensajes de log visibles en el frontend.
         current_jugador (Jugador | None): Jugador cuya mano se muestra actualmente.
         juego (Juego | None): Referencia al objeto Juego activo.
+        human_ids (set[int]): IDs de jugadores humanos.
+        bots (dict[int, BotAI]): Instancias de IA por ID de bot.
     """
 
-    def __init__(self, question_q, answer_q, log_list):
+    def __init__(self, question_q, answer_q, log_list, human_ids=None, bots=None):
         self.question_q = question_q
         self.answer_q = answer_q
         self.log = log_list
         self.current_jugador = None
         self.juego = None
+        self.human_ids = human_ids or {0}
+        self.bots = bots or {}
+        # ID del jugador que está siendo preguntado ahora mismo (para bots)
+        self._asking_id = None
+        # Contador de setup para elegir_personaje (se llama antes de crear jugadores)
+        self._setup_idx = 0
 
     def set_game(self, juego):
         """Guarda la referencia al objeto Juego para que los métodos puedan consultarlo."""
         self.juego = juego
 
     def _ask(self, pregunta: dict):
-        """Envía una pregunta al cliente y bloquea hasta recibir respuesta."""
+        """Envía una pregunta al cliente o la responde automáticamente si es un bot."""
+        asking_id = self._asking_id
+        if asking_id is not None and asking_id not in self.human_ids:
+            bot = self.bots.get(asking_id)
+            if bot:
+                jugador = self.current_jugador
+                resp = bot.decidir(pregunta, jugador, self.juego)
+                tipo = pregunta.get('tipo', '?')
+                nombre = jugador.nombre if jugador else f"Bot{asking_id}"
+                _debug(f"🤖 {nombre} [{tipo}] -> {resp}")
+                # Pausa para que el frontend pueda mostrar el estado antes del siguiente paso
+                if tipo == 'elegir_carta' and str(resp) != 'FIN':
+                    time.sleep(0.6)
+                elif tipo in ('elegir_jugador', 'prompt'):
+                    time.sleep(0.3)
+                return str(resp) if resp is not None else 'None'
         self.question_q.put(pregunta)
         return self.answer_q.get()
 
     # ------------------------------------------------------------------ genérico
     def prompt(self, text, options=None):
         """Muestra un mensaje genérico al jugador y devuelve su respuesta en texto libre."""
+        # Sincroniza _asking_id con current_jugador (útil para responder Bang/Fallaste)
+        if self.current_jugador is not None:
+            self._asking_id = self.current_jugador.idJugador
         return self._ask({
             "tipo": "prompt",
             "texto": text,
@@ -49,6 +90,8 @@ class FlaskIO:
         Returns:
             Personaje: El personaje seleccionado (A o B).
         """
+        self._asking_id = self._setup_idx
+        self._setup_idx += 1
         resp = self._ask({
             "tipo": "elegir_personaje",
             "nombre_jugador": nombre_jugador,
@@ -76,6 +119,7 @@ class FlaskIO:
             str: Índice de carta (base 1), "FIN" o "PODER".
         """
         self.current_jugador = jugador
+        self._asking_id = jugador.idJugador
         return self._ask({
             "tipo": "elegir_carta",
             "texto": text,
@@ -95,6 +139,7 @@ class FlaskIO:
         Returns:
             int | None: idJugador del rival seleccionado, o None si se cancela.
         """
+        # _asking_id ya fue seteado por elegir_carta antes de esta llamada
         resp = self._ask({
             "tipo": "elegir_jugador",
             "texto": text,
@@ -112,6 +157,7 @@ class FlaskIO:
             tuple[str, int]: (``"mano"`` | ``"equipada"``, índice).
         """
         self.current_jugador = rival
+        # _asking_id mantiene al jugador que está ejecutando la acción (seteado en elegir_carta)
         resp = self._ask({
             "tipo": "elegir_carta_rival",
             "texto": text,
@@ -126,12 +172,18 @@ class FlaskIO:
         return (origen, int(indice))
 
     # ------------------------------------------------------------------ personajes
+    def observar(self, señal, actor_id):
+        """Notifica a todos los bots de una acción observable para actualizar creencias."""
+        for bot in self.bots.values():
+            bot.observar(señal, actor_id)
+
     def elegir_lucky_duke(self, jugador, carta1, carta2):
         """Lucky Duke: muestra las 2 cartas robadas y devuelve la elegida para el chequeo.
 
         Returns:
             Carta: La carta seleccionada.
         """
+        self._asking_id = jugador.idJugador
         resp = self._ask({
             "tipo": "elegir_lucky_duke",
             "jugador_id": jugador.idJugador,
@@ -141,6 +193,7 @@ class FlaskIO:
         return carta1 if resp == "0" else carta2
 
     def elegir_robo_jesse(self, jugador, rivales):
+        self._asking_id = jugador.idJugador
         """Jesse Jones: pregunta si robar a un rival o al mazo, y cuál rival elegir.
 
         Returns:
@@ -156,6 +209,7 @@ class FlaskIO:
         return int(resp)
 
     def elegir_robo_pedro(self, jugador, carta_top):
+        self._asking_id = jugador.idJugador
         """Pedro Ramírez: ofrece coger la carta superior del descarte o robar del mazo.
 
         Returns:
@@ -173,6 +227,7 @@ class FlaskIO:
         return resp == "SI"
 
     def elegir_kit_carlson(self, jugador, cartas):
+        self._asking_id = jugador.idJugador
         """Kit Carlson: muestra 3 cartas y devuelve el índice de la que se devuelve al mazo.
 
         Returns:
@@ -189,6 +244,7 @@ class FlaskIO:
         return int(resp)
 
     def elegir_almacen_carta(self, jugador, cartas):
+        self._asking_id = jugador.idJugador
         """Almacén: el jugador elige qué carta tomar de las expuestas en la mesa.
 
         Returns:
@@ -207,6 +263,8 @@ class FlaskIO:
     # ------------------------------------------------------------------ fin
     def mostrar_game_over(self, ganador):
         """Notifica al frontend que la partida ha terminado y quién ha ganado."""
+        # Forzar que la pregunta vaya al humano, no a un bot
+        self._asking_id = min(self.human_ids)
         self._ask({
             "tipo": "game_over",
             "ganador": ganador,

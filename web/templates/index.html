@@ -462,26 +462,36 @@ body {
 }
 .rp-sheriff-badge {
   position: absolute; top: 5px; left: 5px;
-  font-family: var(--font-mono); font-size: 9px; font-weight: 700;
-  letter-spacing: 0.5px; background: var(--accent); color: var(--accent-text);
-  border-radius: 999px; padding: 2px 7px;
+  font-size: 16px; line-height: 1;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.4));
 }
+@keyframes damage-shake {
+  0%,100% { transform: translateX(0) rotate(0deg); }
+  20%     { transform: translateX(-5px) rotate(-1.5deg); }
+  40%     { transform: translateX(5px)  rotate(1.5deg); }
+  60%     { transform: translateX(-3px) rotate(-0.5deg); }
+  80%     { transform: translateX(3px)  rotate(0.5deg); }
+}
+.rival-panel.damaged { animation: damage-shake 0.38s ease; }
 .rp-body { padding: 7px 7px 5px; }
 .rp-name { font-family: var(--font-head); font-size: 10px; font-weight: 400; color: var(--on-surface); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 4px; }
 .rp-personaje { font-family: var(--font-mono); font-size: 9px; font-weight: 700; color: var(--purple-acc); margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .rp-stats { font-family: var(--font-mono); font-size: 9px; font-weight: 700; color: var(--on-muted); margin-top: 4px; }
 .rp-badges { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 4px; }
 .rp-badge {
-  font-family: var(--font-mono); font-size: 8px; font-weight: 700;
-  border-radius: 999px; padding: 2px 6px; letter-spacing: 0.5px;
-  background: var(--blue-dim); color: var(--blue); border: 1px solid var(--blue);
+  font-size: 13px; line-height: 1;
+  border-radius: 6px; padding: 2px 4px;
+  background: rgba(0,0,0,0.08);
+  border: 1px solid rgba(0,0,0,0.12);
+  filter: drop-shadow(0 1px 1px rgba(0,0,0,0.2));
+  display: inline-flex; align-items: center; justify-content: center;
 }
-.rp-badge-carcel          { background: #3a3550; color: #c7bfe0; border-color: #8a7fbf; }
-.rp-badge-mustang         { background: var(--green-dim); color: var(--green); border-color: var(--green); }
-.rp-badge-barril          { background: var(--blue-dim); color: var(--blue); border-color: var(--blue); }
-.rp-badge-dinamita        { background: var(--red-dim); color: var(--red); border-color: var(--red); }
-.rp-badge-miraTelescopica { background: #e4d9f0; color: var(--purple-acc); border-color: var(--purple-acc); }
-.rp-badge-volcanic        { background: #f3ded2; color: var(--accent); border-color: var(--accent); }
+.rp-badge-carcel          { background: #3a3550; }
+.rp-badge-mustang         { background: var(--green-dim); }
+.rp-badge-barril          { background: var(--blue-dim); }
+.rp-badge-dinamita        { background: var(--red-dim); }
+.rp-badge-miraTelescopica { background: #e4d9f0; }
+.rp-badge-volcanic        { background: #f3ded2; }
 
 /* Center play zone */
 #play-zone {
@@ -508,10 +518,36 @@ body {
   background:
     repeating-linear-gradient(45deg, rgba(255,255,255,0.05) 0 6px, transparent 6px 12px),
     linear-gradient(160deg, var(--surface-top), var(--surface-low) 70%);
+  position: relative;
 }
-.pile-card.back::after { content: '★'; font-size: 26px; color: var(--accent); opacity: 0.85; text-shadow: 0 0 8px rgba(155,33,30,0.6); }
-.pile-card.face { background: var(--paper); color: var(--ink); border-color: var(--paper-edge); }
-.pile-card .pc-nombre { font-family: var(--font-head); font-size: 9px; font-weight: 400; text-align: center; padding: 4px; }
+.pile-card.back::before {
+  content: '';
+  position: absolute;
+  inset: 5px;
+  border: 1.5px solid rgba(155,33,30,0.35);
+  border-radius: 8px;
+  pointer-events: none;
+}
+.pile-card.back::after {
+  content: 'BANG!';
+  font-family: var(--font-head);
+  font-size: 17px;
+  color: var(--accent);
+  opacity: 0.92;
+  letter-spacing: 1px;
+  text-shadow: 1px 1px 0 rgba(0,0,0,0.25), 0 0 10px rgba(155,33,30,0.5);
+  transform: rotate(-8deg);
+  display: block;
+}
+.pile-card.face { background: var(--paper); color: var(--ink); border-color: var(--paper-edge); display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 4px 3px; }
+.pile-card.face.card-in { animation: card-in 0.22s cubic-bezier(0.2,0.8,0.3,1); }
+@keyframes card-in {
+  from { transform: scale(0.55) translateY(-18px); opacity: 0; }
+  to   { transform: scale(1)    translateY(0);     opacity: 1; }
+}
+.pile-card .pc-nombre { font-family: var(--font-head); font-size: 8px; font-weight: 400; text-align: center; line-height: 1.2; word-break: break-word; }
+.pile-card .pc-art { display: flex; align-items: center; justify-content: center; flex: 1; }
+.pile-card .pc-art canvas { max-width: 56px; max-height: 56px; image-rendering: pixelated; }
 .pile-card .pc-palo { font-family: var(--font-mono); font-size: 11px; font-weight: 700; text-align: center; }
 
 /* Mesa cards (almacen, lucky duke, etc.) */
@@ -529,6 +565,8 @@ body {
 .mesa-card:hover { border-color: var(--accent); transform: translateY(-5px) rotate(-2deg) scale(1.04); box-shadow: 0 0 0 3px var(--accent), 0 10px 0 var(--outline), 0 12px 18px rgba(155,33,30,0.35); }
 .mesa-card .mc-nombre { font-family: var(--font-head); font-size: 9px; font-weight: 400; color: var(--ink); line-height: 1.2; }
 .mesa-card .mc-palo { font-family: var(--font-mono); font-size: 11px; font-weight: 700; }
+.mesa-card .mc-art { flex: 1; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.mesa-card .mc-art canvas { image-rendering: pixelated; image-rendering: crisp-edges; max-width: 58px; max-height: 58px; }
 
 /* ── HAND ZONE ───────────────────────────────────────── */
 #hand-zone {
@@ -597,10 +635,31 @@ body {
   border-color: var(--accent);
   box-shadow: 0 0 0 3px var(--accent), 0 8px 0 var(--outline), 0 14px 20px rgba(155,33,30,0.4);
 }
-.hand-card .hc-nombre { font-family: var(--font-head); font-size: 8px; font-weight: 400; color: var(--ink); line-height: 1.2; }
+@keyframes card-play {
+  0%   { transform: translateY(-24px) scale(1.07); opacity: 1; }
+  60%  { transform: translateY(-90px) scale(1.15); opacity: 0.7; }
+  100% { transform: translateY(-140px) scale(0.5); opacity: 0; }
+}
+.hand-card.playing {
+  animation: card-play 0.35s ease-in forwards;
+  pointer-events: none;
+}
+.hand-card.clicked {
+  opacity: 0.35;
+  pointer-events: none;
+  transition: opacity 0.1s;
+}
+.hand-card .hc-nombre { font-family: var(--font-head); font-size: 8px; font-weight: 400; color: var(--ink); line-height: 1.2; overflow: hidden; word-break: break-word; max-width: 100%; }
 .hand-card .hc-tipo  { font-family: var(--font-mono); font-size: 8px; font-weight: 700; color: #8a6a30; }
 .hand-card.tipo-arma   { border-color: var(--blue); background: #e3f6ff; }
 .hand-card.tipo-objeto { border-color: var(--green); background: #e4fbef; }
+.hand-card.tipo-arma { background: var(--paper); border-color: var(--paper-edge); }
+.hc-art { flex: 1; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.hc-art canvas { image-rendering: pixelated; image-rendering: crisp-edges; max-width: 62px; max-height: 62px; }
+.hc-bottom { display: flex; align-items: center; justify-content: center; position: relative; height: 20px; }
+.hc-skull { position: absolute; left: 0; top: 50%; transform: translateY(-50%); line-height: 0; }
+.hc-skull canvas { image-rendering: pixelated; image-rendering: crisp-edges; width: 18px; height: 21px; }
+.hc-range { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--outline); display: flex; align-items: center; justify-content: center; font-family: var(--font-head); font-size: 11px; font-weight: 700; color: var(--accent); }
 
 /* Rival card (hidden / equip) */
 .rival-card-hidden {
@@ -851,8 +910,13 @@ let numJugadores = 4;
 let pollInterval = null;
 let logCount = 0;
 let isSending = false;
+let _questionAnswered = false;
 let gameOver = false;
 let lastPreguntaKey = null;   // evita re-render si la pregunta no cambió
+window._resetPollState = () => { lastPreguntaKey = null; _questionAnswered = false; window._ultimaPreg = null; gameOver = false; };
+window._setCurrentQuestion = (q) => { window._ultimaPreg = q; _questionAnswered = false; };
+// Lets the test marathon apply panel onclicks without waiting for the frontend poll
+window._applyJugadores = (idsValidos, idsFuera) => { marcarPaneles(idsValidos, idsFuera || []); };
 window._ultimoEstado = null;
 
 // ── SETUP ─────────────────────────────────────────────
@@ -964,6 +1028,7 @@ async function poll() {
     }
     if (data.estado?.jugadores) {
       window._ultimoEstado = data.estado;
+      window._descarteRecientes = data.estado.descarte_recientes || [];
       renderEstado(data.estado);
       renderDescarte(data.estado.descarte_top);
     }
@@ -983,11 +1048,16 @@ async function poll() {
 // ── ACCIÓN — debounce + re-poll inmediato ─────────────
 async function enviarAccion(valor) {
   if (isSending) return;
+  // Bloquear si no hay pregunta activa o ya fue respondida (evita doble envío)
+  if ((!window._ultimaPreg || _questionAnswered) && valor !== 'ok') return;
+  _questionAnswered = true;
   isSending = true;
 
-  // Desactiva UI inmediatamente para dar feedback visual
-  setSendingState(true);
+  // Limpiar UI inmediatamente — eliminar botones y paneles antes de esperar respuesta
+  clearBotones();
   limpiarPaneles();
+  document.getElementById('mesa-cards').innerHTML = '';
+  setSendingState(true);
 
   try {
     await fetch('/accion', {
@@ -1018,7 +1088,40 @@ function setSendingState(on) {
   });
 }
 
+// ── ESTADO GLOBAL ────────────────────────────────────
+let _idsSeleccionables = [];
+let _idsFuera = [];
+let _handLocked = false; // deprecated — mantenido por compatibilidad
+let _ultimoHumanMano = [];
+
+function _aplicarSeleccionables() {
+  document.querySelectorAll('.rival-panel').forEach(panel => {
+    const id = parseInt(panel.dataset.id);
+    panel.classList.remove('seleccionable', 'fuera-alcance');
+    panel.onclick = null;
+    if (_idsSeleccionables.includes(id)) {
+      panel.classList.add('seleccionable');
+      panel.onclick = () => enviarAccion(String(id));
+    } else if (_idsFuera.includes(id)) {
+      panel.classList.add('fuera-alcance');
+    }
+  });
+}
+
+function clearPrompt() {
+  // No borramos _ultimaPreg aquí: solo enviarAccion lo borra cuando el usuario responde.
+  // Borrarlo aquí causa un race condition entre preguntas (brief null del servidor).
+  setPromptText('');
+  clearBotones();
+  limpiarPaneles();
+  document.getElementById('mesa-cards').innerHTML = '';
+  if (_ultimoHumanMano.length > 0) {
+    renderMano(_ultimoHumanMano, [], false);
+  }
+}
+
 // ── RENDER TABLERO ────────────────────────────────────
+const _prevVidas = {};
 function renderEstado(estado) {
   const n = estado.jugadores.length;
   const turnoActual = ((estado.turno_actual % n) + n) % n;
@@ -1039,14 +1142,13 @@ function renderEstado(estado) {
       zone.appendChild(panel);
     }
 
-    const wasTurno = panel.classList.contains('turno');
     const isTurno = j.id === turnoActual;
     panel.className = 'rival-panel'
       + (j.muerto ? ' muerto' : '')
       + (isTurno  ? ' turno'  : '');
 
     const initials = j.nombre.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
-    const sheriffBadge = j.rol === 'Sheriff' ? '<div class="rp-sheriff-badge">SHERIFF</div>' : '';
+    const sheriffBadge = j.rol === 'Sheriff' ? '<div class="rp-sheriff-badge">⭐</div>' : '';
     const rolShow = j.muerto && j.rol !== '?'
       ? `<div style="font-family:var(--font-mono);font-size:8px;font-weight:700;color:var(--red);margin-top:2px;">${j.rol.toUpperCase()}</div>` : '';
 
@@ -1058,12 +1160,16 @@ function renderEstado(estado) {
     const armaNames = {0:'COLT',1:'VOLC',2:'SCHO',3:'REMI',4:'CARA',5:'WINC'};
     const arma = armaNames[j.arma] ?? j.arma;
 
-    const badgeMap = {carcel:'CÁRC',mustang:'MUST',barril:'BARR',dinamita:'DINA',miraTelescopica:'MIRA',volcanic:'VOLC'};
+    const badgeMap = {carcel:'⛓️',mustang:'🐎',barril:'🛢️',dinamita:'💣',miraTelescopica:'🔭',volcanic:'🔥'};
     let badges = '<div class="rp-badges">';
     const estados = j.estados || {};
     for (const [k, lbl] of Object.entries(badgeMap))
       if (estados[k]) badges += `<span class="rp-badge rp-badge-${k}">${lbl}</span>`;
     badges += '</div>';
+
+    const prevV = _prevVidas[j.id];
+    const tookDamage = prevV !== undefined && j.vidas < prevV;
+    _prevVidas[j.id] = j.vidas;
 
     panel.innerHTML = `
       <div class="rp-portrait">${sheriffBadge}${initials}</div>
@@ -1075,7 +1181,40 @@ function renderEstado(estado) {
         <div class="rp-stats">${arma} · Rng ${j.distancia} · ${j.numCartas}🂠</div>
         ${badges}
       </div>`;
+
+    if (tookDamage) {
+      panel.classList.add('damaged');
+      panel.addEventListener('animationend', () => panel.classList.remove('damaged'), {once:true});
+    }
   });
+
+  // Re-aplicar seleccionables tras reconstruir paneles
+  _aplicarSeleccionables();
+
+  // Mano humana siempre visible (no interactiva si no es su turno)
+  if (estado.human_mano) {
+    _ultimoHumanMano = estado.human_mano;
+    const pregActiva = document.getElementById('prompt-texto').textContent.trim();
+    // Solo mostrar si no hay una pregunta activa que ya gestiona la mano
+    const pregunta = window._ultimaPreg;
+    const tienePromptMano = pregunta && (pregunta.tipo === 'elegir_carta' || pregunta.tipo === 'prompt');
+    if (!tienePromptMano) {
+      renderMano(estado.human_mano, [], false);
+    }
+  }
+
+  // Rol del jugador humano
+  const humanJ = estado.jugadores.find(j => j.id === 0);
+  if (humanJ) {
+    let rolEl = document.getElementById('my-rol-badge');
+    if (!rolEl) {
+      rolEl = document.createElement('span');
+      rolEl.id = 'my-rol-badge';
+      rolEl.style.cssText = 'font-family:var(--font-mono);font-size:10px;font-weight:700;color:var(--accent);letter-spacing:1px;padding:2px 6px;border:1px solid var(--accent);border-radius:4px;';
+      document.getElementById('phase-badge').insertAdjacentElement('afterend', rolEl);
+    }
+    rolEl.textContent = humanJ.rol !== '?' ? humanJ.rol.toUpperCase() : '';
+  }
 }
 
 // ── RENDER MANO — wrapper pattern sin jitter ──────────
@@ -1106,10 +1245,37 @@ function renderMano(mano, opciones, jugable) {
     // Inner card: only does translateY on hover
     const div = document.createElement('div');
     div.className = 'hand-card' + tipoCls + (esJugable ? ' jugable' : '');
-    div.innerHTML = `<div class="hc-nombre">${carta.nombre}</div><div class="hc-tipo">${carta.tipo}</div>`;
+
+    const weaponInfo = carta.tipo === 'Arma' ? getWeaponArt(carta.nombre) : null;
+    const efectoInfo = !weaponInfo ? getEfectoArt(carta.nombre) : null;
+    if (weaponInfo) {
+      const nombre = document.createElement('div'); nombre.className = 'hc-nombre'; nombre.textContent = carta.nombre;
+      const artWrap = document.createElement('div'); artWrap.className = 'hc-art';
+      artWrap.appendChild(drawWeaponCanvas(weaponInfo.g()));
+      const bottom = document.createElement('div'); bottom.className = 'hc-bottom';
+      if (weaponInfo.skull) {
+        const sk = document.createElement('div'); sk.className = 'hc-skull';
+        sk.appendChild(drawSkullCanvas()); bottom.appendChild(sk);
+      }
+      const rng = document.createElement('div'); rng.className = 'hc-range'; rng.textContent = weaponInfo.range;
+      bottom.appendChild(rng);
+      div.append(nombre, artWrap, bottom);
+    } else if (efectoInfo) {
+      const nombre = document.createElement('div'); nombre.className = 'hc-nombre'; nombre.textContent = carta.nombre;
+      const artWrap = document.createElement('div'); artWrap.className = 'hc-art';
+      artWrap.appendChild(renderEfectoCanvas(efectoInfo.g()));
+      const tipo = document.createElement('div'); tipo.className = 'hc-tipo'; tipo.textContent = carta.tipo;
+      div.append(nombre, artWrap, tipo);
+    } else {
+      div.innerHTML = `<div class="hc-nombre">${carta.nombre}</div><div class="hc-tipo">${carta.tipo}</div>`;
+    }
 
     if (esJugable) {
-      wrap.onclick = () => enviarAccion(String(carta.indice + 1));
+      wrap.onclick = () => {
+        if (isSending) return;
+        div.classList.add('clicked');
+        enviarAccion(String(carta.indice + 1));
+      };
     }
 
     wrap.appendChild(div);
@@ -1118,8 +1284,31 @@ function renderMano(mano, opciones, jugable) {
 }
 
 // ── RENDER PREGUNTA ───────────────────────────────────
+function mkMesaCardConArte(c) {
+  const d = document.createElement('div');
+  d.className = 'mesa-card';
+  const nombre = document.createElement('div'); nombre.className = 'mc-nombre'; nombre.textContent = c.nombre;
+  const palo = document.createElement('div'); palo.className = 'mc-palo'; palo.innerHTML = paloHTML(c.palo, c.numero);
+  const weaponInfo = getWeaponArt(c.nombre);
+  const efectoInfo = !weaponInfo ? getEfectoArt(c.nombre) : null;
+  d.appendChild(nombre);
+  if (weaponInfo) {
+    const artWrap = document.createElement('div'); artWrap.className = 'mc-art';
+    artWrap.appendChild(drawWeaponCanvas(weaponInfo.g()));
+    d.appendChild(artWrap);
+  } else if (efectoInfo) {
+    const artWrap = document.createElement('div'); artWrap.className = 'mc-art';
+    artWrap.appendChild(renderEfectoCanvas(efectoInfo.g()));
+    d.appendChild(artWrap);
+  }
+  d.appendChild(palo);
+  return d;
+}
+
 function renderPregunta(preg) {
   if (!preg) return;
+  _questionAnswered = false;
+  window._ultimaPreg = preg;
   const tipo = preg.tipo;
 
   if (tipo === 'elegir_personaje') { renderElegirPersonaje(preg); return; }
@@ -1146,7 +1335,7 @@ function renderPregunta(preg) {
     clearBotones();
     marcarPaneles(preg.jugadores_validos, preg.jugadores_fuera_alcance || []);
     document.getElementById('prompt-botones').appendChild(
-      mkPromptBtn('✕ CANCELAR', 'cancel', () => { limpiarPaneles(); enviarAccion('None'); })
+      mkPromptBtn('✕ CANCELAR', 'cancel', () => enviarAccion('None'))
     );
     return;
   }
@@ -1193,9 +1382,7 @@ function renderPregunta(preg) {
     clearBotones();
     const mesa = document.getElementById('mesa-cards');
     (preg.cartas || []).forEach((c, i) => {
-      const d = document.createElement('div');
-      d.className = 'mesa-card';
-      d.innerHTML = `<div class="mc-nombre">${c.nombre}</div><div class="mc-palo">${paloHTML(c.palo, c.numero)}</div>`;
+      const d = mkMesaCardConArte(c);
       d.onclick = () => enviarAccion(String(i));
       mesa.appendChild(d);
     });
@@ -1222,7 +1409,7 @@ function renderPregunta(preg) {
     clearBotones();
     marcarPaneles(preg.rivales, []);
     document.getElementById('prompt-botones').appendChild(
-      mkPromptBtn('DEL MAZO', '', () => { limpiarPaneles(); enviarAccion('None'); })
+      mkPromptBtn('DEL MAZO', '', () => enviarAccion('None'))
     );
     return;
   }
@@ -1301,14 +1488,18 @@ function renderGameOver(preg) {
 }
 
 // ── LOG ───────────────────────────────────────────────
+let _lastLogMsg = '';
 function renderLog(msgs) {
-  if (msgs.length === logCount) return;
+  const lastMsg = msgs[msgs.length - 1] || '';
+  if (msgs.length === logCount && lastMsg === _lastLogMsg) return;
   logCount = msgs.length;
+  _lastLogMsg = lastMsg;
   const c = document.getElementById('log-msgs');
   c.innerHTML = '';
   msgs.forEach(m => {
     const d = document.createElement('div');
-    d.className = 'log-msg' + (m.includes('---') || m.includes('HAN') ? ' important' : '');
+    const important = m.includes('RONDA') || m.includes('---') || m.includes('💀') || m.includes('🏆');
+    d.className = 'log-msg' + (important ? ' important' : '');
     d.textContent = m;
     c.appendChild(d);
   });
@@ -1335,35 +1526,558 @@ function clearBotones() {
 }
 
 function marcarPaneles(idsValidos, idsFuera) {
-  document.querySelectorAll('.rival-panel').forEach(panel => {
-    const id = parseInt(panel.dataset.id);
-    if (idsValidos.includes(id)) {
-      panel.classList.add('seleccionable');
-      panel.onclick = () => { limpiarPaneles(); enviarAccion(String(id)); };
-    } else if (idsFuera.includes(id)) {
-      panel.classList.add('fuera-alcance');
-    }
-  });
+  _idsSeleccionables = idsValidos || [];
+  _idsFuera = idsFuera || [];
+  _aplicarSeleccionables();
 }
 
 function limpiarPaneles() {
+  _idsSeleccionables = [];
+  _idsFuera = [];
   document.querySelectorAll('.rival-panel').forEach(p => {
     p.classList.remove('seleccionable', 'fuera-alcance');
     p.onclick = null;
   });
 }
 
+// ── PIXEL ART ARMAS ──────────────────────────────────
+(function(){
+  const INK='#9b211e', BG='#fff4de', W=76, H=54, PX=2;
+  function mk(){return Array.from({length:H},()=>new Uint8Array(W));}
+  function r(g,x,y,w,h){for(let j=y;j<y+h;j++)for(let i=x;i<x+w;i++)if(j>=0&&j<H&&i>=0&&i<W)g[j][i]=1;}
+  function pt(g,x,y){if(x>=0&&x<W&&y>=0&&y<H)g[y][x]=1;}
+  function cl(g,x,y){if(x>=0&&x<W&&y>=0&&y<H)g[y][x]=0;}
+  function ln(g,x1,y1,x2,y2){let dx=Math.abs(x2-x1),dy=Math.abs(y2-y1),sx=x1<x2?1:-1,sy=y1<y2?1:-1,e=dx-dy;while(true){pt(g,x1,y1);if(x1===x2&&y1===y2)break;let e2=2*e;if(e2>-dy){e-=dy;x1+=sx;}if(e2<dx){e+=dx;y1+=sy;}}}
+  function el(g,cx,cy,rx,ry){for(let y=-ry;y<=ry;y++)for(let x=-rx;x<=rx;x++)if(x*x/rx/rx+y*y/ry/ry<=1)pt(g,Math.round(cx+x),Math.round(cy+y));}
+  function revolver(barrelLen,cylR,variant){
+    const g=mk(),bX=2,bY=13,bH=4;
+    r(g,bX,bY,barrelLen,bH);r(g,bX+2,bY-1,barrelLen-3,1);r(g,bX,bY-1,3,bH+2);r(g,bX+2,bY-3,2,2);
+    if(barrelLen>18)r(g,bX+8,bY+bH,barrelLen-16,2);
+    const cX=bX+barrelLen+cylR+1,cY=bY+bH+cylR-2;
+    el(g,cX,cY,cylR,cylR);
+    for(let i=0;i<6;i++){const a=i*Math.PI/3+Math.PI/12;const fx=Math.round(cX+cylR*0.58*Math.cos(a));const fy=Math.round(cY+cylR*0.58*Math.sin(a));cl(g,fx,fy);cl(g,fx+1,fy);cl(g,fx,fy+1);}
+    cl(g,cX,cY);
+    r(g,bX+barrelLen,bY-1,cX+cylR-(bX+barrelLen)+1,2);
+    const fX=bX+barrelLen-1,fY=bY+bH-1,fW=cX+cylR-fX+3,fH=9;
+    r(g,fX,fY,fW,fH);r(g,fX+4,fY+2,fW-8,fH-3);r(g,fX+3,fY+fH-1,fW-6,1);
+    const hX=cX+cylR-3,hY=bY-10;
+    r(g,hX,hY+4,7,8);r(g,hX+2,hY,6,5);r(g,hX-2,hY+6,3,4);
+    const tgL=fX+6,tgT=fY+fH,tgR=fX+fW-2,tgB=tgT+13;
+    ln(g,tgL,tgT,tgL-1,tgT+5);ln(g,tgL-1,tgT+5,tgL+1,tgB);ln(g,tgL+1,tgB,tgR-1,tgB);ln(g,tgR-1,tgB,tgR,tgT+4);ln(g,tgR,tgT+4,tgR,tgT);
+    r(g,tgL+8,fY+2,2,fH+8);
+    const gX=cX+cylR-1,gT=fY+3,gW=11,gH=22;
+    for(let i=0;i<gH;i++){const off=Math.round(i*0.25);r(g,gX+off,gT+i,Math.max(gW-Math.round(i*0.1),8),1);}
+    for(let row=gT+2;row<gT+gH-3;row+=3)for(let col=gX+1;col<gX+gW-1;col+=3)cl(g,col,row);
+    r(g,gX+3,gT+gH,gW-3,2);
+    if(variant==='topbreak'){r(g,bX+barrelLen-1,bY,2,bH);r(g,bX+barrelLen-2,bY+bH-2,4,3);}
+    return g;
+  }
+  function rifle(barrelLen,recvW){
+    const g=mk(),bY=17,bH=3,bX=2;
+    r(g,bX,bY,barrelLen,bH);r(g,bX,bY-1,4,bH+2);pt(g,bX+3,bY-2);
+    const rsX=bX+Math.floor(barrelLen*0.3);r(g,rsX,bY-4,5,4);cl(g,rsX+2,bY-4);
+    const feX=bX+6,feLen=barrelLen-22,feY=bY+bH,feH=7;
+    r(g,feX,feY,feLen,feH);r(g,feX,feY-1,4,feH+2);r(g,feX+10,bY-1,2,feH+4);r(g,feX+Math.floor(feLen*0.55),bY-1,2,feH+4);
+    const recX=feX+feLen,recY=bY-3,recH=feH+8;
+    r(g,recX,recY,recvW,recH);r(g,recX+4,recY+4,recvW-9,recH-6);
+    const lvX=recX+5,lvY=recY+recH,lvW=recvW-8,lvH=15;
+    ln(g,lvX,lvY,lvX,lvY+lvH);ln(g,lvX,lvY+lvH,lvX+lvW,lvY+lvH);ln(g,lvX+lvW,lvY+lvH,lvX+lvW,lvY+2);r(g,lvX+1,lvY,lvW-1,2);
+    r(g,lvX+5,lvY-2,2,Math.floor(lvH/2)+2);
+    const wrX=recX+recvW,wrH=recH-4;r(g,wrX,recY+2,7,wrH);
+    const stX=wrX+7,stW=W-stX-2,stT=bY-1,stB=recY+recH+1;
+    for(let i=0;i<stW;i++){const t=i/stW;const top=Math.round(stT+t*4);const bot=Math.round(stB-t);r(g,stX+i,top,1,Math.max(bot-top+1,3));}
+    for(let y=stT+2;y<stB;y++){if(g[y]&&g[y][stX+stW-1])r(g,stX+stW,y,2,1);}
+    for(let row=stT+3;row<stB-2;row+=5)for(let col=stX+2;col<stX+stW-4;col+=10)cl(g,col,row);
+    return g;
+  }
+  function drawGun(grid){
+    const src=document.createElement('canvas');
+    src.width=W*PX;src.height=H*PX;
+    const sc=src.getContext('2d');
+    sc.fillStyle=BG;sc.fillRect(0,0,src.width,src.height);
+    sc.fillStyle=INK;
+    for(let y=0;y<H;y++)for(let x=0;x<W;x++)if(grid[y][x])sc.fillRect(x*PX,y*PX,PX,PX);
+    const diag=Math.ceil(Math.hypot(W*PX,H*PX))+8;
+    const cv=document.createElement('canvas');
+    cv.width=diag;cv.height=diag;
+    cv.style.imageRendering='pixelated';
+    const ctx=cv.getContext('2d');
+    ctx.fillStyle=BG;ctx.fillRect(0,0,diag,diag);
+    ctx.translate(diag/2,diag/2);ctx.rotate(Math.PI/4);
+    ctx.drawImage(src,-W*PX/2,-H*PX/2);
+    return cv;
+  }
+  function drawSkull(){
+    const SPX=2,SW=13,SH=15;
+    const cv=document.createElement('canvas');
+    cv.width=SW*SPX;cv.height=SH*SPX;
+    const ctx=cv.getContext('2d');
+    ctx.fillStyle=BG;ctx.fillRect(0,0,cv.width,cv.height);
+    ctx.fillStyle=INK;
+    [[0,0,1,1,1,1,1,1,1,1,1,0,0],[0,1,1,1,1,1,1,1,1,1,1,1,0],[1,1,1,1,1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1,1,1,1,1],[1,1,0,0,1,1,1,1,1,0,0,1,1],[1,1,0,0,1,1,1,1,1,0,0,1,1],[1,1,0,0,1,1,1,1,1,0,0,1,1],[0,1,1,1,1,0,1,0,1,1,1,1,0],[0,0,1,1,1,1,1,1,1,1,1,0,0],[0,0,1,1,1,1,1,1,1,1,1,0,0],[0,0,1,0,1,0,1,0,1,0,1,0,0],[0,0,1,1,1,1,1,1,1,1,1,0,0],[0,0,0,1,0,1,0,1,0,1,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0]]
+    .forEach((row,y)=>row.forEach((v,x)=>{if(v)ctx.fillRect(x*SPX,y*SPX,SPX,SPX);}));
+    return cv;
+  }
+  const ARMAS={
+    'volcanic':   {g:()=>revolver(14,8,'standard'), range:1, skull:true},
+    'colt .45':   {g:()=>revolver(20,9,'standard'), range:1, skull:false},
+    'schofield':  {g:()=>revolver(26,10,'topbreak'),range:2, skull:false},
+    'remington':  {g:()=>revolver(32,11,'standard'),range:3, skull:false},
+    'rev. carabina':{g:()=>rifle(50,18),            range:4, skull:false},
+    'carabina revolver':{g:()=>rifle(50,18),        range:4, skull:false},
+    'caravina revolver':{g:()=>rifle(50,18),        range:4, skull:false},
+    'carabina':   {g:()=>rifle(50,18),              range:4, skull:false},
+    'winchester': {g:()=>rifle(56,20),              range:5, skull:false},
+  };
+  window.getWeaponArt = function(nombre) {
+    const key = nombre.toLowerCase();
+    return ARMAS[key] || null;
+  };
+  window.drawWeaponCanvas = drawGun;
+  window.drawSkullCanvas  = drawSkull;
+})();
+
+// ── PIXEL ART EFECTOS ─────────────────────────────────
+(function(){
+  const INK='#9b211e', BG='#fff4de';
+  function mkC(W,H){return Array.from({length:H},()=>new Uint8Array(W));}
+  function pt(g,x,y,W,H){if(x>=0&&x<W&&y>=0&&y<H)g[y][x]=1;}
+  function cl(g,x,y,W,H){if(x>=0&&x<W&&y>=0&&y<H)g[y][x]=0;}
+  function rc(g,x,y,w,h,W,H){for(let j=y;j<y+h;j++)for(let i=x;i<x+w;i++)pt(g,i,j,W,H);}
+  function cc(g,x,y,w,h,W,H){for(let j=y;j<y+h;j++)for(let i=x;i<x+w;i++)cl(g,i,j,W,H);}
+  function el(g,cx,cy,rx,ry,W,H){for(let y=-ry;y<=ry;y++)for(let x=-rx;x<=rx;x++)if(x*x/rx/rx+y*y/ry/ry<=1)pt(g,Math.round(cx+x),Math.round(cy+y),W,H);}
+  function fillPoly(g,pts,W,H){
+    const minY=Math.floor(Math.min(...pts.map(p=>p[1]))),maxY=Math.ceil(Math.max(...pts.map(p=>p[1])));
+    for(let y=minY;y<=maxY;y++){
+      const xs=[];
+      for(let i=0;i<pts.length;i++){const[x1,y1]=pts[i],[x2,y2]=pts[(i+1)%pts.length];if((y1<=y&&y2>y)||(y2<=y&&y1>y))xs.push(x1+(y-y1)/(y2-y1)*(x2-x1));}
+      xs.sort((a,b)=>a-b);
+      for(let i=0;i<xs.length;i+=2){const xa=Math.floor(xs[i]),xb=Math.ceil(xs[i+1]??xs[i]);rc(g,xa,y,xb-xa+1,1,W,H);}
+    }
+  }
+
+  function bangGrid(){
+    const W=64,H=54;const g=mkC(W,H);const cx=40,cy=28;
+    const nSpikes=12,outerRs=[22,18,24,17,22,19,23,16,21,18,24,17],innerR=9,startA=-Math.PI/2;
+    const pts=[];
+    for(let i=0;i<nSpikes*2;i++){const a=startA+i*Math.PI/nSpikes;const r=i%2===0?outerRs[i/2]:innerR;pts.push([cx+r*Math.cos(a),cy+r*Math.sin(a)]);}
+    fillPoly(g,pts,W,H);
+    for(let y=-7;y<=7;y++)for(let x=-7;x<=7;x++)if(x*x+y*y<=44&&x*x+y*y>=16)cl(g,cx+x,cy+y,W,H);
+    for(let y=-3;y<=3;y++)for(let x=-3;x<=3;x++)if(x*x+y*y<=9)pt(g,cx+x,cy+y,W,H);
+    const bH=8,bY=cy-4,bLen=cx-13,bX=1;
+    rc(g,bX,bY,bLen,bH,W,H);rc(g,bX,bY-1,4,bH+2,W,H);
+    for(let i=0;i<7;i++){const h=Math.max(bH-Math.round(i*bH/7),1);rc(g,bX+bLen+i,bY+Math.floor((bH-h)/2),1,h,W,H);}
+    rc(g,0,bY+2,2,4,W,H);
+    return {g,W,H};
+  }
+
+  function fallasteGrid(){
+    const W=76,H=60;const g=mkC(W,H);const cx=38;
+    const ctY=7,cbY=37,ctW=34,cbW=42;
+    for(let row=ctY;row<=cbY;row++){const t=(row-ctY)/(cbY-ctY);const w=Math.round(ctW+(cbW-ctW)*t);rc(g,cx-Math.floor(w/2),row,w,1,W,H);}
+    for(let y=-6;y<=2;y++)for(let x=-6;x<=6;x++)if(Math.abs(x)<7)cl(g,cx+x,ctY+y+6,W,H);
+    rc(g,cx-Math.floor(ctW/2),ctY,10,3,W,H);rc(g,cx+Math.floor(ctW/2)-10,ctY,10,3,W,H);
+    rc(g,cx-35,cbY+1,70,5,W,H);rc(g,cx-31,cbY+6,62,2,W,H);
+    const midY=Math.floor((ctY+cbY)/2)-1,pathH=5,pathX=cx-Math.floor(ctW/2)+1,pathW=ctW-2;
+    for(let j=midY-1;j<=midY+pathH;j++)for(let i=pathX;i<pathX+pathW;i++)cl(g,i,j,W,H);
+    const bX=pathX+4,bLen=Math.floor(pathW*0.52);
+    rc(g,bX,midY,bLen,pathH,W,H);rc(g,bX,midY-1,3,pathH+2,W,H);
+    rc(g,bX+bLen,midY+1,2,3,W,H);pt(g,bX+bLen+2,midY+2,W,H);
+    const eX=pathX-1;
+    pt(g,eX-2,midY-3,W,H);pt(g,eX-1,midY-3,W,H);pt(g,eX-3,midY-1,W,H);pt(g,eX-1,midY+pathH+1,W,H);pt(g,eX-3,midY+pathH,W,H);
+    const xX=pathX+pathW;
+    pt(g,xX+2,midY-3,W,H);pt(g,xX+4,midY-2,W,H);pt(g,xX+5,midY,W,H);pt(g,xX+3,midY+pathH+1,W,H);pt(g,xX+5,midY+pathH,W,H);
+    for(let i=1;i<=4;i++)rc(g,eX-4-i*6,midY+1,4,3,W,H);
+    return {g,W,H};
+  }
+
+  function renderEfecto({g,W,H}){
+    const cv=document.createElement('canvas');
+    cv.width=W*2;cv.height=H*2;cv.style.imageRendering='pixelated';
+    const ctx=cv.getContext('2d');
+    ctx.fillStyle=BG;ctx.fillRect(0,0,cv.width,cv.height);
+    ctx.fillStyle=INK;
+    for(let y=0;y<H;y++)for(let x=0;x<W;x++)if(g[y][x])ctx.fillRect(x*2,y*2,2,2);
+    return cv;
+  }
+
+  function cervejaGrid(){
+    const W=62,H=54;const g=mkC(W,H);
+    const bTopX=10,bTopW=38,bBotW=30,bTopY=16,bH=30;
+    for(let i=0;i<bH;i++){const t=i/bH;const w=Math.round(bTopW+(bBotW-bTopW)*t);rc(g,bTopX+Math.floor((bTopW-w)/2),bTopY+i,w,1,W,H);}
+    rc(g,bTopX-2,bTopY+bH,bTopW+4,3,W,H);
+    rc(g,bTopX,bTopY-4,bTopW,5,W,H);
+    el(g,bTopX+8,bTopY-7,9,7,W,H);el(g,bTopX+19,bTopY-9,10,9,W,H);el(g,bTopX+30,bTopY-7,9,7,W,H);
+    rc(g,bTopX,bTopY-1,3,6,W,H);rc(g,bTopX+bTopW-3,bTopY-1,3,6,W,H);
+    const hx=bTopX+bTopW+1,hY1=bTopY+4,hY2=bTopY+bH-6;
+    rc(g,hx,hY1,10,3,W,H);rc(g,hx,hY2,10,3,W,H);rc(g,hx+8,hY1,3,hY2-hY1+3,W,H);cc(g,hx,hY1+3,8,hY2-hY1-3,W,H);
+    cc(g,bTopX+2,bTopY+1,3,bH-2,W,H);rc(g,bTopX+2,bTopY+1,1,bH-2,W,H);
+    [[19,34],[23,26],[30,38],[26,30],[34,22],[22,40]].forEach(([x,y])=>{cl(g,x,y,W,H);cl(g,x+1,y,W,H);});
+    cc(g,bTopX+4,bTopY+1,bTopW-8,2,W,H);
+    cl(g,bTopX+7,bTopY-9,W,H);cl(g,bTopX+9,bTopY-11,W,H);cl(g,bTopX+18,bTopY-12,W,H);cl(g,bTopX+21,bTopY-13,W,H);cl(g,bTopX+30,bTopY-9,W,H);cl(g,bTopX+32,bTopY-11,W,H);
+    cc(g,hx+9,hY1+3,1,hY2-hY1-3,W,H);
+    return {g,W,H};
+  }
+
+  function saloonBarGrid(){
+    const W=76,H=60;const g=mkC(W,H);
+    function bottle(bx,bW,bH,nH,botY,round){
+      if(round){for(let i=0;i<bH;i++){const t=i/bH;const w=t<0.4?Math.round(bW*(0.5+t)):bW;rc(g,bx+Math.floor((bW-w)/2),botY-bH+i,w,1,W,H);}}
+      else rc(g,bx,botY-bH,bW,bH,W,H);
+      const nx=bx+Math.floor((bW-2)/2);
+      rc(g,nx,botY-bH-nH,2,nH,W,H);rc(g,nx-1,botY-bH-nH-2,4,2,W,H);
+      cc(g,bx+1,botY-bH+2,bW-2,Math.floor(bH*0.4),W,H);
+    }
+    rc(g,1,14,74,3,W,H);cc(g,2,15,72,1,W,H);
+    [[3,5,11,3,false],[10,4,9,3,true],[16,5,11,3,false],[23,3,9,2,false],[28,5,10,3,true],[35,4,9,3,false],[41,5,11,3,false],[48,4,8,3,true],[54,5,11,3,false],[61,3,9,2,false],[66,5,10,3,false]]
+      .forEach(([bx,bW,bH,nH,r])=>bottle(bx,bW,bH,nH,14,r));
+    rc(g,1,33,74,3,W,H);cc(g,2,34,72,1,W,H);
+    [[5,5,14,4,false],[13,4,11,3,true],[20,5,14,4,false],[28,4,12,3,false],[35,5,13,4,true],[43,4,11,3,false],[50,5,14,4,false],[58,4,12,3,true],[65,5,13,4,false]]
+      .forEach(([bx,bW,bH,nH,r])=>bottle(bx,bW,bH,nH,33,r));
+    rc(g,0,42,76,4,W,H);cc(g,2,43,72,1,W,H);
+    rc(g,0,46,76,10,W,H);cc(g,2,48,72,1,W,H);cc(g,2,51,72,1,W,H);
+    function mug(mx){const my=37;rc(g,mx,my+1,8,4,W,H);rc(g,mx,my-2,9,4,W,H);el(g,mx+2,my-3,3,3,W,H);el(g,mx+6,my-3,3,3,W,H);cl(g,mx+2,my-4,W,H);cl(g,mx+6,my-4,W,H);rc(g,mx+8,my+1,3,1,W,H);rc(g,mx+8,my+4,3,1,W,H);rc(g,mx+10,my+1,1,4,W,H);cl(g,mx+1,my+2,W,H);cl(g,mx+1,my+3,W,H);}
+    mug(12);mug(54);
+    function stool(sx){rc(g,sx,56,12,2,W,H);rc(g,sx+5,58,2,2,W,H);rc(g,sx+1,57,10,1,W,H);cl(g,sx,56,W,H);cl(g,sx+11,56,W,H);}
+    stool(8);stool(53);
+    return {g,W,H};
+  }
+
+  function ln(g,x1,y1,x2,y2,W,H){let dx=Math.abs(x2-x1),dy=Math.abs(y2-y1),sx=x1<x2?1:-1,sy=y1<y2?1:-1,er=dx-dy;for(;;){pt(g,x1,y1,W,H);if(x1===x2&&y1===y2)break;const e2=2*er;if(e2>-dy){er-=dy;x1+=sx;}if(e2<dx){er+=dx;y1+=sy;}}}
+
+  function barrilGrid(){
+    const W=54,H=58;const g=mkC(W,H);const cx=27,ty=4,bH=46;
+    for(let i=0;i<bH;i++){const t=2*i/bH-1;const w=Math.round(17+8*(1-t*t));rc(g,cx-w,ty+i,2*w,1,W,H);}
+    el(g,cx,ty,17,6,W,H);el(g,cx,ty+bH,17,6,W,H);
+    [ty+9,ty+23,ty+37].forEach(hy=>{const i=hy-ty;const t=2*i/bH-1;const w=Math.round(18+8*(1-t*t))+1;rc(g,cx-w,hy,2*w,3,W,H);});
+    [-11,-4,3,10].forEach(dx=>{for(let i=5;i<bH-5;i++){const t=2*i/bH-1;const w=Math.round(17+8*(1-t*t));if(Math.abs(dx)<w-1)cl(g,cx+dx,ty+i,W,H);}});
+    for(let i=5;i<bH-5;i++)cl(g,cx-16,ty+i,W,H);
+    el(g,cx,ty+4,12,4,W,H);cc(g,cx-10,ty+4,20,4,W,H);
+    return {g,W,H};
+  }
+
+  function carcelGrid(){
+    const W=56,H=58;const g=mkC(W,H);
+    rc(g,0,0,56,58,W,H);
+    cc(g,12,20,32,30,W,H);
+    const aX=28,aY=20,aR=16;
+    for(let y=-aR;y<=0;y++)for(let x=-aR;x<=aR;x++)if(x*x+y*y<=aR*aR)cl(g,aX+x,aY+y,W,H);
+    [17,23,29,35].forEach(bx=>rc(g,bx,4,3,46,W,H));
+    rc(g,12,28,32,3,W,H);
+    [9,19,50].forEach(y=>cc(g,0,y,56,1,W,H));
+    [9,27,45].forEach(x=>cc(g,x,0,1,9,W,H));
+    [18,36].forEach(x=>cc(g,x,50,1,8,W,H));
+    [9,27,45].forEach(x=>cc(g,x,50,1,8,W,H));
+    return {g,W,H};
+  }
+
+  function mustangGrid(){
+    const W=72,H=62;const g=mkC(W,H);
+    el(g,48,32,20,13,W,H);
+    el(g,62,27,11,9,W,H);
+    fillPoly(g,[[28,26],[34,10],[46,14],[46,28],[38,36],[30,36]],W,H);
+    el(g,32,10,8,8,W,H);
+    fillPoly(g,[[18,8],[30,4],[34,14],[30,22],[14,24],[8,20],[8,14]],W,H);
+    fillPoly(g,[[2,18],[10,14],[14,22],[12,30],[4,32],[0,26],[0,20]],W,H);
+    fillPoly(g,[[24,2],[32,0],[36,4],[30,8],[24,8]],W,H);
+    cl(g,27,2,5,5,W,H);
+    el(g,22,11,5,4,W,H);cl(g,21,10,6,4,W,H);el(g,22,11,3,2,W,H);cl(g,22,10,2,1,W,H);
+    el(g,4,26,4,3,W,H);cc(g,4,26,3,2,W,H);
+    rc(g,0,30,12,2,W,H);cl(g,2,30,8,1,W,H);
+    rc(g,30,2,5,20,W,H);rc(g,34,4,5,18,W,H);rc(g,38,8,4,14,W,H);rc(g,42,12,3,12,W,H);
+    fillPoly(g,[[66,22],[72,12],[72,28],[68,40],[64,40]],W,H);rc(g,64,38,5,22,W,H);
+    rc(g,56,44,7,16,W,H);rc(g,63,42,7,16,W,H);
+    rc(g,32,44,7,16,W,H);rc(g,40,46,7,14,W,H);
+    rc(g,30,58,11,3,W,H);rc(g,38,58,11,3,W,H);rc(g,54,58,11,3,W,H);rc(g,61,56,11,3,W,H);
+    rc(g,30,48,9,3,W,H);rc(g,38,50,9,3,W,H);rc(g,54,48,9,3,W,H);rc(g,61,46,9,3,W,H);
+    cc(g,38,28,14,10,W,H);rc(g,38,28,2,10,W,H);
+    return {g,W,H};
+  }
+
+  function dinamitaGrid(){
+    const W=46,H=58;const g=mkC(W,H);const cx=23,sy=14,sh=34;
+    rc(g,cx-9,sy,18,sh,W,H);
+    el(g,cx,sy,9,5,W,H);el(g,cx,sy+sh,9,5,W,H);
+    cc(g,cx-8,sy+2,3,sh-4,W,H);rc(g,cx-8,sy+2,1,sh-4,W,H);
+    rc(g,cx-9,sy+13,18,8,W,H);cc(g,cx-7,sy+15,14,4,W,H);
+    [[23,12],[25,10],[23,8],[25,6],[23,4],[25,2]].forEach(([x,y])=>pt(g,x,y,W,H));
+    rc(g,22,12,3,3,W,H);
+    [[21,1],[25,1],[23,0],[22,2],[24,2],[20,2],[26,2]].forEach(([x,y])=>pt(g,x,y,W,H));
+    return {g,W,H};
+  }
+
+  function miraGrid(){
+    const W=60,H=54;const g=mkC(W,H);
+    const cx=30,cy=27,R=22;
+    for(let y=-R;y<=R;y++)for(let x=-R;x<=R;x++){const d=x*x+y*y;if(d>=(R-2)*(R-2)&&d<=R*R)pt(g,cx+x,cy+y,W,H);}
+    rc(g,cx-R+2,cy-1,R-7,2,W,H);rc(g,cx+6,cy-1,R-7,2,W,H);
+    rc(g,cx-1,cy-R+2,2,R-7,W,H);rc(g,cx-1,cy+6,2,R-7,W,H);
+    el(g,cx,cy,3,3,W,H);
+    return {g,W,H};
+  }
+
+  function indiosGrid(){
+    const W=56,H=60;const g=mkC(W,H);
+    [[28,2,4,10],[22,4,4,10],[34,4,4,10],[16,8,4,10],[40,8,4,10],[12,14,4,8],[44,14,4,8]].forEach(([x,y,w,h])=>rc(g,x,y,w,h,W,H));
+    rc(g,16,16,24,3,W,H);
+    el(g,28,24,9,8,W,H);
+    cl(g,24,22,W,H);cl(g,32,22,W,H);
+    rc(g,26,27,5,2,W,H);
+    fillPoly(g,[[18,42],[20,30],[36,30],[38,42]],W,H);
+    cc(g,22,32,12,8,W,H);
+    rc(g,6,30,14,4,W,H);rc(g,36,30,14,4,W,H);
+    for(let y=0;y<=20;y++){const x=Math.round(y*(20-y)/30);pt(g,6-x,24+y,W,H);}
+    rc(g,6,24,2,21,W,H);
+    ln(g,7,34,20,34,W,H);
+    fillPoly(g,[[7,34],[11,31],[11,37]],W,H);
+    rc(g,18,32,4,2,W,H);rc(g,18,35,4,2,W,H);
+    rc(g,20,42,7,14,W,H);rc(g,29,42,7,14,W,H);
+    rc(g,18,56,9,3,W,H);rc(g,29,56,9,3,W,H);
+    return {g,W,H};
+  }
+
+  function dueloGrid(){
+    const W=70,H=54;const g=mkC(W,H);
+    rc(g,4,10,14,3,W,H);rc(g,6,7,10,5,W,H);
+    el(g,11,18,5,5,W,H);
+    rc(g,8,23,8,12,W,H);
+    rc(g,16,26,9,2,W,H);
+    rc(g,8,35,4,12,W,H);rc(g,12,35,4,12,W,H);
+    rc(g,7,47,5,2,W,H);rc(g,11,47,5,2,W,H);
+    rc(g,52,10,14,3,W,H);rc(g,54,7,10,5,W,H);
+    el(g,59,18,5,5,W,H);
+    rc(g,54,23,8,12,W,H);
+    rc(g,45,26,9,2,W,H);
+    rc(g,54,35,4,12,W,H);rc(g,58,35,4,12,W,H);
+    rc(g,54,47,5,2,W,H);rc(g,58,47,5,2,W,H);
+    rc(g,22,44,26,1,W,H);
+    el(g,35,30,7,7,W,H);cc(g,35,30,5,5,W,H);
+    [[35,20],[35,40],[26,30],[44,30],[28,23],[42,23],[28,37],[42,37]].forEach(([x,y])=>{pt(g,x,y,W,H);pt(g,x,y+1,W,H);});
+    [25,30,40,44].forEach(x=>pt(g,x,43,W,H));
+    return {g,W,H};
+  }
+
+  function ametralladoraGrid(){
+    const W=64,H=64;const g=mkC(W,H);const cx=28,cy=28;
+    for(let y=-24;y<=24;y++)for(let x=-24;x<=24;x++){const d=x*x+y*y;if(d>=20*20&&d<=24*24)pt(g,cx+x,cy+y,W,H);}
+    for(let i=0;i<6;i++){
+      const a=i*Math.PI/3-Math.PI/6;
+      const bx=Math.round(cx+13*Math.cos(a)),by=Math.round(cy+13*Math.sin(a));
+      el(g,bx,by,6,6,W,H);cc(g,bx,by,4,4,W,H);el(g,bx,by,2,2,W,H);
+    }
+    el(g,cx,cy,5,5,W,H);
+    cl(g,cx-2,cy-2,W,H);cl(g,cx+1,cy-2,W,H);cl(g,cx-2,cy+1,W,H);cl(g,cx+1,cy+1,W,H);
+    rc(g,52,24,10,4,W,H);el(g,62,26,4,4,W,H);rc(g,52,28,4,12,W,H);el(g,54,40,4,4,W,H);
+    fillPoly(g,[[10,52],[46,52],[52,64],[4,64]],W,H);
+    function whl(cx,cy,r){
+      for(let y=-r;y<=r;y++)for(let x=-r;x<=r;x++){const d=x*x+y*y;if(d>=(r-2)*(r-2)&&d<=r*r)pt(g,cx+x,cy+y,W,H);}
+      ln(g,cx,cy-r+2,cx,cy+r-2,W,H);ln(g,cx-r+2,cy,cx+r-2,cy,W,H);
+      ln(g,cx-r+3,cy-r+3,cx+r-3,cy+r-3,W,H);ln(g,cx+r-3,cy-r+3,cx-r+3,cy+r-3,W,H);
+    }
+    whl(12,60,6);whl(44,60,6);
+    return {g,W,H};
+  }
+
+  function panicoGrid(){
+    const W=56,H=60;const g=mkC(W,H);
+    rc(g,18,6,22,3,W,H);rc(g,22,3,14,5,W,H);
+    el(g,29,14,8,8,W,H);
+    rc(g,20,11,18,5,W,H);
+    cl(g,23,12,W,H);cl(g,24,12,W,H);cl(g,33,12,W,H);cl(g,34,12,W,H);
+    rc(g,18,22,22,18,W,H);
+    [24,28,32,36].forEach(y=>cc(g,18,y,22,2,W,H));
+    rc(g,4,22,14,4,W,H);
+    rc(g,40,22,12,4,W,H);
+    el(g,4,20,7,8,W,H);
+    rc(g,3,14,5,8,W,H);
+    rc(g,1,12,9,4,W,H);
+    rc(g,2,18,5,2,W,H);cl(g,4,18,W,H);
+    fillPoly(g,[[20,40],[26,40],[24,56],[18,56]],W,H);
+    fillPoly(g,[[30,40],[36,40],[40,56],[34,56]],W,H);
+    rc(g,16,56,10,3,W,H);rc(g,34,56,10,3,W,H);
+    return {g,W,H};
+  }
+
+  function ingExplosGrid(){
+    const W=64,H=54;const g=mkC(W,H);const cx=32,cy=22;
+    for(let y=-16;y<=16;y++)for(let x=-16;x<=0;x++){const d=x*x+y*y;if(d>=144&&d<=256)pt(g,cx+x,cy+y,W,H);}
+    for(let y=-16;y<=16;y++)for(let x=0;x<=16;x++){const d=x*x+y*y;if(d>=144&&d<=256)pt(g,cx+x,cy+y,W,H);}
+    for(let i=-2;i<=2;i++){const ty=cy+i*6;rc(g,cx-11,ty-1,7,2,W,H);}
+    for(let i=-2;i<=2;i++){const ty=cy+i*6;rc(g,cx+5,ty-1,7,2,W,H);}
+    el(g,cx,cy,4,4,W,H);cc(g,cx-2,cy-1,4,3,W,H);
+    el(g,cx,cy+2,2,2,W,H);
+    for(let i=0;i<5;i++){el(g,cx+(i%2?2:-2),cy+16+i*5,3,2,W,H);}
+    rc(g,cx-1,cy+40,3,10,W,H);
+    fillPoly(g,[[cx-4,cy+50],[cx+5,cy+50],[cx+1,cy+54]],W,H);
+    return {g,W,H};
+  }
+
+  function almacenGrid(){
+    const W=70,H=60;const g=mkC(W,H);
+    fillPoly(g,[[35,2],[68,22],[2,22]],W,H);
+    cc(g,28,8,14,8,W,H);
+    rc(g,4,22,62,34,W,H);
+    cc(g,6,24,26,30,W,H);
+    cc(g,38,24,26,30,W,H);
+    ln(g,6,24,31,53,W,H);ln(g,31,24,6,53,W,H);
+    ln(g,38,24,63,53,W,H);ln(g,63,24,38,53,W,H);
+    rc(g,6,24,26,2,W,H);rc(g,6,52,26,2,W,H);
+    rc(g,38,24,26,2,W,H);rc(g,38,52,26,2,W,H);
+    rc(g,6,24,2,30,W,H);rc(g,30,24,2,30,W,H);
+    rc(g,38,24,2,30,W,H);rc(g,62,24,2,30,W,H);
+    rc(g,33,30,4,4,W,H);rc(g,33,44,4,4,W,H);
+    rc(g,2,22,4,34,W,H);rc(g,64,22,4,34,W,H);
+    rc(g,32,2,6,4,W,H);
+    return {g,W,H};
+  }
+
+  function diligenciaGrid(){
+    const W=76,H=54;const g=mkC(W,H);
+    rc(g,20,16,38,24,W,H);
+    cc(g,24,19,10,10,W,H);rc(g,25,20,8,8,W,H);cc(g,26,21,6,6,W,H);
+    cc(g,44,19,10,10,W,H);rc(g,45,20,8,8,W,H);cc(g,46,21,6,6,W,H);
+    rc(g,18,12,42,6,W,H);
+    rc(g,16,40,46,4,W,H);
+    function whl(cx,cy,r){
+      for(let y=-r;y<=r;y++)for(let x=-r;x<=r;x++){const d=x*x+y*y;if(d>=(r-2)*(r-2)&&d<=r*r)pt(g,cx+x,cy+y,W,H);}
+      ln(g,cx,cy-r+2,cx,cy+r-2,W,H);ln(g,cx-r+2,cy,cx+r-2,cy,W,H);
+    }
+    whl(26,47,8);whl(52,47,8);whl(10,46,6);whl(66,46,6);
+    [[4,22],[4,34]].forEach(([hx,hy])=>{
+      el(g,hx,hy,4,3,W,H);rc(g,hx-2,hy+2,8,4,W,H);
+      rc(g,hx-1,hy+6,3,10,W,H);rc(g,hx+3,hy+6,3,10,W,H);
+      rc(g,hx+6,hy+2,10,3,W,H);
+    });
+    ln(g,18,28,14,24,W,H);ln(g,18,36,14,36,W,H);
+    el(g,36,9,4,4,W,H);rc(g,32,13,10,5,W,H);
+    ln(g,42,13,52,5,W,H);
+    return {g,W,H};
+  }
+
+  function wellsFargoGrid(){
+    const W=76,H=54;const g=mkC(W,H);
+    rc(g,18,14,42,26,W,H);
+    cc(g,22,17,10,10,W,H);rc(g,23,18,8,8,W,H);cc(g,24,19,6,6,W,H);
+    cc(g,38,17,10,10,W,H);rc(g,39,18,8,8,W,H);cc(g,40,19,6,6,W,H);
+    cc(g,54,17,10,10,W,H);rc(g,55,18,8,8,W,H);cc(g,56,19,6,6,W,H);
+    rc(g,16,10,46,6,W,H);rc(g,20,8,38,4,W,H);
+    [[26,5],[38,4],[50,5]].forEach(([bx,by])=>{el(g,bx,by,4,4,W,H);rc(g,bx-1,by+3,3,4,W,H);});
+    rc(g,14,40,50,4,W,H);
+    function whl(cx,cy,r){
+      for(let y=-r;y<=r;y++)for(let x=-r;x<=r;x++){const d=x*x+y*y;if(d>=(r-2)*(r-2)&&d<=r*r)pt(g,cx+x,cy+y,W,H);}
+      ln(g,cx,cy-r+2,cx,cy+r-2,W,H);ln(g,cx-r+2,cy,cx+r-2,cy,W,H);
+    }
+    whl(24,47,9);whl(54,47,9);whl(8,46,6);whl(68,46,6);
+    [[4,18],[4,28],[4,38]].forEach(([hx,hy])=>{
+      el(g,hx,hy,4,3,W,H);rc(g,hx-2,hy+2,8,3,W,H);
+      rc(g,hx-1,hy+5,3,9,W,H);rc(g,hx+3,hy+5,3,9,W,H);
+      rc(g,hx+6,hy+2,8,3,W,H);
+    });
+    ln(g,16,24,12,20,W,H);ln(g,16,30,12,30,W,H);ln(g,16,38,12,40,W,H);
+    el(g,36,7,4,4,W,H);rc(g,32,11,10,5,W,H);
+    ln(g,42,11,54,3,W,H);
+    return {g,W,H};
+  }
+
+  const EFECTOS={
+    '¡bang!':   {g:bangGrid},
+    'bang':     {g:bangGrid},
+    'fallaste': {g:fallasteGrid},
+    'cerveza':  {g:cervejaGrid},
+    'saloon':   {g:saloonBarGrid},
+    'cárcel':   {g:carcelGrid},
+    'carcel':   {g:carcelGrid},
+    'mustang':  {g:mustangGrid},
+    'barril':   {g:barrilGrid},
+    'dinamita': {g:dinamitaGrid},
+    'mira telescópica':{g:miraGrid},
+    'mira telescopica':{g:miraGrid},
+    'indios':   {g:indiosGrid},
+    'duelo':    {g:dueloGrid},
+    'ametralladora':{g:ametralladoraGrid},
+    'ametralladora gatling':{g:ametralladoraGrid},
+    'pánico':   {g:panicoGrid},
+    'panico':   {g:panicoGrid},
+    'ing. explosiva':{g:ingExplosGrid},
+    'almacén':  {g:almacenGrid},
+    'almacen':  {g:almacenGrid},
+    'diligencia':{g:diligenciaGrid},
+    'wells fargo':{g:wellsFargoGrid},
+  };
+  window.getEfectoArt = function(nombre){return EFECTOS[nombre.toLowerCase()]||null;};
+  window.renderEfectoCanvas = renderEfecto;
+})();
+
+let _lastDescarte = null;
 function renderDescarte(carta) {
   const face = document.getElementById('discard-pile');
   const back = document.getElementById('discard-empty');
   if (carta) {
+    const isNew = !_lastDescarte || _lastDescarte.idObjeto !== carta.idObjeto;
+    _lastDescarte = carta;
     face.style.display = '';
     back.style.display = 'none';
-    face.innerHTML = `<div class="pc-nombre">${carta.nombre}</div><div class="pc-palo">${paloHTML(carta.palo, carta.numero)}</div>`;
+    face.innerHTML = '';
+
+    const nm = document.createElement('div');
+    nm.className = 'pc-nombre';
+    nm.textContent = carta.nombre;
+    face.appendChild(nm);
+
+    const artDiv = document.createElement('div');
+    artDiv.className = 'pc-art';
+    try {
+      const ei = getEfectoArt(carta.nombre);
+      const wi = getWeaponArt?.(carta.nombre);
+      if (ei) { artDiv.appendChild(renderEfectoCanvas(ei.g())); }
+      else if (wi) { const cv = drawWeaponCanvas(wi.g()); cv.style.cssText='max-width:56px;max-height:56px;image-rendering:pixelated;'; artDiv.appendChild(cv); }
+    } catch(e) {}
+    face.appendChild(artDiv);
+
+    const pl = document.createElement('div');
+    pl.className = 'pc-palo';
+    pl.innerHTML = paloHTML(carta.palo, carta.numero);
+    face.appendChild(pl);
+
+    if (isNew) { face.classList.remove('card-in'); void face.offsetWidth; face.classList.add('card-in'); }
+    face.style.cursor = 'pointer';
+    face.onclick = () => mostrarDescartes();
   } else {
+    _lastDescarte = null;
     face.style.display = 'none';
     back.style.display = '';
   }
+}
+
+function mostrarDescartes() {
+  const recientes = window._descarteRecientes || [];
+  let overlay = document.getElementById('descarte-overlay');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'descarte-overlay';
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:20px;';
+    overlay.onclick = () => overlay.remove();
+    document.body.appendChild(overlay);
+  } else {
+    overlay.innerHTML = '';
+  }
+  const title = document.createElement('div');
+  title.style.cssText = 'font-family:var(--font-head);font-size:14px;color:#fff;letter-spacing:2px;margin-bottom:8px;';
+  title.textContent = 'ÚLTIMAS CARTAS DESCARTADAS';
+  overlay.appendChild(title);
+  const row = document.createElement('div');
+  row.style.cssText = 'display:flex;flex-wrap:wrap;gap:8px;justify-content:center;max-width:400px;';
+  recientes.forEach(c => {
+    const d = mkMesaCardConArte(c);
+    d.style.cursor = 'default';
+    d.onclick = e => e.stopPropagation();
+    row.appendChild(d);
+  });
+  overlay.appendChild(row);
+  const hint = document.createElement('div');
+  hint.style.cssText = 'font-family:var(--font-mono);font-size:10px;color:#aaa;margin-top:8px;';
+  hint.textContent = 'Pulsa para cerrar';
+  overlay.appendChild(hint);
 }
 </script>
 </body>
