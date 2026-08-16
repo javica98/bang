@@ -1037,20 +1037,16 @@ function _procesarSiguienteEvento() {
   });
 }
 
-function _mkCartaCanvas(cartaNombre, idClase) {
-  // Devuelve un canvas con el arte de la carta, o null si no hay arte
+function _mkCartaCanvas(cartaNombre) {
   try {
-    const art = getEfectoArt?.(cartaNombre?.toLowerCase?.());
-    if (art?.g) {
-      const cv = document.createElement('canvas');
-      cv.width = 96; cv.height = 96;
-      art.g(cv.getContext('2d'), 96, 96);
-      cv.style.cssText = 'image-rendering:pixelated;border-radius:6px;';
-      return cv;
+    const ei = getEfectoArt?.(cartaNombre);
+    if (ei?.g) {
+      const cv = window.renderEfectoCanvas?.(ei.g());
+      if (cv) { cv.style.cssText = 'image-rendering:pixelated;border-radius:6px;max-width:96px;max-height:96px;'; return cv; }
     }
-    const wart = getWeaponArt?.(cartaNombre);
-    if (wart?.g) {
-      const cv = drawWeaponCanvas?.(wart.g());
+    const wi = getWeaponArt?.(cartaNombre);
+    if (wi?.g) {
+      const cv = window.drawWeaponCanvas?.(wi.g());
       if (cv) { cv.style.cssText = 'image-rendering:pixelated;border-radius:6px;max-width:96px;max-height:96px;'; return cv; }
     }
   } catch(e) {}
@@ -1124,7 +1120,7 @@ function _mostrarAnimacionEvento(ev, onDone) {
   `;
 
   // Arte de carta (fix 5)
-  const cartaCanvas = ev.carta ? _mkCartaCanvas(ev.carta, ev.id_clase) : null;
+  const cartaCanvas = ev.carta ? _mkCartaCanvas(ev.carta) : null;
   if (cartaCanvas) {
     cartaCanvas.style.cssText += 'width:96px;height:96px;margin-bottom:4px;';
     card.appendChild(cartaCanvas);
@@ -1146,8 +1142,13 @@ function _mostrarAnimacionEvento(ev, onDone) {
     desc.textContent = 'El rival está pensando…';
   } else if (ev.tipo === 'carta_jugada') {
     titulo.textContent = ev.carta || '?';
+    const esPanico = /p[áa]nico/i.test(ev.carta || '');
     if (ev.objetivo) {
-      desc.innerHTML = `<b>${ev.jugador}</b> ataca a <b>${ev.objetivo}</b>`;
+      if (esPanico) {
+        desc.innerHTML = `<b>${ev.jugador}</b> roba una carta a <b>${ev.objetivo}</b>`;
+      } else {
+        desc.innerHTML = `<b>${ev.jugador}</b> dispara a <b>${ev.objetivo}</b>`;
+      }
     } else if (ev.grupo === 'area') {
       desc.innerHTML = `<b>${ev.jugador}</b> ataca a <b>todos los jugadores</b>`;
     } else if (ev.grupo === 'curacion') {
@@ -1155,7 +1156,7 @@ function _mostrarAnimacionEvento(ev, onDone) {
     } else if (ev.grupo === 'equipamiento') {
       desc.innerHTML = `<b>${ev.jugador}</b> equipa la carta`;
     } else if (ev.grupo === 'robo') {
-      desc.innerHTML = `<b>${ev.jugador}</b> roba cartas extra`;
+      desc.innerHTML = `<b>${ev.jugador}</b> roba cartas adicionales`;
     } else {
       desc.innerHTML = `<b>${ev.jugador}</b> juega la carta`;
     }
