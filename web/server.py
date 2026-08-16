@@ -25,6 +25,7 @@ session = {
     "question_q": None,
     "answer_q": None,
     "log": [],
+    "eventos": [],
     "juego": None,
     "io": None,
     "pending": None,
@@ -199,6 +200,7 @@ def nueva_partida():
 
     # Resetear sesión
     session["log"] = []
+    session["eventos"] = []
     session["pending"] = None
     session["juego"] = None
     session["running"] = True
@@ -214,6 +216,7 @@ def nueva_partida():
     bots = {i: BotAI(i) for i in range(1, num_players)}
 
     io = FlaskIO(q, a, session["log"], human_ids=human_ids, bots=bots)
+    io.eventos = session["eventos"]
     session["io"] = io
 
     t = threading.Thread(target=_run_game, args=(num_players, nombres), daemon=True)
@@ -242,10 +245,17 @@ def estado():
         except queue.Empty:
             pass
 
+    # Devuelve y vacía los eventos pendientes de animación
+    # Usar .copy() + .clear() para no romper la referencia que tiene io.eventos
+    ev_list = session.get("eventos", [])
+    eventos = ev_list.copy()
+    ev_list.clear()
+
     return jsonify({
         "estado": _serialize_estado(),
         "pregunta": session["pending"],
         "log": session["log"][-80:],
+        "eventos": eventos,
         "running": session["running"],
         "error": session.get("error"),
     })

@@ -1,0 +1,27 @@
+{
+  "name": "bang",
+  "version": "1.0.0",
+  "description": "Implementación del juego de cartas **BANG!** en Python con interfaz web.",
+  "main": "playwright.config.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/javica98/bang.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/javica98/bang/issues"
+  },
+  "homepage": "https://github.com/javica98/bang#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.62.1"
+  }
+}

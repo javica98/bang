@@ -2,6 +2,16 @@ import sys
 import time
 from bang_game import DESCRIPCIONES_PERSONAJE
 
+# Clasificación de cartas por idClase
+_GRUPO_CARTA = {
+    11: 'ofensiva', 15: 'ofensiva', 17: 'ofensiva', 18: 'ofensiva',  # Bang, Duelo, Pánico, Ing.Explosiva
+    14: 'area',     16: 'area',                                        # Indios, Gatling
+    13: 'curacion', 19: 'curacion',                                    # Cerveza, Saloon
+    12: 'respuesta',                                                   # Fallaste
+    20: 'robo',     21: 'robo',     22: 'robo',                       # Almacén, Diligencia, Wells Fargo
+}
+# idClase 1-10 → equipamiento (armas y objetos)
+
 # Always write to the real stdout, bypassing patched_print so bot decisions
 # don't appear in the frontend log.
 def _debug(msg):
@@ -42,10 +52,16 @@ class FlaskIO:
         self.juego = None
         self.human_ids = human_ids or {0}
         self.bots = bots or {}
-        # ID del jugador que está siendo preguntado ahora mismo (para bots)
         self._asking_id = None
-        # Contador de setup para elegir_personaje (se llama antes de crear jugadores)
         self._setup_idx = 0
+        self._pending_evento = None
+        self._ultimo_turno_anunciado = None
+        self.eventos = None
+
+    def _emit(self, evento):
+        """Añade un evento estructurado a la lista de eventos de la sesión."""
+        if self.eventos is not None:
+            self.eventos.append(evento)
 
     def set_game(self, juego):
         """Guarda la referencia al objeto Juego para que los métodos puedan consultarlo."""
@@ -62,11 +78,57 @@ class FlaskIO:
                 tipo = pregunta.get('tipo', '?')
                 nombre = jugador.nombre if jugador else f"Bot{asking_id}"
                 _debug(f"🤖 {nombre} [{tipo}] -> {resp}")
-                # Pausa para que el frontend pueda mostrar el estado antes del siguiente paso
+
+                # --- Emitir eventos de animación ---
                 if tipo == 'elegir_carta' and str(resp) != 'FIN':
+                    mano = pregunta.get('mano', [])
+                    idx = int(resp) - 1
+                    carta = mano[idx] if 0 <= idx < len(mano) else None
+                    if carta:
+                        id_clase = carta.get('idClase', 0)
+                        grupo = _GRUPO_CARTA.get(id_clase, 'equipamiento' if id_clase <= 10 else 'otro')
+                        self._pending_evento = {
+                            'tipo': 'carta_jugada',
+                            'jugador': nombre,
+                            'jugador_id': asking_id,
+                            'carta': carta.get('nombre', '?'),
+                            'id_clase': id_clase,
+                            'grupo': grupo,
+                            'objetivo': None,
+                            'objetivo_id': None,
+                        }
+                        # Cartas sin objetivo se emiten ya
+                        if grupo not in ('ofensiva',):
+                            self._emit(self._pending_evento)
+                            self._pending_evento = None
                     time.sleep(0.6)
-                elif tipo in ('elegir_jugador', 'prompt'):
+
+                elif tipo == 'elegir_jugador':
+                    objetivo_id = int(resp) if resp not in (None, 'None', 'null') else None
+                    objetivo_nombre = None
+                    if objetivo_id is not None and self.juego:
+                        for j in self.juego.jugadores:
+                            if j.idJugador == objetivo_id:
+                                objetivo_nombre = j.nombre
+                                break
+                    if self._pending_evento:
+                        self._pending_evento['objetivo'] = objetivo_nombre
+                        self._pending_evento['objetivo_id'] = objetivo_id
+                        self._emit(self._pending_evento)
+                        self._pending_evento = None
                     time.sleep(0.3)
+
+                elif tipo == 'prompt':
+                    texto_prompt = pregunta.get('texto', '')
+                    self._emit({
+                        'tipo': 'respuesta',
+                        'jugador': nombre,
+                        'jugador_id': asking_id,
+                        'respuesta': str(resp),
+                        'texto_prompt': texto_prompt,
+                    })
+                    time.sleep(0.3)
+
                 return str(resp) if resp is not None else 'None'
         self.question_q.put(pregunta)
         return self.answer_q.get()
@@ -120,6 +182,16 @@ class FlaskIO:
         """
         self.current_jugador = jugador
         self._asking_id = jugador.idJugador
+        # Emitir evento de cambio de turno la primera vez que un bot entra en elegir_carta
+        if jugador.idJugador not in self.human_ids and self._ultimo_turno_anunciado != jugador.idJugador:
+            self._ultimo_turno_anunciado = jugador.idJugador
+            self._emit({
+                'tipo': 'cambio_turno',
+                'jugador': jugador.nombre,
+                'jugador_id': jugador.idJugador,
+            })
+        elif jugador.idJugador in self.human_ids:
+            self._ultimo_turno_anunciado = None
         return self._ask({
             "tipo": "elegir_carta",
             "texto": text,

@@ -995,6 +995,155 @@ function paloHTML(palo, numero) {
 }
 
 // ── POLLING — 200ms para respuesta rápida ─────────────
+// ── SISTEMA DE ANIMACIONES DE EVENTOS ────────────────────────────────────────
+
+const _GRUPO_COLOR = {
+  ofensiva:    { bg: '#7b1a1a', icono: '💥', label: 'ATAQUE'   },
+  area:        { bg: '#6b3a00', icono: '🌀', label: 'ÁREA'     },
+  curacion:    { bg: '#1a5c1a', icono: '🍺', label: 'CURACIÓN' },
+  equipamiento:{ bg: '#1a3a6b', icono: '🔧', label: 'EQUIPA'   },
+  robo:        { bg: '#4a1a6b', icono: '🃏', label: 'ROBA'     },
+  respuesta:   { bg: '#4a4a00', icono: '🛡️', label: 'RESPONDE' },
+  turno:       { bg: '#2a2a2a', icono: '🤠', label: 'TURNO'    },
+  otro:        { bg: '#333',    icono: '⚡', label: 'ACCIÓN'   },
+};
+
+let _eventoQueue = [];
+let _eventoRunning = false;
+let _overlayActual = null;
+
+function encolarEventos(eventos) {
+  _eventoQueue.push(...eventos);
+  if (!_eventoRunning) _procesarSiguienteEvento();
+}
+
+// Llamar cuando llega una pregunta humana — cancela animaciones pendientes
+function _limpiarAnimaciones() {
+  _eventoQueue = [];
+  if (_overlayActual) {
+    _overlayActual.remove();
+    _overlayActual = null;
+  }
+  _eventoRunning = false;
+}
+
+function _procesarSiguienteEvento() {
+  if (!_eventoQueue.length) { _eventoRunning = false; return; }
+  _eventoRunning = true;
+  const ev = _eventoQueue.shift();
+  _mostrarAnimacionEvento(ev, () => {
+    setTimeout(_procesarSiguienteEvento, 100);
+  });
+}
+
+function _mostrarAnimacionEvento(ev, onDone) {
+  const grupo = ev.tipo === 'cambio_turno' ? 'turno' : (ev.grupo || 'otro');
+  const info = _GRUPO_COLOR[grupo] || _GRUPO_COLOR.otro;
+
+  const overlay = document.createElement('div');
+  overlay.style.cssText = `
+    position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:2000;
+    display:flex;align-items:center;justify-content:center;
+    animation:fadeInOverlay 0.18s ease;cursor:pointer;
+  `;
+  _overlayActual = overlay;
+
+  const card = document.createElement('div');
+  card.style.cssText = `
+    background:${info.bg};border:2px solid rgba(255,255,255,0.2);
+    border-radius:16px;padding:32px 48px;min-width:300px;max-width:440px;
+    text-align:center;color:#fff;font-family:monospace;
+    box-shadow:0 8px 40px rgba(0,0,0,0.7);
+    animation:popCard 0.22s cubic-bezier(0.34,1.56,0.64,1);
+    pointer-events:none;
+  `;
+
+  const icono = document.createElement('div');
+  icono.style.cssText = 'font-size:52px;margin-bottom:10px;';
+  icono.textContent = info.icono;
+
+  const titulo = document.createElement('div');
+  titulo.style.cssText = 'font-size:24px;font-weight:bold;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;';
+
+  const desc = document.createElement('div');
+  desc.style.cssText = 'font-size:15px;opacity:0.9;margin-top:6px;line-height:1.6;';
+
+  if (ev.tipo === 'cambio_turno') {
+    titulo.textContent = `Turno de ${ev.jugador}`;
+    desc.textContent = 'El rival está pensando…';
+  } else if (ev.tipo === 'carta_jugada') {
+    titulo.textContent = ev.carta || '?';
+    if (ev.objetivo) {
+      desc.innerHTML = `<b>${ev.jugador}</b> ataca a <b>${ev.objetivo}</b>`;
+    } else if (ev.grupo === 'area') {
+      desc.innerHTML = `<b>${ev.jugador}</b> ataca a <b>todos los jugadores</b>`;
+    } else if (ev.grupo === 'curacion') {
+      desc.innerHTML = `<b>${ev.jugador}</b> recupera vida`;
+    } else if (ev.grupo === 'equipamiento') {
+      desc.innerHTML = `<b>${ev.jugador}</b> equipa la carta`;
+    } else if (ev.grupo === 'robo') {
+      desc.innerHTML = `<b>${ev.jugador}</b> roba cartas extra`;
+    } else {
+      desc.innerHTML = `<b>${ev.jugador}</b> juega la carta`;
+    }
+  } else if (ev.tipo === 'respuesta') {
+    const texto = ev.texto_prompt || '';
+    const usoBang     = /BANG/i.test(texto)     && ev.respuesta === 'SI';
+    const usoFallaste = /FALLASTE/i.test(texto)  && ev.respuesta === 'SI';
+    const recibDanio  = ev.respuesta === 'NO';
+    if (usoFallaste) {
+      titulo.textContent = 'Usó Fallaste';
+      desc.innerHTML = `<b>${ev.jugador}</b> esquiva el disparo 🛡️`;
+    } else if (usoBang) {
+      titulo.textContent = 'Respondió con Bang';
+      desc.innerHTML = `<b>${ev.jugador}</b> devuelve el disparo 🔫`;
+    } else if (recibDanio) {
+      titulo.textContent = '¡Recibió daño!';
+      desc.innerHTML = `<b>${ev.jugador}</b> no pudo esquivar 💔`;
+    } else {
+      titulo.textContent = ev.respuesta === 'SI' ? 'Esquivado' : 'Daño recibido';
+      desc.innerHTML = `<b>${ev.jugador}</b>`;
+    }
+  }
+
+  card.appendChild(icono);
+  card.appendChild(titulo);
+  card.appendChild(desc);
+  overlay.appendChild(card);
+  document.body.appendChild(overlay);
+
+  // Duración según tipo
+  const dur = ev.tipo === 'cambio_turno' ? 1200
+    : (grupo === 'ofensiva' || grupo === 'area') ? 1800
+    : grupo === 'respuesta' ? 1500
+    : 1200;
+
+  let closed = false;
+  const cerrar = () => {
+    if (closed) return;
+    closed = true;
+    if (_overlayActual === overlay) _overlayActual = null;
+    overlay.style.animation = 'fadeOutOverlay 0.18s ease forwards';
+    setTimeout(() => { overlay.remove(); onDone(); }, 180);
+  };
+
+  // Click para saltar animación
+  overlay.addEventListener('click', cerrar);
+  setTimeout(cerrar, dur);
+}
+
+// Keyframes de animación (inyectados una sola vez)
+if (!document.getElementById('_bang_anim_styles')) {
+  const st = document.createElement('style');
+  st.id = '_bang_anim_styles';
+  st.textContent = `
+    @keyframes fadeInOverlay  { from{opacity:0} to{opacity:1} }
+    @keyframes fadeOutOverlay { from{opacity:1} to{opacity:0} }
+    @keyframes popCard { from{transform:scale(0.7);opacity:0} to{transform:scale(1);opacity:1} }
+  `;
+  document.head.appendChild(st);
+}
+
 function startPolling() {
   if (pollInterval) clearInterval(pollInterval);
   pollInterval = setInterval(poll, 200);
@@ -1035,12 +1184,25 @@ async function poll() {
     if (data.log) renderLog(data.log);
 
     // Solo re-renderizar la pregunta si realmente cambió
-    // Esto evita reconstruir el DOM cada 200ms mientras el usuario está eligiendo
     const key = preguntaKey(data.pregunta);
     if (key !== lastPreguntaKey) {
       lastPreguntaKey = key;
-      if (data.pregunta) renderPregunta(data.pregunta);
-      else clearPrompt();
+      if (data.pregunta) {
+        // Llegó pregunta para el humano — cancelar cualquier animación antes de renderizar
+        _limpiarAnimaciones();
+        renderPregunta(data.pregunta);
+      } else clearPrompt();
+    }
+
+    // Encolar eventos solo si NO hay pregunta activa para el humano
+    // (evita que overlays bloqueen clicks mientras Javi está actuando)
+    if (data.eventos?.length) {
+      if (!data.pregunta) {
+        encolarEventos(data.eventos);
+      } else {
+        // Hay pregunta humana → asegurarse de que no quede overlay activo
+        _limpiarAnimaciones();
+      }
     }
   } catch(e) { /* ignora errores de red transitorios */ }
 }
@@ -1418,8 +1580,28 @@ function renderPregunta(preg) {
   setPromptText(preg.texto);
   const bots = document.getElementById('prompt-botones');
   bots.innerHTML = '';
+
+  // Punto 5: detectar si el texto pide usar BANG o FALLASTE y el jugador no tiene la carta
+  const texto = preg.texto || '';
+  const pideBANG     = /usar un BANG/i.test(texto);
+  const pideFALLASTE = /usar un FALLASTE/i.test(texto);
+  const manoHumana   = (window._ultimoEstado?.human_mano || []);
+  const tieneBANG     = manoHumana.some(c => c.idClase === 11);
+  const tieneFALLASTE = manoHumana.some(c => c.idClase === 12);
+  const sinCarta = (pideBANG && !tieneBANG) || (pideFALLASTE && !tieneFALLASTE);
+
+  if (sinCarta) {
+    const nombreCarta = pideBANG ? 'BANG' : 'FALLASTE';
+    setPromptText(`${texto}\n⚠️ No tienes ${nombreCarta} en la mano — recibirás daño.`);
+  }
+
   (preg.opciones || []).forEach(opt => {
-    bots.appendChild(mkPromptBtn(opt, '', () => enviarAccion(opt)));
+    if (sinCarta && opt === 'SI') {
+      // No mostrar el botón SI si no tiene la carta
+      return;
+    }
+    const label = sinCarta && opt === 'NO' ? '💔 Aceptar daño' : opt;
+    bots.appendChild(mkPromptBtn(label, opt === 'NO' ? '' : '', () => enviarAccion(opt)));
   });
 }
 
