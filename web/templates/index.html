@@ -1044,11 +1044,7 @@ function _procesarSiguienteEvento() {
     if (_pendingPregunta) {
       const preg = _pendingPregunta;
       _pendingPregunta = null;
-      const prevTipo = window._ultimaPreg?.tipo;
       _limpiarAnimaciones();
-      if (prevTipo === 'elegir_personaje' && preg.tipo !== 'elegir_personaje') {
-        _mostrarResumenPersonajes();
-      }
       renderPregunta(preg);
       window._setCurrentQuestion(preg);
     }
@@ -1085,7 +1081,7 @@ function _mkCartaCanvas(cartaNombre) {
   return null;
 }
 
-function _mostrarResumenPersonajes() {
+function _mostrarResumenPersonajes(onClose) {
   const jugadores = window._ultimoEstado?.jugadores;
   if (!jugadores?.length) return;
 
@@ -1131,7 +1127,7 @@ function _mostrarResumenPersonajes() {
 
   const cerrar = () => {
     overlay.style.animation = 'fadeOutOverlay 0.2s ease forwards';
-    setTimeout(() => overlay.remove(), 200);
+    setTimeout(() => { overlay.remove(); if (onClose) onClose(); }, 200);
   };
   overlay.addEventListener('click', cerrar);
   setTimeout(cerrar, 6000);
@@ -1173,9 +1169,8 @@ function _mostrarAnimacionJavi(valor, preg) {
   }
   if (!ev) return;
 
-  // Mostrar animación sin bloquear — autocierra en la mitad del tiempo
-  const onDone = () => {};
-  _mostrarAnimacionEvento(ev, onDone);
+  // Encolar la animación igual que los eventos de bot
+  encolarEventos([ev]);
 }
 
 function _mostrarAnimacionEvento(ev, onDone) {
@@ -1204,18 +1199,24 @@ function _mostrarAnimacionEvento(ev, onDone) {
     pointer-events:none;display:flex;flex-direction:column;align-items:center;gap:10px;
   `;
 
-  // Arte de carta: mismo patrón que renderMano
+  // Arte de carta — inferir nombre si es respuesta sin carta explícita
+  let _cartaNombre = ev.carta;
+  if (!_cartaNombre && ev.tipo === 'respuesta' && ev.respuesta === 'SI') {
+    const t = (ev.texto_prompt || '').toUpperCase();
+    if (t.includes('FALLASTE')) _cartaNombre = 'Fallaste';
+    else if (t.includes('BANG')) _cartaNombre = 'Bang';
+  }
   let cartaCanvas = null;
-  if (ev.carta) {
+  if (_cartaNombre) {
     try {
-      const ei = getEfectoArt(ev.carta);
-      if (ei?.g) cartaCanvas = renderEfectoCanvas(ei.g());
+      const ei = window.getEfectoArt?.(_cartaNombre);
+      if (ei?.g) cartaCanvas = window.renderEfectoCanvas?.(ei.g());
       if (!cartaCanvas) {
-        const wi = getWeaponArt(ev.carta);
-        if (wi?.g) cartaCanvas = drawWeaponCanvas(wi.g());
+        const wi = window.getWeaponArt?.(_cartaNombre);
+        if (wi?.g) cartaCanvas = window.drawWeaponCanvas?.(wi.g());
       }
       if (cartaCanvas) cartaCanvas.style.cssText = 'image-rendering:pixelated;border-radius:6px;max-width:96px;max-height:96px;margin-bottom:4px;';
-    } catch(e) { console.error('cartaCanvas:', e); }
+    } catch(e) { console.error('[CARTA-ERR]', e.message); }
   }
   if (cartaCanvas) {
     card.appendChild(cartaCanvas);
@@ -1354,28 +1355,41 @@ async function poll() {
     }
     if (data.log) renderLog(data.log);
 
-    // Encolar eventos ANTES de renderizar la pregunta
-    if (data.eventos?.length) {
-      encolarEventos(data.eventos);
-    }
-
     // Re-renderizar pregunta solo si cambió
     const key = preguntaKey(data.pregunta);
     if (key !== lastPreguntaKey) {
       const prevTipo = window._ultimaPreg?.tipo;
       lastPreguntaKey = key;
       if (data.pregunta) {
-        if (_eventoRunning || _eventoQueue.length > 0) {
-          // Hay animaciones en curso — diferir la pregunta hasta que terminen
-          _pendingPregunta = data.pregunta;
+        if (prevTipo === 'elegir_personaje' && data.pregunta.tipo !== 'elegir_personaje') {
+          // Transición personaje→juego: resumen primero, luego animaciones, luego pregunta
+          const evts = data.eventos ? [...data.eventos] : [];
+          const preg = data.pregunta;
+          _mostrarResumenPersonajes(() => {
+            if (evts.length) {
+              encolarEventos(evts);
+              _pendingPregunta = preg;
+            } else {
+              renderPregunta(preg);
+            }
+          });
         } else {
-          _limpiarAnimaciones();
-          if (prevTipo === 'elegir_personaje' && data.pregunta.tipo !== 'elegir_personaje') {
-            _mostrarResumenPersonajes();
+          // Flujo normal: encolar eventos y diferir o renderizar pregunta
+          if (data.eventos?.length) encolarEventos(data.eventos);
+          if (_eventoRunning || _eventoQueue.length > 0) {
+            _pendingPregunta = data.pregunta;
+          } else {
+            _limpiarAnimaciones();
+            renderPregunta(data.pregunta);
           }
-          renderPregunta(data.pregunta);
         }
-      } else clearPrompt();
+      } else {
+        if (data.eventos?.length) encolarEventos(data.eventos);
+        clearPrompt();
+      }
+    } else {
+      // Clave igual — solo encolar eventos nuevos
+      if (data.eventos?.length) encolarEventos(data.eventos);
     }
   } catch(e) { /* ignora errores de red transitorios */ }
 }
