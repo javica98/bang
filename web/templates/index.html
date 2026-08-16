@@ -1021,6 +1021,148 @@ let _eventoRunning = false;
 let _overlayActual = null;
 let _pendingPregunta = null;  // pregunta diferida hasta que terminen animaciones
 
+// ── Sistema de cadena de eventos ────────────────────────────────────────────
+// Layout partido: izquierda = carta usada, derecha = log de respuestas
+let _chainOverlay = null;
+let _chainLog = null;      // columna derecha (respuestas)
+let _chainCloseTimer = null;
+let _chainCarta = null;    // carta que abrió la cadena actual
+let _chainAtacante = null; // jugador que la jugó
+let _mostrandoResumen = false;
+let _eventosPendientesResumen = [];   // eventos acumulados durante el resumen
+let _preguntaPendienteResumen = null; // última pregunta recibida durante el resumen
+
+function _cerrarChain(delay) {
+  if (_chainCloseTimer) { clearTimeout(_chainCloseTimer); _chainCloseTimer = null; }
+  if (!_chainOverlay) return;
+  const ol = _chainOverlay;
+  const doClose = () => {
+    // Limpiar estado solo si este overlay sigue siendo el activo
+    if (_chainOverlay === ol) {
+      _chainOverlay = null; _chainLog = null; _chainCarta = null; _chainAtacante = null;
+    }
+    ol.style.animation = 'fadeOutOverlay 0.22s ease forwards';
+    setTimeout(() => ol.remove(), 220);
+  };
+  if (delay) _chainCloseTimer = setTimeout(doClose, delay);
+  else doClose();
+}
+
+function _iniciarChain(ev) {
+  const cartaNombre = ev.carta || '';
+  const atacante = ev.jugador || '';
+  const objetivo  = ev.objetivo || (ev.grupo === 'area' ? 'Todos' : '');
+
+  // Mismo atacante, misma carta (ej. Willy the Kid con varios Bangs):
+  // no reiniciar el overlay, solo añadir nueva línea de objetivo
+  if (_chainOverlay && _chainCarta === cartaNombre && _chainAtacante === atacante) {
+    if (objetivo) _appendChain(`<b>${atacante}</b> → <b>${objetivo}</b>`, '#e8b86d');
+    // Cancelar cierre pendiente mientras llegan más ataques
+    if (_chainCloseTimer) { clearTimeout(_chainCloseTimer); _chainCloseTimer = null; }
+    return;
+  }
+
+  _cerrarChain(0);
+
+  // Canvas de la carta
+  const cv = _mkCartaCanvas(cartaNombre);
+
+  // Contenedor principal — banner inferior no bloqueante
+  const ol = document.createElement('div');
+  ol.style.cssText = `
+    position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
+    background:rgba(10,6,2,0.95);border:2px solid rgba(255,160,40,0.5);
+    border-radius:16px;min-width:420px;max-width:640px;
+    z-index:1900;color:#fff;font-family:monospace;pointer-events:none;
+    animation:popCard 0.22s cubic-bezier(0.34,1.56,0.64,1);
+    display:flex;flex-direction:row;overflow:hidden;
+  `;
+
+  // — Columna izquierda: carta ————————————————————————————————
+  const colLeft = document.createElement('div');
+  colLeft.style.cssText = `
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:6px;padding:16px 18px;min-width:130px;
+    background:rgba(255,140,0,0.08);border-right:1px solid rgba(255,160,40,0.25);
+  `;
+
+  if (cv) {
+    cv.style.cssText = 'image-rendering:pixelated;border-radius:6px;max-width:72px;max-height:72px;';
+    colLeft.appendChild(cv);
+  } else {
+    const ic = document.createElement('div');
+    ic.style.cssText = 'font-size:40px;';
+    ic.textContent = ev.grupo === 'area' ? '💥' : '🔫';
+    colLeft.appendChild(ic);
+  }
+
+  const nomDiv = document.createElement('div');
+  nomDiv.style.cssText = 'font-size:14px;font-weight:bold;letter-spacing:1px;text-transform:uppercase;color:#f5d76e;text-align:center;';
+  nomDiv.textContent = cartaNombre || '?';
+  colLeft.appendChild(nomDiv);
+
+  if (atacante || objetivo) {
+    const flechaDiv = document.createElement('div');
+    flechaDiv.style.cssText = 'font-size:11px;color:#bbb;text-align:center;line-height:1.4;';
+    flechaDiv.innerHTML = objetivo
+      ? `<b>${atacante}</b> → <b>${objetivo}</b>`
+      : `<b>${atacante}</b>`;
+    colLeft.appendChild(flechaDiv);
+  }
+  ol.appendChild(colLeft);
+
+  // — Columna derecha: log de respuestas ————————————————————————
+  const colRight = document.createElement('div');
+  colRight.style.cssText = `
+    flex:1;display:flex;flex-direction:column;justify-content:center;
+    gap:4px;padding:14px 16px;min-height:90px;font-size:13px;
+  `;
+  ol.appendChild(colRight);
+
+  document.body.appendChild(ol);
+  _chainOverlay = ol;
+  _chainLog = colRight;
+  _chainCarta = cartaNombre;
+  _chainAtacante = atacante;
+}
+
+function _appendChain(html, color) {
+  if (!_chainLog) return;
+  const line = document.createElement('div');
+  line.style.cssText = `
+    color:${color||'#ccc'};padding:3px 0 3px 8px;
+    border-left:2px solid ${color||'#555'};
+    animation:fadeInOverlay 0.18s ease;
+  `;
+  line.innerHTML = html;
+  _chainLog.appendChild(line);
+}
+
+function _chainPendingJavi(texto) {
+  if (!_chainLog) return;
+  const line = document.createElement('div');
+  line.id = '_chainJavi';
+  line.style.cssText = `
+    color:#f5d76e;padding:3px 0 3px 8px;
+    border-left:2px solid #f5d76e;
+    animation:fadeInOverlay 0.18s ease;font-weight:bold;
+  `;
+  line.innerHTML = `⟳ Tu turno…`;
+  _chainLog.appendChild(line);
+}
+
+function _chainUpdateJavi(html, color) {
+  const el = document.getElementById('_chainJavi');
+  if (el) {
+    el.style.color = color||'#ccc';
+    el.style.borderLeftColor = color||'#555';
+    el.style.fontWeight = 'normal';
+    el.innerHTML = html;
+  } else {
+    _appendChain(html, color);
+  }
+}
+
 function encolarEventos(eventos) {
   _eventoQueue.push(...eventos);
   if (!_eventoRunning) _procesarSiguienteEvento();
@@ -1040,20 +1182,27 @@ function _limpiarAnimaciones() {
 function _procesarSiguienteEvento() {
   if (!_eventoQueue.length) {
     _eventoRunning = false;
-    // Si hay una pregunta diferida, renderizarla ahora que terminaron las animaciones
     if (_pendingPregunta) {
       const preg = _pendingPregunta;
       _pendingPregunta = null;
       _limpiarAnimaciones();
+      if (_chainOverlay && preg.tipo === 'prompt') {
+        _chainPendingJavi(preg.texto);
+      } else {
+        _cerrarChain(0);
+      }
       renderPregunta(preg);
       window._setCurrentQuestion(preg);
+    } else {
+      // Cola vacía sin pregunta pendiente — fallback de seguridad
+      _cerrarChain(2000);
     }
     return;
   }
   _eventoRunning = true;
   const ev = _eventoQueue.shift();
   _mostrarAnimacionEvento(ev, () => {
-    setTimeout(_procesarSiguienteEvento, 100);
+    setTimeout(_procesarSiguienteEvento, 200);
   });
 }
 
@@ -1125,9 +1274,19 @@ function _mostrarResumenPersonajes(onClose) {
   overlay.appendChild(hint);
   document.body.appendChild(overlay);
 
+  _mostrandoResumen = true;
+  _eventosPendientesResumen = [];
+  _preguntaPendienteResumen = null;
   const cerrar = () => {
     overlay.style.animation = 'fadeOutOverlay 0.2s ease forwards';
-    setTimeout(() => { overlay.remove(); if (onClose) onClose(); }, 200);
+    setTimeout(() => {
+      overlay.remove();
+      _mostrandoResumen = false;
+      const evts = _eventosPendientesResumen.splice(0);
+      const preg = _preguntaPendienteResumen;
+      _preguntaPendienteResumen = null;
+      if (onClose) onClose(evts, preg);
+    }, 200);
   };
   overlay.addEventListener('click', cerrar);
   setTimeout(cerrar, 6000);
@@ -1174,11 +1333,58 @@ function _mostrarAnimacionJavi(valor, preg) {
 }
 
 function _mostrarAnimacionEvento(ev, onDone) {
-  console.log('[ANIM] ev:', ev.tipo, '| carta:', ev.carta, '| grupo:', ev.grupo);
   const grupo = ev.tipo === 'cambio_turno' ? 'turno'
               : ev.tipo === 'descarte'      ? 'descarte'
               : ev.tipo === 'respuesta'     ? 'respuesta'
               : (ev.grupo || 'otro');
+
+  // ── CADENA: ofensiva/area (excepto Pánico) → overlay persistente ──────────
+  if (ev.tipo === 'carta_jugada' && (grupo === 'ofensiva' || grupo === 'area')) {
+    const esPanico = /p[áa]nico/i.test(ev.carta || '');
+    if (!esPanico) {
+      _iniciarChain(ev);
+      if (ev.objetivo) {
+        _appendChain(`<b>${ev.jugador}</b> → <b>${ev.objetivo}</b>`, '#e8b86d');
+      } else if (grupo === 'area') {
+        _appendChain(`<b>${ev.jugador}</b> → todos`, '#e8b86d');
+      } else {
+        _appendChain(`<b>${ev.jugador}</b> juega la carta`, '#e8b86d');
+      }
+      setTimeout(onDone, 1400);
+      return;
+    }
+    // Pánico cae al overlay normal (cerrar cadena si la hubiera)
+    _cerrarChain(0);
+  }
+
+  // ── RESPUESTA dentro de cadena → añadir línea al log ─────────────────────
+  if (ev.tipo === 'respuesta' && _chainOverlay) {
+    const texto = ev.texto_prompt || '';
+    const usoFallaste = /FALLASTE/i.test(texto) && ev.respuesta === 'SI';
+    const usoBang     = /BANG/i.test(texto)     && ev.respuesta === 'SI';
+    const esJavi      = ev.jugador_id === 0 || ev.jugador === 'Javi';
+    if (usoFallaste) {
+      if (esJavi) _chainUpdateJavi(`✓ <b>Javi</b> usa Fallaste`, '#5adf5a');
+      else _appendChain(`✓ <b>${ev.jugador}</b> usa Fallaste`, '#5adf5a');
+    } else if (usoBang) {
+      if (esJavi) _chainUpdateJavi(`⚡ <b>Javi</b> responde con Bang`, '#f5d76e');
+      else _appendChain(`⚡ <b>${ev.jugador}</b> responde con Bang`, '#f5d76e');
+    } else {
+      if (esJavi) _chainUpdateJavi(`✗ <b>Javi</b> recibe daño`, '#e55');
+      else _appendChain(`✗ <b>${ev.jugador}</b> recibe daño`, '#e55');
+    }
+    // NO cerrar aquí: la cadena cierra cuando llegue cambio_turno o elegir_carta
+    setTimeout(onDone, 1200);
+    return;
+  }
+
+  // ── CAMBIO TURNO / otros → cerrar cadena y mostrar overlay normal ─────────
+  if (ev.tipo === 'cambio_turno' || ev.tipo === 'descarte' ||
+      (ev.tipo === 'carta_jugada' && grupo !== 'ofensiva' && grupo !== 'area')) {
+    _cerrarChain(0);
+  }
+
+  // ── OVERLAY NORMAL ────────────────────────────────────────────────────────
   const info = _GRUPO_COLOR[grupo] || _GRUPO_COLOR.otro;
 
   const overlay = document.createElement('div');
@@ -1199,7 +1405,7 @@ function _mostrarAnimacionEvento(ev, onDone) {
     pointer-events:none;display:flex;flex-direction:column;align-items:center;gap:10px;
   `;
 
-  // Arte de carta — inferir nombre si es respuesta sin carta explícita
+  // Arte de carta
   let _cartaNombre = ev.carta;
   if (!_cartaNombre && ev.tipo === 'respuesta' && ev.respuesta === 'SI') {
     const t = (ev.texto_prompt || '').toUpperCase();
@@ -1216,20 +1422,13 @@ function _mostrarAnimacionEvento(ev, onDone) {
         if (wi?.g) cartaCanvas = window.drawWeaponCanvas?.(wi.g());
       }
       if (cartaCanvas) cartaCanvas.style.cssText = 'image-rendering:pixelated;border-radius:6px;max-width:96px;max-height:96px;margin-bottom:4px;';
-    } catch(e) { console.error('[CARTA-ERR]', e.message); }
+    } catch(e) {}
   }
-  if (cartaCanvas) {
-    card.appendChild(cartaCanvas);
-  } else {
-    const icono = document.createElement('div');
-    icono.style.cssText = 'font-size:52px;';
-    icono.textContent = info.icono;
-    card.appendChild(icono);
-  }
+  if (cartaCanvas) { card.appendChild(cartaCanvas); }
+  else { const ic = document.createElement('div'); ic.style.cssText = 'font-size:52px;'; ic.textContent = info.icono; card.appendChild(ic); }
 
   const titulo = document.createElement('div');
   titulo.style.cssText = 'font-size:22px;font-weight:bold;letter-spacing:2px;text-transform:uppercase;';
-
   const desc = document.createElement('div');
   desc.style.cssText = 'font-size:15px;opacity:0.92;line-height:1.6;';
 
@@ -1238,42 +1437,16 @@ function _mostrarAnimacionEvento(ev, onDone) {
     desc.textContent = 'El rival está pensando…';
   } else if (ev.tipo === 'carta_jugada') {
     titulo.textContent = ev.carta || '?';
-    const esPanico = /p[áa]nico/i.test(ev.carta || '');
-    if (ev.objetivo) {
-      if (esPanico) {
-        desc.innerHTML = `<b>${ev.jugador}</b> roba una carta a <b>${ev.objetivo}</b>`;
-      } else {
-        desc.innerHTML = `<b>${ev.jugador}</b> dispara a <b>${ev.objetivo}</b>`;
-      }
-    } else if (ev.grupo === 'area') {
-      desc.innerHTML = `<b>${ev.jugador}</b> ataca a <b>todos los jugadores</b>`;
-    } else if (ev.grupo === 'curacion') {
-      desc.innerHTML = `<b>${ev.jugador}</b> recupera vida`;
-    } else if (ev.grupo === 'equipamiento') {
-      desc.innerHTML = `<b>${ev.jugador}</b> equipa la carta`;
-    } else if (ev.grupo === 'robo') {
-      desc.innerHTML = `<b>${ev.jugador}</b> roba cartas adicionales`;
-    } else {
-      desc.innerHTML = `<b>${ev.jugador}</b> juega la carta`;
-    }
+    if (ev.grupo === 'curacion') desc.innerHTML = `<b>${ev.jugador}</b> recupera vida`;
+    else if (ev.grupo === 'equipamiento') desc.innerHTML = `<b>${ev.jugador}</b> equipa la carta`;
+    else if (ev.grupo === 'robo') desc.innerHTML = `<b>${ev.jugador}</b> roba cartas adicionales`;
+    else desc.innerHTML = `<b>${ev.jugador}</b> juega la carta`;
   } else if (ev.tipo === 'respuesta') {
     const texto = ev.texto_prompt || '';
-    const usoFallaste = /FALLASTE/i.test(texto) && ev.respuesta === 'SI';
-    const usoBang     = /BANG/i.test(texto)     && ev.respuesta === 'SI';
-    const recibDanio  = ev.respuesta === 'NO';
-    if (usoFallaste) {
-      titulo.textContent = 'Usó Fallaste';
-      desc.innerHTML = `<b>${ev.jugador}</b> esquiva el disparo`;
-    } else if (usoBang) {
-      titulo.textContent = 'Respondió con Bang';
-      desc.innerHTML = `<b>${ev.jugador}</b> devuelve el disparo`;
-    } else if (recibDanio) {
-      titulo.textContent = '¡Recibió daño!';
-      desc.innerHTML = `<b>${ev.jugador}</b> no pudo esquivar`;
-    } else {
-      titulo.textContent = ev.respuesta === 'SI' ? 'Esquivado' : 'Daño recibido';
-      desc.innerHTML = `<b>${ev.jugador}</b>`;
-    }
+    if (/FALLASTE/i.test(texto) && ev.respuesta === 'SI') { titulo.textContent = 'Usó Fallaste'; desc.innerHTML = `<b>${ev.jugador}</b> esquiva`; }
+    else if (/BANG/i.test(texto) && ev.respuesta === 'SI') { titulo.textContent = 'Respondió con Bang'; desc.innerHTML = `<b>${ev.jugador}</b> devuelve`; }
+    else if (ev.respuesta === 'NO') { titulo.textContent = '¡Recibió daño!'; desc.innerHTML = `<b>${ev.jugador}</b> no esquivó`; }
+    else { titulo.textContent = 'Respuesta'; desc.innerHTML = `<b>${ev.jugador}</b>`; }
   } else if (ev.tipo === 'descarte') {
     titulo.textContent = `${ev.jugador} descarta`;
     desc.innerHTML = (ev.cartas || []).join(', ');
@@ -1284,22 +1457,17 @@ function _mostrarAnimacionEvento(ev, onDone) {
   overlay.appendChild(card);
   document.body.appendChild(overlay);
 
-  // Duraciones (fix 6)
-  const dur = ev.tipo === 'cambio_turno' ? 1600
-    : ev.tipo === 'descarte'             ? 1400
-    : (grupo === 'ofensiva' || grupo === 'area') ? 2200
-    : grupo === 'respuesta'              ? 1800
-    : 1600;
+  const dur = ev.tipo === 'cambio_turno' ? 2800
+    : ev.tipo === 'descarte' ? 1800
+    : grupo === 'respuesta'  ? 2800 : 2500;
 
   let closed = false;
   const cerrar = () => {
-    if (closed) return;
-    closed = true;
+    if (closed) return; closed = true;
     if (_overlayActual === overlay) _overlayActual = null;
     overlay.style.animation = 'fadeOutOverlay 0.18s ease forwards';
     setTimeout(() => { overlay.remove(); onDone(); }, 180);
   };
-
   overlay.addEventListener('click', cerrar);
   setTimeout(cerrar, dur);
 }
@@ -1365,21 +1533,35 @@ async function poll() {
           // Transición personaje→juego: resumen primero, luego animaciones, luego pregunta
           const evts = data.eventos ? [...data.eventos] : [];
           const preg = data.pregunta;
-          _mostrarResumenPersonajes(() => {
-            if (evts.length) {
-              encolarEventos(evts);
-              _pendingPregunta = preg;
+          _mostrarResumenPersonajes((evtsAcumulados, pregAcumulada) => {
+            const todos = [...evts, ...(evtsAcumulados || [])];
+            const pregFinal = pregAcumulada || preg;
+            if (todos.length) {
+              encolarEventos(todos);
+              _pendingPregunta = pregFinal;
             } else {
-              renderPregunta(preg);
+              renderPregunta(pregFinal);
             }
           });
         } else {
+          // Si el resumen de personajes está visible, acumular eventos y no procesar
+          if (_mostrandoResumen) {
+            if (data.eventos?.length) _eventosPendientesResumen.push(...data.eventos);
+            if (data.pregunta) _preguntaPendienteResumen = data.pregunta;
+            return;
+          }
           // Flujo normal: encolar eventos y diferir o renderizar pregunta
           if (data.eventos?.length) encolarEventos(data.eventos);
           if (_eventoRunning || _eventoQueue.length > 0) {
             _pendingPregunta = data.pregunta;
           } else {
             _limpiarAnimaciones();
+            // Si hay cadena activa y llega un prompt para Javi, mantener cadena abierta
+            if (_chainOverlay && data.pregunta?.tipo === 'prompt') {
+              _chainPendingJavi(data.pregunta.texto);
+            } else {
+              _cerrarChain(0);
+            }
             renderPregunta(data.pregunta);
           }
         }
@@ -1786,12 +1968,21 @@ function renderPregunta(preg) {
   }
 
   (preg.opciones || []).forEach(opt => {
-    if (sinCarta && opt === 'SI') {
-      // No mostrar el botón SI si no tiene la carta
-      return;
-    }
+    if (sinCarta && opt === 'SI') return;
     const label = sinCarta && opt === 'NO' ? '💔 Aceptar daño' : opt;
-    bots.appendChild(mkPromptBtn(label, opt === 'NO' ? '' : '', () => enviarAccion(opt)));
+    bots.appendChild(mkPromptBtn(label, opt === 'NO' ? '' : '', () => {
+      // Actualizar línea de Javi en la cadena — la cadena cierra sola al llegar el próximo evento
+      if (_chainOverlay) {
+        if (opt === 'SI') {
+          if (pideFALLASTE) _chainUpdateJavi('✓ <b>Javi</b> usa Fallaste', '#5adf5a');
+          else if (pideBANG) _chainUpdateJavi('⚡ <b>Javi</b> responde con Bang', '#f5d76e');
+          else               _chainUpdateJavi('✓ <b>Javi</b> responde SI', '#5adf5a');
+        } else {
+          _chainUpdateJavi('✗ <b>Javi</b> recibe daño', '#e55');
+        }
+      }
+      enviarAccion(opt);
+    }));
   });
 }
 
@@ -1843,6 +2034,8 @@ function renderElegirPersonaje(preg) {
 function renderGameOver(preg) {
   gameOver = true;
   clearInterval(pollInterval);
+  _cerrarChain(0);
+  _limpiarAnimaciones();
   showScreen('screen-gameover');
   document.getElementById('go-ganador').textContent =
     `¡${preg.ganador.toUpperCase()} HAN GANADO!`;

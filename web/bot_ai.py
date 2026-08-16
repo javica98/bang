@@ -170,6 +170,9 @@ class BotAI:
             else:
                 self._cartas_fallidas.clear()
             self._ultima_eleccion = None
+        else:
+            # Nuevo ciclo de decisión (turno nuevo o FIN aceptado): limpiar fallos obsoletos
+            self._cartas_fallidas.clear()
 
         jugables = [c for c in mano
                     if str(c['indice'] + 1) in opciones
@@ -233,9 +236,11 @@ class BotAI:
                 return elegir(c)
 
         # ── 10. Descarte forzado: elegir la carta menos valiosa ───────────
-        if not pregunta.get('permitir_fin', True) and jugables:
-            peor = min(jugables, key=lambda c: PRIORIDAD_CARTA.get(c['nombre'], 1))
-            return elegir(peor)
+        if not pregunta.get('permitir_fin', True):
+            candidatas = jugables or [c for c in mano if str(c['indice'] + 1) in opciones]
+            if candidatas:
+                peor = min(candidatas, key=lambda c: PRIORIDAD_CARTA.get(c['nombre'], 1))
+                return elegir(peor)
 
         return 'FIN'
 

@@ -362,7 +362,10 @@ class FlaskIO:
                 for c in cartas
             ],
         })
-        return int(resp)
+        try:
+            return int(resp)
+        except (ValueError, TypeError):
+            return 0
 
     def elegir_almacen_carta(self, jugador, cartas):
         self._asking_id = jugador.idJugador
