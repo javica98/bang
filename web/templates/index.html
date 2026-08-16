@@ -1019,6 +1019,7 @@ const _GRUPO_COLOR = {
 let _eventoQueue = [];
 let _eventoRunning = false;
 let _overlayActual = null;
+let _pendingPregunta = null;  // pregunta diferida hasta que terminen animaciones
 
 function encolarEventos(eventos) {
   _eventoQueue.push(...eventos);
@@ -1028,6 +1029,7 @@ function encolarEventos(eventos) {
 // Llamar cuando llega una pregunta humana — cancela animaciones pendientes
 function _limpiarAnimaciones() {
   _eventoQueue = [];
+  _pendingPregunta = null;
   if (_overlayActual) {
     _overlayActual.remove();
     _overlayActual = null;
@@ -1036,7 +1038,22 @@ function _limpiarAnimaciones() {
 }
 
 function _procesarSiguienteEvento() {
-  if (!_eventoQueue.length) { _eventoRunning = false; return; }
+  if (!_eventoQueue.length) {
+    _eventoRunning = false;
+    // Si hay una pregunta diferida, renderizarla ahora que terminaron las animaciones
+    if (_pendingPregunta) {
+      const preg = _pendingPregunta;
+      _pendingPregunta = null;
+      const prevTipo = window._ultimaPreg?.tipo;
+      _limpiarAnimaciones();
+      if (prevTipo === 'elegir_personaje' && preg.tipo !== 'elegir_personaje') {
+        _mostrarResumenPersonajes();
+      }
+      renderPregunta(preg);
+      window._setCurrentQuestion(preg);
+    }
+    return;
+  }
   _eventoRunning = true;
   const ev = _eventoQueue.shift();
   _mostrarAnimacionEvento(ev, () => {
@@ -1162,6 +1179,7 @@ function _mostrarAnimacionJavi(valor, preg) {
 }
 
 function _mostrarAnimacionEvento(ev, onDone) {
+  console.log('[ANIM] ev:', ev.tipo, '| carta:', ev.carta, '| grupo:', ev.grupo);
   const grupo = ev.tipo === 'cambio_turno' ? 'turno'
               : ev.tipo === 'descarte'      ? 'descarte'
               : ev.tipo === 'respuesta'     ? 'respuesta'
@@ -1347,12 +1365,16 @@ async function poll() {
       const prevTipo = window._ultimaPreg?.tipo;
       lastPreguntaKey = key;
       if (data.pregunta) {
-        // Nueva pregunta: limpiar animaciones y mostrar
-        _limpiarAnimaciones();
-        if (prevTipo === 'elegir_personaje' && data.pregunta.tipo !== 'elegir_personaje') {
-          _mostrarResumenPersonajes();
+        if (_eventoRunning || _eventoQueue.length > 0) {
+          // Hay animaciones en curso — diferir la pregunta hasta que terminen
+          _pendingPregunta = data.pregunta;
+        } else {
+          _limpiarAnimaciones();
+          if (prevTipo === 'elegir_personaje' && data.pregunta.tipo !== 'elegir_personaje') {
+            _mostrarResumenPersonajes();
+          }
+          renderPregunta(data.pregunta);
         }
-        renderPregunta(data.pregunta);
       } else clearPrompt();
     }
   } catch(e) { /* ignora errores de red transitorios */ }
