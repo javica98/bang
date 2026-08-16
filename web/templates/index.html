@@ -1037,24 +1037,27 @@ function _procesarSiguienteEvento() {
   });
 }
 
-function _sinAcentos(s) {
-  return (s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
-}
-
 function _mkCartaCanvas(cartaNombre) {
-  try {
-    const nombre = _sinAcentos(cartaNombre);
-    const ei = window.getEfectoArt?.(nombre);
-    if (ei?.g) {
-      const cv = window.renderEfectoCanvas?.(ei.g());
-      if (cv) { cv.style.cssText = 'image-rendering:pixelated;border-radius:6px;max-width:96px;max-height:96px;'; return cv; }
-    }
-    const wi = window.getWeaponArt?.(nombre);
-    if (wi?.g) {
-      const cv = window.drawWeaponCanvas?.(wi.g());
-      if (cv) { cv.style.cssText = 'image-rendering:pixelated;border-radius:6px;max-width:96px;max-height:96px;'; return cv; }
-    }
-  } catch(e) {}
+  if (!cartaNombre) return null;
+  // Prueba nombre original y luego sin acentos (para "Pánico" → "panico")
+  const norm = cartaNombre.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+  const candidatos = [cartaNombre, norm];
+  for (const n of candidatos) {
+    try {
+      const ei = window.getEfectoArt?.(n);
+      if (ei?.g) {
+        const cv = window.renderEfectoCanvas?.(ei.g());
+        if (cv) { cv.style.cssText = 'image-rendering:pixelated;border-radius:6px;max-width:96px;max-height:96px;'; return cv; }
+      }
+    } catch(e) { console.warn('getEfectoArt error', n, e); }
+    try {
+      const wi = window.getWeaponArt?.(n);
+      if (wi?.g) {
+        const cv = window.drawWeaponCanvas?.(wi.g());
+        if (cv) { cv.style.cssText = 'image-rendering:pixelated;border-radius:6px;max-width:96px;max-height:96px;'; return cv; }
+      }
+    } catch(e) { console.warn('getWeaponArt error', n, e); }
+  }
   return null;
 }
 
