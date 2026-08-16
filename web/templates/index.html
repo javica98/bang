@@ -1037,20 +1037,77 @@ function _procesarSiguienteEvento() {
   });
 }
 
+function _sinAcentos(s) {
+  return (s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+}
+
 function _mkCartaCanvas(cartaNombre) {
   try {
-    const ei = getEfectoArt?.(cartaNombre);
+    const nombre = _sinAcentos(cartaNombre);
+    const ei = window.getEfectoArt?.(nombre);
     if (ei?.g) {
       const cv = window.renderEfectoCanvas?.(ei.g());
       if (cv) { cv.style.cssText = 'image-rendering:pixelated;border-radius:6px;max-width:96px;max-height:96px;'; return cv; }
     }
-    const wi = getWeaponArt?.(cartaNombre);
+    const wi = window.getWeaponArt?.(nombre);
     if (wi?.g) {
       const cv = window.drawWeaponCanvas?.(wi.g());
       if (cv) { cv.style.cssText = 'image-rendering:pixelated;border-radius:6px;max-width:96px;max-height:96px;'; return cv; }
     }
   } catch(e) {}
   return null;
+}
+
+function _mostrarResumenPersonajes() {
+  const jugadores = window._ultimoEstado?.jugadores;
+  if (!jugadores?.length) return;
+
+  const overlay = document.createElement('div');
+  overlay.style.cssText = `
+    position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:2100;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;
+    cursor:pointer;animation:fadeInOverlay 0.25s ease;
+  `;
+
+  const titulo = document.createElement('div');
+  titulo.style.cssText = 'color:#f5d76e;font-family:monospace;font-size:22px;font-weight:bold;letter-spacing:3px;text-transform:uppercase;';
+  titulo.textContent = '⚔️ Pistoleros listos';
+  overlay.appendChild(titulo);
+
+  const grid = document.createElement('div');
+  grid.style.cssText = 'display:flex;flex-wrap:wrap;gap:16px;justify-content:center;max-width:780px;';
+
+  jugadores.forEach(j => {
+    const card = document.createElement('div');
+    const esHumano = j.id === 0;
+    card.style.cssText = `
+      background:${esHumano ? '#1a3a1a' : '#2a2a3a'};border:2px solid ${esHumano ? '#5a9a5a' : 'rgba(255,255,255,0.15)'};
+      border-radius:12px;padding:14px 20px;min-width:160px;text-align:center;
+      color:#fff;font-family:monospace;
+    `;
+    const rolColor = j.rol === 'Sheriff' ? '#f5d76e' : j.rol === 'Renegado' ? '#aaa' : j.rol === 'Forajido' ? '#e55' : '#9cf';
+    card.innerHTML = `
+      <div style="font-size:13px;color:${rolColor};font-weight:bold;letter-spacing:1px;">${j.rol}</div>
+      <div style="font-size:16px;font-weight:bold;margin:4px 0;">${j.nombre}</div>
+      <div style="font-size:13px;opacity:0.8;">${j.personaje}</div>
+      <div style="font-size:12px;margin-top:4px;">❤️ ${'♥'.repeat(j.vidasMax)}</div>
+    `;
+    grid.appendChild(card);
+  });
+
+  overlay.appendChild(grid);
+  const hint = document.createElement('div');
+  hint.style.cssText = 'color:rgba(255,255,255,0.45);font-family:monospace;font-size:12px;margin-top:4px;';
+  hint.textContent = 'Haz clic para continuar';
+  overlay.appendChild(hint);
+  document.body.appendChild(overlay);
+
+  const cerrar = () => {
+    overlay.style.animation = 'fadeOutOverlay 0.2s ease forwards';
+    setTimeout(() => overlay.remove(), 200);
+  };
+  overlay.addEventListener('click', cerrar);
+  setTimeout(cerrar, 6000);
 }
 
 function _mostrarAnimacionJavi(valor, preg) {
@@ -1262,10 +1319,15 @@ async function poll() {
     // Solo re-renderizar la pregunta si realmente cambió
     const key = preguntaKey(data.pregunta);
     if (key !== lastPreguntaKey) {
+      const prevTipo = window._ultimaPreg?.tipo;
       lastPreguntaKey = key;
       if (data.pregunta) {
         // Llegó pregunta para el humano — cancelar cualquier animación antes de renderizar
         _limpiarAnimaciones();
+        // Mostrar resumen de personajes al salir de la fase de selección
+        if (prevTipo === 'elegir_personaje' && data.pregunta.tipo !== 'elegir_personaje') {
+          _mostrarResumenPersonajes();
+        }
         renderPregunta(data.pregunta);
       } else clearPrompt();
     }
@@ -1664,8 +1726,8 @@ function renderPregunta(preg) {
   const pideBANG     = /usar un BANG/i.test(texto);
   const pideFALLASTE = /usar un FALLASTE/i.test(texto);
   const manoHumana   = (window._ultimoEstado?.human_mano || []);
-  const tieneBANG     = manoHumana.some(c => c.idClase === 11);
-  const tieneFALLASTE = manoHumana.some(c => c.idClase === 12);
+  const tieneBANG     = manoHumana.some(c => c.idClase === 11 || /^bang$/i.test(c.nombre));
+  const tieneFALLASTE = manoHumana.some(c => c.idClase === 12 || /fallaste/i.test(c.nombre));
   const sinCarta = (pideBANG && !tieneBANG) || (pideFALLASTE && !tieneFALLASTE);
 
   if (sinCarta) {
