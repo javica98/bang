@@ -1186,10 +1186,20 @@ function _mostrarAnimacionEvento(ev, onDone) {
     pointer-events:none;display:flex;flex-direction:column;align-items:center;gap:10px;
   `;
 
-  // Arte de carta (fix 5)
-  const cartaCanvas = ev.carta ? _mkCartaCanvas(ev.carta) : null;
+  // Arte de carta: mismo patrón que renderMano
+  let cartaCanvas = null;
+  if (ev.carta) {
+    try {
+      const ei = getEfectoArt(ev.carta);
+      if (ei?.g) cartaCanvas = renderEfectoCanvas(ei.g());
+      if (!cartaCanvas) {
+        const wi = getWeaponArt(ev.carta);
+        if (wi?.g) cartaCanvas = drawWeaponCanvas(wi.g());
+      }
+      if (cartaCanvas) cartaCanvas.style.cssText = 'image-rendering:pixelated;border-radius:6px;max-width:96px;max-height:96px;margin-bottom:4px;';
+    } catch(e) { console.error('cartaCanvas:', e); }
+  }
   if (cartaCanvas) {
-    cartaCanvas.style.cssText += 'width:96px;height:96px;margin-bottom:4px;';
     card.appendChild(cartaCanvas);
   } else {
     const icono = document.createElement('div');
@@ -1347,8 +1357,8 @@ async function poll() {
       _limpiarAnimaciones();
     }
 
-    // Encolar eventos solo si NO hay pregunta activa para el humano
-    if (data.eventos?.length && !data.pregunta) {
+    // Encolar eventos siempre; _limpiarAnimaciones ya limpia si hay pregunta activa
+    if (data.eventos?.length) {
       encolarEventos(data.eventos);
     }
   } catch(e) { /* ignora errores de red transitorios */ }
@@ -2332,7 +2342,8 @@ function limpiarPaneles() {
     'ametralladora gatling':{g:ametralladoraGrid},
     'pánico':   {g:panicoGrid},
     'panico':   {g:panicoGrid},
-    'ing. explosiva':{g:ingExplosGrid},
+    'ing. explosiva':    {g:ingExplosGrid},
+    'ingenua explosiva': {g:ingExplosGrid},
     'almacén':  {g:almacenGrid},
     'almacen':  {g:almacenGrid},
     'diligencia':{g:diligenciaGrid},

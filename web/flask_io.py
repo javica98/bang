@@ -137,9 +137,20 @@ class FlaskIO:
                                 objetivo_nombre = j.nombre
                                 break
                     if self._pending_evento:
-                        self._pending_evento['objetivo'] = objetivo_nombre
-                        self._pending_evento['objetivo_id'] = objetivo_id
-                        self._emit(self._pending_evento)
+                        # Comprobar que un Bang no sea inválido (contBang ya >= 1)
+                        carta_nombre = self._pending_evento.get('carta', '')
+                        puede_emitir = True
+                        if carta_nombre == 'Bang' and self.juego:
+                            atacante = next(
+                                (j for j in self.juego.jugadores if j.idJugador == asking_id),
+                                None
+                            )
+                            if atacante and atacante.contBang >= 1 and not atacante.volcanic:
+                                puede_emitir = False
+                        if puede_emitir:
+                            self._pending_evento['objetivo'] = objetivo_nombre
+                            self._pending_evento['objetivo_id'] = objetivo_id
+                            self._emit(self._pending_evento)
                         self._pending_evento = None
                     time.sleep(0.3)
 
