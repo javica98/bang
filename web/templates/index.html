@@ -1005,6 +1005,7 @@ const _GRUPO_COLOR = {
   robo:        { bg: '#4a1a6b', icono: '🃏', label: 'ROBA'     },
   respuesta:   { bg: '#4a4a00', icono: '🛡️', label: 'RESPONDE' },
   turno:       { bg: '#2a2a2a', icono: '🤠', label: 'TURNO'    },
+  descarte:    { bg: '#3a2a00', icono: '🗑️', label: 'DESCARTE' },
   otro:        { bg: '#333',    icono: '⚡', label: 'ACCIÓN'   },
 };
 
@@ -1036,13 +1037,77 @@ function _procesarSiguienteEvento() {
   });
 }
 
+function _mkCartaCanvas(cartaNombre, idClase) {
+  // Devuelve un canvas con el arte de la carta, o null si no hay arte
+  try {
+    const art = getEfectoArt?.(cartaNombre?.toLowerCase?.());
+    if (art?.g) {
+      const cv = document.createElement('canvas');
+      cv.width = 96; cv.height = 96;
+      art.g(cv.getContext('2d'), 96, 96);
+      cv.style.cssText = 'image-rendering:pixelated;border-radius:6px;';
+      return cv;
+    }
+    const wart = getWeaponArt?.(cartaNombre);
+    if (wart?.g) {
+      const cv = drawWeaponCanvas?.(wart.g());
+      if (cv) { cv.style.cssText = 'image-rendering:pixelated;border-radius:6px;max-width:96px;max-height:96px;'; return cv; }
+    }
+  } catch(e) {}
+  return null;
+}
+
+function _mostrarAnimacionJavi(valor, preg) {
+  if (!preg) return;
+  const tipo = preg.tipo;
+  let ev = null;
+
+  if (tipo === 'elegir_carta' && valor !== 'FIN' && valor !== 'PODER') {
+    const idx = parseInt(valor) - 1;
+    const mano = preg.mano || [];
+    const carta = mano[idx];
+    if (carta) {
+      const id_clase = carta.idClase || 0;
+      const _GC = {11:'ofensiva',15:'ofensiva',17:'ofensiva',18:'ofensiva',14:'area',16:'area',13:'curacion',19:'curacion',12:'respuesta',20:'robo',21:'robo',22:'robo'};
+      const grupo = _GC[id_clase] || (id_clase <= 10 ? 'equipamiento' : 'otro');
+      ev = { tipo: 'carta_jugada', jugador: 'Javi', carta: carta.nombre, id_clase, grupo, objetivo: null };
+    }
+  } else if (tipo === 'elegir_jugador' && valor !== 'None') {
+    // el objetivo se conoce al seleccionar panel — completar el ev pendiente de carta
+    const estado = window._ultimoEstado;
+    const j = estado?.jugadores?.find(x => x.id === parseInt(valor));
+    if (j && window._javiBotPendingEv) {
+      window._javiBotPendingEv.objetivo = j.nombre;
+      ev = window._javiBotPendingEv;
+      window._javiBotPendingEv = null;
+    }
+    if (!ev) return; // sin pending no hay nada que mostrar
+  } else if (tipo === 'prompt') {
+    ev = { tipo: 'respuesta', jugador: 'Javi', respuesta: valor, texto_prompt: preg.texto };
+  }
+
+  // Guardar pending para elegir_jugador
+  if (ev?.tipo === 'carta_jugada' && ev.grupo === 'ofensiva') {
+    window._javiBotPendingEv = ev;
+    return; // esperar a que elija objetivo
+  }
+  if (!ev) return;
+
+  // Mostrar animación sin bloquear — autocierra en la mitad del tiempo
+  const onDone = () => {};
+  _mostrarAnimacionEvento(ev, onDone);
+}
+
 function _mostrarAnimacionEvento(ev, onDone) {
-  const grupo = ev.tipo === 'cambio_turno' ? 'turno' : (ev.grupo || 'otro');
+  const grupo = ev.tipo === 'cambio_turno' ? 'turno'
+              : ev.tipo === 'descarte'      ? 'descarte'
+              : ev.tipo === 'respuesta'     ? 'respuesta'
+              : (ev.grupo || 'otro');
   const info = _GRUPO_COLOR[grupo] || _GRUPO_COLOR.otro;
 
   const overlay = document.createElement('div');
   overlay.style.cssText = `
-    position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:2000;
+    position:fixed;inset:0;background:rgba(0,0,0,0.78);z-index:2000;
     display:flex;align-items:center;justify-content:center;
     animation:fadeInOverlay 0.18s ease;cursor:pointer;
   `;
@@ -1050,23 +1115,31 @@ function _mostrarAnimacionEvento(ev, onDone) {
 
   const card = document.createElement('div');
   card.style.cssText = `
-    background:${info.bg};border:2px solid rgba(255,255,255,0.2);
-    border-radius:16px;padding:32px 48px;min-width:300px;max-width:440px;
+    background:${info.bg};border:2px solid rgba(255,255,255,0.22);
+    border-radius:18px;padding:28px 44px;min-width:300px;max-width:460px;
     text-align:center;color:#fff;font-family:monospace;
-    box-shadow:0 8px 40px rgba(0,0,0,0.7);
-    animation:popCard 0.22s cubic-bezier(0.34,1.56,0.64,1);
-    pointer-events:none;
+    box-shadow:0 10px 50px rgba(0,0,0,0.75);
+    animation:popCard 0.24s cubic-bezier(0.34,1.56,0.64,1);
+    pointer-events:none;display:flex;flex-direction:column;align-items:center;gap:10px;
   `;
 
-  const icono = document.createElement('div');
-  icono.style.cssText = 'font-size:52px;margin-bottom:10px;';
-  icono.textContent = info.icono;
+  // Arte de carta (fix 5)
+  const cartaCanvas = ev.carta ? _mkCartaCanvas(ev.carta, ev.id_clase) : null;
+  if (cartaCanvas) {
+    cartaCanvas.style.cssText += 'width:96px;height:96px;margin-bottom:4px;';
+    card.appendChild(cartaCanvas);
+  } else {
+    const icono = document.createElement('div');
+    icono.style.cssText = 'font-size:52px;';
+    icono.textContent = info.icono;
+    card.appendChild(icono);
+  }
 
   const titulo = document.createElement('div');
-  titulo.style.cssText = 'font-size:24px;font-weight:bold;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;';
+  titulo.style.cssText = 'font-size:22px;font-weight:bold;letter-spacing:2px;text-transform:uppercase;';
 
   const desc = document.createElement('div');
-  desc.style.cssText = 'font-size:15px;opacity:0.9;margin-top:6px;line-height:1.6;';
+  desc.style.cssText = 'font-size:15px;opacity:0.92;line-height:1.6;';
 
   if (ev.tipo === 'cambio_turno') {
     titulo.textContent = `Turno de ${ev.jugador}`;
@@ -1088,35 +1161,38 @@ function _mostrarAnimacionEvento(ev, onDone) {
     }
   } else if (ev.tipo === 'respuesta') {
     const texto = ev.texto_prompt || '';
+    const usoFallaste = /FALLASTE/i.test(texto) && ev.respuesta === 'SI';
     const usoBang     = /BANG/i.test(texto)     && ev.respuesta === 'SI';
-    const usoFallaste = /FALLASTE/i.test(texto)  && ev.respuesta === 'SI';
     const recibDanio  = ev.respuesta === 'NO';
     if (usoFallaste) {
       titulo.textContent = 'Usó Fallaste';
-      desc.innerHTML = `<b>${ev.jugador}</b> esquiva el disparo 🛡️`;
+      desc.innerHTML = `<b>${ev.jugador}</b> esquiva el disparo`;
     } else if (usoBang) {
       titulo.textContent = 'Respondió con Bang';
-      desc.innerHTML = `<b>${ev.jugador}</b> devuelve el disparo 🔫`;
+      desc.innerHTML = `<b>${ev.jugador}</b> devuelve el disparo`;
     } else if (recibDanio) {
       titulo.textContent = '¡Recibió daño!';
-      desc.innerHTML = `<b>${ev.jugador}</b> no pudo esquivar 💔`;
+      desc.innerHTML = `<b>${ev.jugador}</b> no pudo esquivar`;
     } else {
       titulo.textContent = ev.respuesta === 'SI' ? 'Esquivado' : 'Daño recibido';
       desc.innerHTML = `<b>${ev.jugador}</b>`;
     }
+  } else if (ev.tipo === 'descarte') {
+    titulo.textContent = `${ev.jugador} descarta`;
+    desc.innerHTML = (ev.cartas || []).join(', ');
   }
 
-  card.appendChild(icono);
   card.appendChild(titulo);
   card.appendChild(desc);
   overlay.appendChild(card);
   document.body.appendChild(overlay);
 
-  // Duración según tipo
-  const dur = ev.tipo === 'cambio_turno' ? 1200
-    : (grupo === 'ofensiva' || grupo === 'area') ? 1800
-    : grupo === 'respuesta' ? 1500
-    : 1200;
+  // Duraciones (fix 6)
+  const dur = ev.tipo === 'cambio_turno' ? 1600
+    : ev.tipo === 'descarte'             ? 1400
+    : (grupo === 'ofensiva' || grupo === 'area') ? 2200
+    : grupo === 'respuesta'              ? 1800
+    : 1600;
 
   let closed = false;
   const cerrar = () => {
@@ -1127,7 +1203,6 @@ function _mostrarAnimacionEvento(ev, onDone) {
     setTimeout(() => { overlay.remove(); onDone(); }, 180);
   };
 
-  // Click para saltar animación
   overlay.addEventListener('click', cerrar);
   setTimeout(cerrar, dur);
 }
@@ -1194,15 +1269,14 @@ async function poll() {
       } else clearPrompt();
     }
 
+    // Si hay pregunta humana activa, garantizar que no haya overlay bloqueando
+    if (data.pregunta) {
+      _limpiarAnimaciones();
+    }
+
     // Encolar eventos solo si NO hay pregunta activa para el humano
-    // (evita que overlays bloqueen clicks mientras Javi está actuando)
-    if (data.eventos?.length) {
-      if (!data.pregunta) {
-        encolarEventos(data.eventos);
-      } else {
-        // Hay pregunta humana → asegurarse de que no quede overlay activo
-        _limpiarAnimaciones();
-      }
+    if (data.eventos?.length && !data.pregunta) {
+      encolarEventos(data.eventos);
     }
   } catch(e) { /* ignora errores de red transitorios */ }
 }
@@ -1214,6 +1288,9 @@ async function enviarAccion(valor) {
   if ((!window._ultimaPreg || _questionAnswered) && valor !== 'ok') return;
   _questionAnswered = true;
   isSending = true;
+
+  // Animación de Javi (fix 4): mostrar qué hizo el humano antes de limpiar UI
+  _mostrarAnimacionJavi(valor, window._ultimaPreg);
 
   // Limpiar UI inmediatamente — eliminar botones y paneles antes de esperar respuesta
   clearBotones();

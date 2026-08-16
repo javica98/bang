@@ -80,27 +80,52 @@ class FlaskIO:
                 _debug(f"🤖 {nombre} [{tipo}] -> {resp}")
 
                 # --- Emitir eventos de animación ---
-                if tipo == 'elegir_carta' and str(resp) != 'FIN':
-                    mano = pregunta.get('mano', [])
-                    idx = int(resp) - 1
-                    carta = mano[idx] if 0 <= idx < len(mano) else None
-                    if carta:
-                        id_clase = carta.get('idClase', 0)
-                        grupo = _GRUPO_CARTA.get(id_clase, 'equipamiento' if id_clase <= 10 else 'otro')
-                        self._pending_evento = {
-                            'tipo': 'carta_jugada',
-                            'jugador': nombre,
-                            'jugador_id': asking_id,
-                            'carta': carta.get('nombre', '?'),
-                            'id_clase': id_clase,
-                            'grupo': grupo,
-                            'objetivo': None,
-                            'objetivo_id': None,
-                        }
-                        # Cartas sin objetivo se emiten ya
-                        if grupo not in ('ofensiva',):
-                            self._emit(self._pending_evento)
-                            self._pending_evento = None
+                if tipo == 'elegir_carta':
+                    resp_str = str(resp)
+                    if resp_str == 'FIN':
+                        # FIN cierra el turno — descartar pending que nunca tuvo objetivo
+                        self._pending_evento = None
+                    else:
+                        mano = pregunta.get('mano', [])
+                        permitir_fin = pregunta.get('permitir_fin', True)
+                        try:
+                            idx = int(resp_str) - 1
+                        except ValueError:
+                            idx = -1
+                        carta = mano[idx] if 0 <= idx < len(mano) else None
+                        if carta:
+                            id_clase = carta.get('idClase', 0)
+                            # Distinguir descarte (permitir_fin=False) de jugar carta
+                            if not permitir_fin:
+                                # Acumular en lista de descarte del turno actual
+                                if not isinstance(self._pending_evento, dict) or self._pending_evento.get('tipo') != 'descarte':
+                                    self._pending_evento = {
+                                        'tipo': 'descarte',
+                                        'jugador': nombre,
+                                        'jugador_id': asking_id,
+                                        'cartas': [],
+                                    }
+                                self._pending_evento['cartas'].append(carta.get('nombre', '?'))
+                            else:
+                                # Emitir descarte pendiente si lo hubiera antes de nueva carta
+                                if self._pending_evento and self._pending_evento.get('tipo') == 'descarte':
+                                    self._emit(self._pending_evento)
+                                    self._pending_evento = None
+                                grupo = _GRUPO_CARTA.get(id_clase, 'equipamiento' if id_clase <= 10 else 'otro')
+                                self._pending_evento = {
+                                    'tipo': 'carta_jugada',
+                                    'jugador': nombre,
+                                    'jugador_id': asking_id,
+                                    'carta': carta.get('nombre', '?'),
+                                    'id_clase': id_clase,
+                                    'grupo': grupo,
+                                    'objetivo': None,
+                                    'objetivo_id': None,
+                                }
+                                # Cartas sin objetivo se emiten ya; ofensivas esperan a elegir_jugador
+                                if grupo not in ('ofensiva',):
+                                    self._emit(self._pending_evento)
+                                    self._pending_evento = None
                     time.sleep(0.6)
 
                 elif tipo == 'elegir_jugador':
@@ -182,15 +207,28 @@ class FlaskIO:
         """
         self.current_jugador = jugador
         self._asking_id = jugador.idJugador
-        # Emitir evento de cambio de turno la primera vez que un bot entra en elegir_carta
-        if jugador.idJugador not in self.human_ids and self._ultimo_turno_anunciado != jugador.idJugador:
-            self._ultimo_turno_anunciado = jugador.idJugador
-            self._emit({
-                'tipo': 'cambio_turno',
-                'jugador': jugador.nombre,
-                'jugador_id': jugador.idJugador,
-            })
+        # Nuevo turno de bot: emitir descarte pendiente del turno anterior y anunciar cambio
+        if jugador.idJugador not in self.human_ids:
+            # Emitir descarte acumulado si cambiamos de jugador
+            if self._pending_evento and self._pending_evento.get('tipo') == 'descarte':
+                if self._pending_evento.get('jugador_id') != jugador.idJugador:
+                    self._emit(self._pending_evento)
+                    self._pending_evento = None
+            if self._ultimo_turno_anunciado != jugador.idJugador:
+                # Limpiar pending_evento de otro bot al cambiar de turno
+                if self._pending_evento and self._pending_evento.get('tipo') == 'carta_jugada':
+                    self._pending_evento = None
+                self._ultimo_turno_anunciado = jugador.idJugador
+                self._emit({
+                    'tipo': 'cambio_turno',
+                    'jugador': jugador.nombre,
+                    'jugador_id': jugador.idJugador,
+                })
         elif jugador.idJugador in self.human_ids:
+            # Turno humano: emitir descarte pendiente si lo hay
+            if self._pending_evento and self._pending_evento.get('tipo') == 'descarte':
+                self._emit(self._pending_evento)
+                self._pending_evento = None
             self._ultimo_turno_anunciado = None
         return self._ask({
             "tipo": "elegir_carta",
