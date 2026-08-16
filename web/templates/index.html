@@ -1336,30 +1336,24 @@ async function poll() {
     }
     if (data.log) renderLog(data.log);
 
-    // Solo re-renderizar la pregunta si realmente cambió
+    // Encolar eventos ANTES de renderizar la pregunta
+    if (data.eventos?.length) {
+      encolarEventos(data.eventos);
+    }
+
+    // Re-renderizar pregunta solo si cambió
     const key = preguntaKey(data.pregunta);
     if (key !== lastPreguntaKey) {
       const prevTipo = window._ultimaPreg?.tipo;
       lastPreguntaKey = key;
       if (data.pregunta) {
-        // Llegó pregunta para el humano — cancelar cualquier animación antes de renderizar
+        // Nueva pregunta: limpiar animaciones y mostrar
         _limpiarAnimaciones();
-        // Mostrar resumen de personajes al salir de la fase de selección
         if (prevTipo === 'elegir_personaje' && data.pregunta.tipo !== 'elegir_personaje') {
           _mostrarResumenPersonajes();
         }
         renderPregunta(data.pregunta);
       } else clearPrompt();
-    }
-
-    // Si hay pregunta humana activa, garantizar que no haya overlay bloqueando
-    if (data.pregunta) {
-      _limpiarAnimaciones();
-    }
-
-    // Encolar eventos siempre; _limpiarAnimaciones ya limpia si hay pregunta activa
-    if (data.eventos?.length) {
-      encolarEventos(data.eventos);
     }
   } catch(e) { /* ignora errores de red transitorios */ }
 }
