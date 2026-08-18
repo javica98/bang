@@ -9,12 +9,15 @@ _ORIG_PRINT = builtins.print
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
+from dotenv import load_dotenv
 from flask import Flask, jsonify, request, render_template
 from bang_game import info_extract, create_players, Juego
 from flask_io import FlaskIO
 from bot_ai import BotAI
+from rag_chat import responder_pregunta
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+load_dotenv(os.path.join(BASE_DIR, ".env"))
 
 app = Flask(__name__)
 app.secret_key = "bang-secret-key"
@@ -305,6 +308,28 @@ def debug():
         "q_size": session["question_q"].qsize() if session.get("question_q") else 0,
         "log_tail": session["log"][-10:],
     })
+
+
+@app.route("/chat", methods=["POST"])
+def chat():
+    """Responde una pregunta sobre las reglas de BANG! usando RAG.
+
+    Espera JSON con ``pregunta`` (str) y opcionalmente ``historial``
+    (lista de turnos previos, formato ``[{"role", "content"}, ...]``) para
+    permitir preguntas de seguimiento dentro de la misma conversación.
+
+    Returns:
+        JSON: ``{"respuesta": str, "fuentes": list[str]}``
+    """
+    data = request.json or {}
+    pregunta = (data.get("pregunta") or "").strip()
+    historial = data.get("historial") or []
+
+    if not pregunta:
+        return jsonify({"respuesta": "Escribe una pregunta sobre las reglas.", "fuentes": []})
+
+    resultado = responder_pregunta(pregunta, historial)
+    return jsonify(resultado)
 
 
 if __name__ == "__main__":

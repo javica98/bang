@@ -764,6 +764,55 @@ body {
 .log-msg { padding: 3px 0; border-bottom: 1px solid var(--surface-high); }
 .log-msg.important { color: var(--accent); font-weight: 700; }
 
+/* ── CHAT DE REGLAS DRAWER ───────────────────────────── */
+#chat-drawer {
+  position: fixed;
+  bottom: 58px; left: 0; right: 0;
+  height: 60vh;
+  background: var(--surface-low);
+  border-top: 3px solid var(--outline);
+  border-radius: 18px 18px 0 0;
+  z-index: 55;
+  display: none;
+  flex-direction: column;
+}
+#chat-drawer.open { display: flex; }
+#chat-drawer-header {
+  padding: 10px 14px;
+  border-bottom: 2px solid var(--outline-soft);
+  display: flex; justify-content: space-between; align-items: center;
+}
+#chat-drawer-header span { font-family: var(--font-mono); font-size: 11px; font-weight: 700; letter-spacing: 2px; color: var(--accent); text-transform: uppercase; }
+#chat-msgs { flex: 1; overflow-y: auto; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; }
+.chat-msg {
+  max-width: 85%;
+  padding: 9px 12px;
+  border-radius: 12px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.45;
+  white-space: pre-wrap;
+}
+.chat-msg.assistant { align-self: flex-start; background: var(--surface-high); color: var(--on-surface); border-bottom-left-radius: 3px; }
+.chat-msg.user { align-self: flex-end; background: var(--accent); color: var(--accent-text); border-bottom-right-radius: 3px; }
+.chat-msg.error { align-self: flex-start; background: var(--red-dim); color: #fff; border-bottom-left-radius: 3px; }
+.chat-msg .chat-fuentes { display: block; margin-top: 6px; font-family: var(--font-mono); font-size: 10px; font-weight: 700; letter-spacing: 0.5px; opacity: 0.7; text-transform: uppercase; }
+.chat-msg.loading { align-self: flex-start; background: var(--surface-high); color: var(--on-muted); font-style: italic; }
+#chat-input-row { display: flex; gap: 8px; padding: 10px 14px; border-top: 2px solid var(--outline-soft); }
+#chat-input {
+  flex: 1;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 2px solid var(--outline-soft);
+  background: var(--surface-top);
+  color: var(--on-surface);
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 13px;
+}
+#chat-input:focus { outline: none; border-color: var(--accent); }
+
 /* ── MENU MODAL ──────────────────────────────────────── */
 #menu-modal { display: none; position: fixed; inset: 0; background: rgba(10,6,20,0.85); z-index: 100; align-items: center; justify-content: center; }
 #menu-modal.open { display: flex; }
@@ -884,6 +933,10 @@ body {
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 10h16M4 14h10"/></svg>
       LOG
     </button>
+    <button class="nav-btn" id="nav-chat" onclick="toggleChat()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+      REGLAS
+    </button>
     <button class="nav-btn" id="nav-menu" onclick="toggleMenu()">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>
       MENÚ
@@ -899,6 +952,24 @@ body {
     <button class="pixel-btn ghost" style="padding:4px 10px;font-size:11px;" onclick="toggleLog()">✕</button>
   </div>
   <div id="log-msgs"></div>
+</div>
+
+<!-- CHAT DE REGLAS DRAWER -->
+<div id="chat-drawer">
+  <div id="chat-drawer-header">
+    <span>🤠 Pregunta las reglas</span>
+    <button class="pixel-btn ghost" style="padding:4px 10px;font-size:11px;" onclick="toggleChat()">✕</button>
+  </div>
+  <div id="chat-msgs">
+    <div class="chat-msg assistant">
+      ¡Howdy! Pregúntame lo que quieras sobre las reglas de BANG! — cartas, personajes, distancias, turnos...
+    </div>
+  </div>
+  <div id="chat-input-row">
+    <input type="text" id="chat-input" placeholder="¿Qué hace el Barril?" autocomplete="off"
+           onkeydown="if(event.key==='Enter') enviarPreguntaChat()">
+    <button class="pixel-btn primary" id="chat-send-btn" style="padding:10px 16px;font-size:12px;" onclick="enviarPreguntaChat()">➤</button>
+  </div>
 </div>
 
 <!-- MENU MODAL -->
@@ -984,6 +1055,68 @@ function toggleLog() {
 }
 function toggleMenu() {
   document.getElementById('menu-modal').classList.toggle('open');
+}
+
+// ── CHAT DE REGLAS (RAG) ────────────────────────────────
+let _chatHistorial = [];   // [{role: 'user'|'assistant', content: '...'}, ...]
+let _chatEnviando = false;
+
+function toggleChat() {
+  document.getElementById('chat-drawer').classList.toggle('open');
+  document.getElementById('nav-chat').classList.toggle('active');
+  if (document.getElementById('chat-drawer').classList.contains('open')) {
+    document.getElementById('chat-input').focus();
+  }
+}
+
+function _chatAgregarMensaje(texto, clase, fuentes) {
+  const msgs = document.getElementById('chat-msgs');
+  const div = document.createElement('div');
+  div.className = 'chat-msg ' + clase;
+  div.textContent = texto;
+  if (fuentes && fuentes.length) {
+    const small = document.createElement('span');
+    small.className = 'chat-fuentes';
+    small.textContent = '📖 ' + fuentes.join(' · ');
+    div.appendChild(small);
+  }
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+  return div;
+}
+
+async function enviarPreguntaChat() {
+  if (_chatEnviando) return;
+  const input = document.getElementById('chat-input');
+  const pregunta = input.value.trim();
+  if (!pregunta) return;
+
+  input.value = '';
+  _chatAgregarMensaje(pregunta, 'user');
+  _chatEnviando = true;
+  document.getElementById('chat-send-btn').disabled = true;
+  const loadingMsg = _chatAgregarMensaje('Consultando el reglamento...', 'loading');
+
+  try {
+    const resp = await fetch('/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ pregunta, historial: _chatHistorial }),
+    });
+    const data = await resp.json();
+    loadingMsg.remove();
+    _chatAgregarMensaje(data.respuesta || 'No he podido generar una respuesta.', 'assistant', data.fuentes);
+    _chatHistorial.push({ role: 'user', content: pregunta });
+    _chatHistorial.push({ role: 'assistant', content: data.respuesta || '' });
+    // Limita el historial enviado en cada request para no hacerlo crecer sin límite
+    if (_chatHistorial.length > 12) _chatHistorial = _chatHistorial.slice(-12);
+  } catch (e) {
+    loadingMsg.remove();
+    _chatAgregarMensaje('Error de conexión con el chat. Inténtalo de nuevo.', 'error');
+  } finally {
+    _chatEnviando = false;
+    document.getElementById('chat-send-btn').disabled = false;
+  }
 }
 
 // ── NAIPES — símbolo y color por palo ──────────────────

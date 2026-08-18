@@ -30,3 +30,6 @@ instance/
 
 # Logs
 *.log
+
+# Chat RAG: índice vectorial regenerable con `python scripts/ingest_rules.py`
+data/chroma/

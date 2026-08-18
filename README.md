@@ -13,6 +13,7 @@ Los jugadores asumen roles secretos — Sheriff, Ayudante, Forajido o Renegado �
 - **22 tipos de cartas**: Bang, Fallaste, Cerveza, Dinamita, Cárcel, Almacén, Duelo…
 - Interfaz web con diseño **Retro Pixel-Art** (Dust & Dithering)
 - Versión alternativa en **Pygame** (modo consola local)
+- **Chat de reglas con RAG**: pregunta en lenguaje natural sobre las reglas del juego
 
 ---
 
@@ -37,6 +38,29 @@ python server.py
 
 Abre el navegador en **http://localhost:5000**
 
+### Chat de reglas (RAG)
+
+El botón **REGLAS** de la partida abre un chat que responde preguntas sobre las
+reglas de BANG! basándose en el reglamento oficial (`docs/rules_source.pdf`).
+
+1. Copia `.env.example` a `.env` y añade tu clave de la API de Anthropic:
+   ```bash
+   cp .env.example .env
+   # edita .env y pon ANTHROPIC_API_KEY=sk-ant-...
+   ```
+2. Genera el índice de búsqueda semántica (solo hace falta una vez, o cada
+   vez que cambie `docs/rules_source.pdf`). Descarga un modelo de embeddings
+   (~470 MB) la primera vez que se ejecuta:
+   ```bash
+   python scripts/ingest_rules.py
+   ```
+3. Arranca el servidor normalmente (`cd web && python server.py`) y usa el
+   botón REGLAS durante la partida.
+
+El chat solo responde preguntas relacionadas con BANG! y se basa únicamente en
+los fragmentos del reglamento recuperados para cada pregunta (RAG), no en
+conocimiento general del modelo.
+
 ### Versión Pygame
 
 ```bash
@@ -54,9 +78,16 @@ bang/
 ├── cartas.csv            # Definición de las 80 cartas
 ├── personajes.txt        # Definición de los 16 personajes
 ├── roles.txt             # Roles por número de jugadores
+├── rag_config.py         # Constantes compartidas del chat RAG (rutas, modelo)
+├── docs/
+│   └── rules_source.pdf  # Reglamento oficial (fuente del chat de reglas)
+├── scripts/
+│   └── ingest_rules.py   # Extrae, trocea e indexa el PDF en Chroma
+├── data/                 # Índice vectorial generado (data/chroma/, gitignored)
 ├── web/
 │   ├── server.py         # Servidor Flask
 │   ├── flask_io.py       # Adaptador IO para la web
+│   ├── rag_chat.py       # Recuperación + llamada a Claude para el chat de reglas
 │   └── templates/
 │       └── index.html    # Frontend (HTML + CSS + JS)
 ├── bang_pygame_io.py     # Adaptador IO para Pygame

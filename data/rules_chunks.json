@@ -1,0 +1,272 @@
+[
+  {
+    "seccion": "Introducción",
+    "titulo": "Introducción",
+    "texto": "BANG! es un juego de duelos entre un grupo de Forajidos y su objetivo principal, el \nSheriff, al más puro estilo de los Spaghetti Wésterns. Los Alguaciles, de incógnito, ayudan \nal Sheriff, pero entre todos ellos hay un Renegado que persigue sus propios fi  nes.\nEn BANG! cada jugador interpreta alguno de estos Roles y representa a un Personaje \ninspirado en algún famoso del Salvaje Oeste.",
+    "id": "chunk_000"
+  },
+  {
+    "seccion": "Contenidos",
+    "titulo": "Contenidos",
+    "texto": "7 cartas de Roles: \n- 1 Sheriff\n- 2 Alguaciles \n- 3 Forajidos \n- 1 Renegado\n16 cartas de \nPersonaje\n30 fi  chas de Bala",
+    "id": "chunk_001"
+  },
+  {
+    "seccion": "Objetivo del juego",
+    "titulo": "Objetivo del juego",
+    "texto": "Cada jugador tiene su propio objetivo:\n80 cartas de juego\n7 tableros de juego\n7 cartas de Resumen\nEl Sheriff: debe eliminar a todos \nlos Forajidos y al Renegado, \npara proteger la ley y el orden.\nForajidos: deben matar al \nSheriff, pero no tienen nin-\ngún escrúpulo en eliminarse \nentre ellos para conseguir la \nrecompensa.\nAlguaciles: ayudan y protegen \nal Sheriff, y comparten su obje-\ntivo a cualquier coste.\nRenegado: quiere ser el próxi-\nmo Sheriff, así que su objetivo \nes ser el último hombre en pie.\n®\n®\nEL JUEGO DEL SALVAJE OESTE\nSheriff\n¡Mata a todos los Forajidos y al Renegado!\nForajido\n¡Mata al Sheriff!\nPuede robar su primera \ncarta de la mano de \notro jugador.\nJesse Jones\nRemington\nBANG!\n¡BANG!\n¡Has Fallado!\nRecupera un \npunto de vida\nObliga a descartar \nuna carta\nRoba una carta\nUn jugador cualquiera\nTodos los demás \njugadores\nCualquier jugador \ndentro de tu alcance\nCualquier jugador a una \ndistancia menor o igual a \nla indicada por el número\nDetalles en el reglamento",
+    "id": "chunk_002"
+  },
+  {
+    "seccion": "Preparación",
+    "titulo": "Preparación",
+    "texto": "Antes de la primera partida, debes destroquelar cuidadosamente las fi  chas de Bala. \nCada jugador recibe un tablero de juego y lo sitúa frente a sí. En él colocará su Rol, su \nPersonaje, su Arma y sus Balas.\nPrepara un mazo de cartas de Rol, compuesto por las siguientes cartas dependiendo \ndel número de jugadores:\n4 jugadores: 1 Sheriff, 1 Renegado y 2 Forajidos.\n5 jugadores: 1 Sheriff, 1 Renegado, 2 Forajidos y 1 Alguacil.\n6 jugadores: 1 Sheriff, 1 Renegado, 3 Forajidos y 1 Alguacil.\n7 jugadores: 1 Sheriff, 1 Renegado, 3 Forajidos y 2 Alguaciles.\nBaraja las cartas de Rol, y entrega una boca abajo a cada jugador. \nQuien reciba el Sheriff lo muestra, y deja la carta boca arriba \nsobre la mesa. Los demás jugadores también miran el Rol que les ha \ncorrespondido pero deben mantenerlo en secreto.\nBaraja los Personajes y entrega una de estas cartas boca arriba\na cada uno de los jugadores, que deberán leer entonces el nombre \nde su Personaje y su Capacidad en voz alta. Cada jugador recibe \na continuación tantas Balas como se muestra en la parte superior \nderecha de su carta de Personaje.\nEl Sheriff recibe una Bala adicional al empezar la partida. Si su \ncarta de Personaje muestra 3 balas, recibe 4; Si muestra 4 balas, \nrecibe 5.\nDevuelve a la caja, sin que se vean, el resto de los Roles, junto al resto de Personajes \ny tableros.\nBaraja las cartas de juego, y entrega boca abajo a cada jugador tantas cartas como \nbalas muestre su carta de Personaje. Coloca el resto de las cartas de juego boca abajo \nen medio de la mesa, como mazo de robo. Deja sitio para la pila de descartes.\nNota: en tus primeras partidas, puedes probar una versión simplifi  cada \ndel juego dejando las cartas con el símbolo de un libro en la caja antes \nde empezar.\nPersonajes\nTodos los Personajes tienen capacidades especiales, que los hacen únicos. Las Balas que \ntienen te indican con cuantos puntos de vida comienzas la partida; es decir, cuántos \nimpactos de bala (o impactos) puedes recibir antes de ser eliminado de la partida (el \nPersonaje muere). Además, las Balas también indican cuántas cartas puedes tener en \ntu mano al fi  nal del turno (a esto se le llama límite de la mano).\nEjemplo: Jesse Jones tiene 4 puntos de vida. Puede recibir 4 impactos antes de ser \neliminado de la partida. Además, puede quedarse con 4 cartas en la mano al fi  nal de \nsu turno.\nSi durante la partida Jesse Jones pierde un punto de vida y se queda con 3 Balas, sólo \npuede quedarse con 3 cartas en su mano al fi  nal del turno. ¡Pero no temas! Los puntos \nde vida pueden recuperarse.\nPuede robar su primera \ncarta de la mano de \notro jugador.\nJesse Jones\nde vida pueden recuperarse.\npuede quedarse con 3 cartas en su mano al fi  nal del turno. ¡Pero no temas! Los puntos \nde vida pueden recuperarse.\nde vida pueden recuperarse.",
+    "id": "chunk_003"
+  },
+  {
+    "seccion": "La partida",
+    "titulo": "La partida",
+    "texto": "El Sheriff juega en primer lugar. La partida se desarrolla en turnos sucesivos, pasando \nde un jugador al siguiente en la dirección de las agujas del reloj. El turno de cada \njugador se divide en 3 fases.\n1. Roba 2 cartas.\n2. Juega cualquier número de cartas.\n3. Descarta el exceso de cartas.\nRoba 2 cartas\nRoba las dos cartas superiores del mazo de robo. Cuando el mazo de robo se quede sin \ncartas, baraja la pila de descartes para crear un nuevo mazo de robo.\nJuega cualquier número de cartas\nTras robar las dos cartas, puedes jugar cualquier número de cartas, bien para acercarte \na la victoria, o bien para frustrar los planes de tus adversarios, intentando eliminarlos. \nSólo puedes jugar cartas durante tu turno (a excepción de la cartas ¡Fallaste! y Cerveza, \ncomo podrás ver más adelante). No estás obligado a jugar cartas durante esta fase. \nPuedes jugar cualquier número de cartas, con sólo estas tres limitaciones:\n• Puedes jugar una única carta ¡BANG! por turno. Esta limitación sólo se aplica a \nlas cartas ¡BANG!, no a las cartas con el símbolo \n. Esta limitación sólo se aplica a \n.\n• Sólo puedes tener en juego una copia de cualquier carta. Una carta es copia de \notra si tienen el mismo nombre.\n• Sólo puedes tener un Arma en juego. Cuando juegues una nueva Arma, deberás \ndescartar la que tengas en juego.\nEjemplo: si tienes un Barril en juego, no puedes jugar otro, puesto que tendrías dos copias \nde la misma carta en juego.\nHay dos tipos de cartas: cartas con el borde marrón (que se juegan y descartan) y \ncartas con el borde azul (Armas y otros objetos).\nLas cartas con el borde marrón se juegan colocándolas directamente en la pila de \ndescartes y aplicando su efecto en ese mismo momento (tal como se explica más \nadelante).\nLas cartas con el borde azul se colocan boca arriba \nfrente a ti (con la excepción de la Cárcel). Las cartas \nazules así colocadas “están en juego”. El efecto de estas \ncartas dura hasta que se descartan o se retiran por \nalguna razón (por ejemplo debido a una carta La Ingenua \nExplosiva) o se verifi  que una condición especial (como \nen la carta Dinamita). No hay límite al número de cartas \nque puedes tener en juego, siempre que no tengan el \nmismo nombre.\nDescarta el exceso de cartas\nUna vez hayas completado la segunda fase (porque no quieras o puedas jugar más \ncartas), debes descartarte del exceso de cartas que tengas en la mano. Recuerda que el \nlímite de tu mano al fi  nal del turno es igual al número de Balas (es decir, puntos de \nvida) que te queden. Después, le corresponde comenzar su turno al siguiente jugador \nen la dirección de las agujas del reloj.\n). No hay límite al número de cartas \nque puedes tener en juego, siempre que no tengan el \n). No hay límite al número de cartas \nque puedes tener en juego, siempre que no tengan el \nDuelo\nUn jugador descarta un \n¡BANG!, después lo haces tú, \netc. El primero de los dos \nque no descarte un ¡BANG!\npierde un punto de vida.\nUn jugador descarta un \n después lo haces tú, \netc. El primero de los dos \n¡BANG!\n¡BANG!\npierde un punto de vida.\nBarril\nDistancia entre jugadores\nLa distancia entre dos jugadores es el número \nmínimo de espacios entre ellos, ya sea en el sentido \nde las agujas del reloj o en el contrario (ver la fi  gura \nadyacente). La distancia es muy importante, porque \nafecta a todas las cartas que muestran un dibujo de \nun punto de mira. Normalmente sólo puedes alcanzar \na objetivos (jugadores o cartas) a una distancia de 1\n(fíjate en el \n de tu Colt .45 que aparece en tu \ntablero de juego). Cuando un Personaje es eliminado, \nya no se tiene en cuenta al calcular la distancia, y por \ntanto algunos de los jugadores restantes se acercarán \ncuando alguien sea eliminado.\nEliminar a un Personaje\nTu Personaje morirá al perder su último punto de vida, y la partida terminará para \nti, a menos que juegues de inmediato una Cerveza (ver más adelante). Cuando te \neliminen de la partida, muestra tu Rol y devuelve todas las cartas que tuvieras en juego \no en la mano a la pila de descartes.\nCastigos y recompensas\n• Si el Sheriff elimina a un Alguacil, el Sheriff debe descartar todas las cartas que \ntenga en juego y en la mano.\n• Cualquier jugador que elimine a un Forajido (incluso si el jugador que lo elimina \nes también un forajido) debe robar del mazo de robo una recompensa de 3 cartas.",
+    "id": "chunk_004"
+  },
+  {
+    "seccion": "Final de la partida",
+    "titulo": "Final de la partida",
+    "texto": "La partida termina cuando se cumple una de las siguientes condiciones:\n• El Sheriff es eliminado. Si el Renegado es el último jugador que queda, gana la \npartida. En caso contrario, ganan los Forajidos.\n• Todos los Forajidos y el Renegado son eliminados. Ganan el Sheriff y los \nAlguaciles.\nEjemplo 1: todos los Forajidos son eliminados, pero el Renegado permanece en pie. En ese \ncaso, la partida continúa. El Renegado debe enfrentarse al Sheriff y sus Alguaciles solo.\nEjemplo 2: el Sheriff muere, pero todos los Forajidos han sido eliminados, y un Alguacil y \nel Renegado permanecen en pie. ¡Los Forajidos ganan la partida! ¡Han logrado su objetivo \na costa de sus propias vidas!",
+    "id": "chunk_005"
+  },
+  {
+    "seccion": "Nueva partida",
+    "titulo": "Nueva partida",
+    "texto": "Si juegas varias partidas seguidas, los jugadores que permanezcan “vivos” al fi  nal \nde una partida pueden, si quieren, conservar sus Personajes (pero no las cartas que \ntengan en la mano o en juego) para la siguiente partida. Los jugadores que hayan sido \neliminados deben robar un nuevo Personaje al azar.\nSi quieres dar a cada jugador la oportunidad de hacer de Sheriff, puedes pasar el Rol de \nSheriff de jugador en jugador, asignando al azar el resto de Roles.\nde las agujas del reloj o en el contrario (ver la fi  gura \nun punto de mira. Normalmente sólo puedes alcanzar \nya no se tiene en cuenta al calcular la distancia, y por \nD\nC\nB\nA\nF\nE\nAhora que ya estás familiarizado con las reglas de BANG!, veamos en detalle qué hacen \nlas cartas.",
+    "id": "chunk_006"
+  },
+  {
+    "seccion": "Las cartas",
+    "titulo": "Armas",
+    "texto": "Armas\nComienzas la partida con un Colt .45. Esto no se representa mediante \nninguna carta, puesto que ese Colt está impreso en tu tablero de juego. \nUsando el Colt .45 puedes impactar a objetivos que estén situados \na una distancia de 1 (es decir, que sólo puedes alcanzar con él a \njugadores situados directamente a tu izquierda o a tu derecha).\nPara atacar a los jugadores que se encuentren a una distancia mayor, \ndeberás poner en juego un Arma mayor. Colócala sobre el Colt .45. \nPuedes reconocer las Armas por su borde azul sin agujeros de bala, \nsu ilustración en blanco y negro y el número dentro de un punto \nde mira (como puede verse en la fi  gura adjunta), que representa la \nmáxima distancia de alcance. El Arma en juego sustituye al Colt \n.45, hasta que se retira la carta por alguna razón. Las Armas jugadas \nen el tablero pueden ser robadas (por ejemplo mediante una carta \n¡Pánico!) o puede que tengas que descartarlas (por ejemplo debido al \nefecto de una carta La Ingenua Explosiva). La única Arma que nunca \npuedes perder es tu viejo compañero, el Colt .45.\nSólo puedes tener en juego un Arma. Si quieres poner en juego un \nArma y tienes ya una en juego, debes descartar esta última.\nNota importante: las Armas no cambian la distancia entre jugadores. \nRepresentan la distancia máxima alcanzable cuando disparas.",
+    "id": "chunk_007"
+  },
+  {
+    "seccion": "Las cartas",
+    "titulo": "Volcanic",
+    "texto": "Volcanic\nCon este Arma en juego puedes jugar cualquier número de cartas \n¡BANG! en tu turno. Puedes jugarlas contra uno o varios objetivos, \nsiempre que estén a una distancia de 1.",
+    "id": "chunk_008"
+  },
+  {
+    "seccion": "Las cartas",
+    "titulo": "¡BANG! y ¡Fallaste!",
+    "texto": "¡BANG! y ¡Fallaste!\nLas cartas ¡BANG! son el método principal para \nreducir los puntos de vida de otros jugadores. Si quieres jugar \nuna carta ¡BANG! para atacar a otro jugador, determina primero la \ndistancia a la que se encuentra ese jugador y si tu Arma es capaz \nde alcanzarle a esa distancia.\nEjemplo 1: volvamos a la fi  gura anterior, en la que se veían las \ndistancias entre los jugadores. Imaginemos que Ana (A) quiere \ndispararle a Carlos (C) (vamos, que Ana quiere jugar una carta \n¡BANG! contra Carlos). Carlos está a una distancia de 2, así que Ana \nnecesita un Arma cuyo  alcance sea mayor para disparar a esa distancia. Un \nSchofi  eld, un Remington, una Carabina Revólver, un Winchester, pero no una Volcanic o \nel Colt .45. Si tuviera una Mira Telescópica en juego, Ana vería a Carlos a una distancia \nde 1, y podría dispararle con cualquier Arma. Pero si Carlos tuviera un Mustang en juego, \nlas dos cartas (la Mira Telescópica y el Mustang) se contrarrestarían (+1 y -1) y Carlos \nseguiría estando a una distancia de 2.\nEjemplo 2: si Daniel (D) tuviese un Mustang en juego, Ana lo vería a una distancia de 4. \nPara poder disparar a Daniel, Ana tendría que poner en juego un Arma capaz de alcanzar \nuna distancia de 4.\n. \nreducir los puntos de vida de otros jugadores. Si quieres jugar \nVolcanic\nPuedes jugar tantos \n¡BANG! como quieras.\nPuedes reconocer las Armas por su borde azul sin agujeros de bala, \nsu ilustración en blanco y negro y el número dentro de un punto \nde mira (como puede verse en la fi  gura adjunta), que representa \nmáxima distancia\n.45, hasta que se retira la carta por alguna razón. Las Armas jugadas \nen el tablero pueden ser robadas (por ejemplo mediante una carta \n¡Pánico!)\nRemington\n¡BANG! y ¡Fallaste!\nLas cartas \nreducir los puntos de vida de otros jugadores. Si quieres jugar \nuna carta \ndistancia a la que se encuentra ese jugador\nde alcanzarle a esa distancia\nEjemplo 1: volvamos a la fi  gura anterior, en la que se veían las \nnecesita un Arma cuyo  alcance sea mayor para disparar a esa distancia. Un \nBANG!\nSi un ¡BANG! te alcanza \npuedes jugar de inmediato \nun ¡Fallaste! para cancelar \nel disparo (incluso si no es \ntu turno). Si no lo haces, \npierdes un punto de vida \n(descartas una Bala). Las \nBalas descartadas se colocan \nen un montón en medio de la \nmesa. Si no te quedan Balas \n(es decir, pierdes tu último punto de vida) \nquedas eliminado de la partida, a menos que \njuegues una carta Cerveza (ver más abajo). \nSólo puedes cancelar disparos dirigidos contra \nti. La carta ¡BANG! se descarta, incluso si ésta \nha sido cancelada.\nCerveza \nEsta carta te permite recuperar\nun punto de vida. Coge una \nBala del montón. Recuerda \nsiempre que no puedes tener \nmás puntos de vida que \ntu cantidad de inicio. La \nCerveza no puede usarse para \nayudar a otros jugadores. La \nCerveza puede jugarse de \ndos formas. Además de poder jugarse en \ntu turno como el resto de cartas, la Cerveza\ntambién puede usarse fuera de tu turno, pero \nsólo si has recibido un impacto que sería letal\n(es decir, un impacto que te haría perder tu \núltimo punto de vida). No puedes usarla de este \nmodo si simplemente has recibido un impacto.\nLa Cerveza no tiene efecto si sólo quedan 2 \njugadores en la partida. En esta caso, si juegas \nuna Cerveza no ganas ningún punto de vida. \nEjemplo: te quedan 2 puntos de vida y sufres 3 \npuntos de daño de una Dinamita. Si juegas 2 \nCervezas permanecerás con vida y te quedará \n1 punto de vida. Si sólo tuvieras 1 Cerveza que \njugar, morirías porque sólo te permitiría ganar \n1 punto de vida, y eso te dejaría con 0 puntos \nde vida.\nSaloon\nLas cartas que tienen dos \nlíneas de símbolos tienen dos \nefectos simultáneos, uno por \ncada línea. En el Saloon los \nsímbolos de la primera línea \nsignifi  can “Recupera un punto \nde vida” y que esto se aplica a \n“Todos los demás jugadores”,",
+    "id": "chunk_009"
+  },
+  {
+    "seccion": "Las cartas",
+    "titulo": "Los símbolos de las cartas",
+    "texto": "Los símbolos de las cartas\nEn cada carta hay uno o varios sím-\nbolos que muestran su efecto:\nFunciona como un ¡BANG!: el \nafectado pierde un punto de vida.\nFunciona como un ¡Fallaste!: \nanula el efecto de un \n¡Fallaste!\n.\nPermite recuperar un punto \nde vida. Sólo el jugador afecta-\ndo se benefi  cia de los efectos de esta \ncarta, a menos que se especifi  que \notra cosa.\nRoba una carta. Si se especifi  ca \n“Un jugador cualquiera” (ver el \nsímbolo correspondiente) pue-\ndes robar una carta al azar de \nsu mano, o puedes quitarle una que \ntenga en juego. Si no se indica nin-\ngún objetivo, roba una carta del mazo \nde robo. En cualquiera de los casos \nanteriores, añade la carta obtenida a \ntu mano.\nObliga a descartar una carta. \nPuedes forzar al jugador elegido a \ndescartar una carta de su mano \nal azar, o puedes elegir y descar-\ntar una de sus cartas en juego.\nIndica que puedes aplicar el \nefecto de la carta a un jugador \ncualquiera independientemente de la \ndistancia que te separe de él.\nIndica que el efecto de la \ncarta se aplica a todos los \ndemás jugadores (no se \naplica a quien haya jugado la carta), \nindependientemente de la distancia \nque te separe de ellos.\nIndica que el efecto de la carta \nse aplica a un jugador cual-\nquiera que esté dentro de tu \nalcance.\nIndica que el efecto de la carta \nse aplica a un jugador cual-\nquiera situado a una distancia \nmenor o igual que la indicada por el \nnúmero. Las cartas Mustang y Mira \nTelescópica pueden alterar esta \ndistancia.\nFallaste!\ndos formas. Además de poder jugarse en",
+    "id": "chunk_010"
+  },
+  {
+    "seccion": "Las cartas",
+    "titulo": "Cerveza",
+    "texto": "Cerveza",
+    "id": "chunk_011"
+  },
+  {
+    "seccion": "Las cartas",
+    "titulo": "Saloon",
+    "texto": "Saloon\ny los de la segunda línea signifi  can “Recupera un punto de vida” (puesto que no se \nespecifi  ca otra cosa, este último efecto sólo se aplica a quien jugo la carta. El efecto fi  nal \nes que todos los jugadores recuperan un punto de vida. No puedes jugar un Saloon\nfuera de turno cuando has perdido tu último punto de \nvida. ¡El Saloon no es una Cerveza!",
+    "id": "chunk_012"
+  },
+  {
+    "seccion": "Las cartas",
+    "titulo": "Diligencia y Wells Fargo",
+    "texto": "Diligencia y Wells Fargo\nLos símbolos signifi  can “Roba 2 cartas” (3 en el caso de \nWells Fargo) de la parte superior del mazo de robo.",
+    "id": "chunk_013"
+  },
+  {
+    "seccion": "Las cartas",
+    "titulo": "Almacén",
+    "texto": "Almacén\nCuando juegues esta carta, roba boca arriba tantas cartas como \njugadores queden aún en la partida, y colócalas sobre la mesa. \nEmpezando por ti y continuando en el sentido de las agujas del reloj, \ncada jugador elige una de las cartas y la añade a su mano.",
+    "id": "chunk_014"
+  },
+  {
+    "seccion": "Las cartas",
+    "titulo": "¡Pánico!",
+    "texto": "¡Pánico!\nLos símbolos de la carta signifi  can “Roba una carta” de “Un jugador \nsituado a una distancia de 1”. Esta distancia no puede ser modifi  cada \nusando Armas, pero sí por cartas como Mustang o Mira Telescópica.",
+    "id": "chunk_015"
+  },
+  {
+    "seccion": "Las cartas",
+    "titulo": "La Ingenua Explosiva",
+    "texto": "La Ingenua Explosiva\nObliga a “Descartar una carta” a “Un jugador cualquiera”, \nindependientemente de la distancia que te separe de él.",
+    "id": "chunk_016"
+  },
+  {
+    "seccion": "Las cartas",
+    "titulo": "Ametralladora Gatling",
+    "texto": "Ametralladora Gatling\nLa Ametralladora Gatling dispara “un ¡BANG!” a “Todos los demás \njugadores”, independientemente de la distancia. Aunque la \nAmetralladora Gatling dispare un ¡BANG! a los demás jugadores, no \nse considera una carta ¡BANG!. En tu turno puedes jugar todas las \nAmetralladoras Gatling que quieras, pero sólo una carta ¡BANG!.\ndispara “un \n ¡BANG!\njugadores”, independientemente de la distancia. Aunque la \n dispare un \n ¡BANG!\n a los demás jugadores, \n¡BANG!\n a los demás jugadores, \n¡BANG!\n¡BANG!\n. En tu turno puedes jugar todas las \n que quieras, pero sólo una carta \nAlmace\n’\nn\nDales la vuelta a tantas \ncartas como jugadores. \nCada jugador recibe una.\nPa\n’\nnico!\nObliga a “Descartar una carta” a “Un jugador cualquiera”, \nindependientemente de la distancia que te separe de él.\nLa Ingenua \nExplosiva\nAmetralladora\nGatling\nWells Fargo\nWells Fargo\nDiligencia",
+    "id": "chunk_017"
+  },
+  {
+    "seccion": "Las cartas",
+    "titulo": "¡Indios!",
+    "texto": "¡Indios!\nCada jugador, excluyendo al que haya jugado la carta, debe descartar \nuna carta ¡BANG! o perder un punto de vida. Las cartas ¡Fallaste!  y \nBarril no tienen efecto en este caso.",
+    "id": "chunk_018"
+  },
+  {
+    "seccion": "Las cartas",
+    "titulo": "Duelo",
+    "texto": "Duelo\nCon esta carta puedes desafi  ar a cualquier jugador \na un duelo (mirándole fi  jamente a los ojos), \nindependientemente de la distancia que te separe \nde él. El jugador desafi  ado puede descartar una carta \n¡BANG!. Si lo hace, ahora eres tú quien puede  descartar una carta \n¡BANG!, y así sucesivamente. El primero de los dos implicados en el \ndesafío que no descarte una carta ¡BANG! pierde un punto de vida, \ny el duelo termina. No se pueden jugar cartas ¡Fallaste!  ni usar el \nBarril durante un duelo. El Duelo no es una carta ¡BANG!.",
+    "id": "chunk_019"
+  },
+  {
+    "seccion": "Las cartas",
+    "titulo": "Mustang",
+    "texto": "Mustang\nCuando tienes un caballo Mustang en juego, la distancia entre tú y \nlos demás jugadores aumenta en 1. Sin embargo, tú sigues viendo al \nresto de jugadores a la misma distancia.\nEjemplo: En la fi  gura que vimos antes, si Ana (A) tiene un Mustang en \njuego, Berta (B) y Fernando (F) la ven a una distancia de 2; Carlos (C) \ny Emma (E), a una distancia de 3; y Daniel (D), a una distancia de 4, \nmientras que Ana sigue viéndolos a todos a la distancia habitual.",
+    "id": "chunk_020"
+  },
+  {
+    "seccion": "Las cartas",
+    "titulo": "Mira Telescópica",
+    "texto": "Mira Telescópica\nSi tienes en juego una Mira Telescópica la distancia a la que ves a \ntodos los demás jugadores se reduce en 1. Sin embargo, los demás \njugadores te ven a ti a la distancia normal. Cualquier distancia \ninferior a 1 se considera de 1.\nEjemplo: en la fi  gura que vimos antes, si Ana (A) tiene una Mira \nTelescópica, así que ve a Benjamín (B) y a Fernando (F) a una \ndistancia de 1, a Carlos (C) y a Emma (E) a una distancia de 1, y \na Daniel (D) a una distancia de 2, mientras que todos ellos siguen \nviendo a Ana a la distancia habitual.",
+    "id": "chunk_021"
+  },
+  {
+    "seccion": "Las cartas",
+    "titulo": "¡Desenfunda!",
+    "texto": "¡Desenfunda!\nEn algunas cartas (",
+    "id": "chunk_022"
+  },
+  {
+    "seccion": "Las cartas",
+    "titulo": "Barril",
+    "texto": "Barril,",
+    "id": "chunk_023"
+  },
+  {
+    "seccion": "Las cartas",
+    "titulo": "Cárcel",
+    "texto": "Cárcel ) se muestran palos de \npóker y valores, y a continuación un signo de igualdad \n(=) y sus efectos. Para usar una carta de este tipo debes \n“Desenfundar”. Desenfundar consiste en darle la vuelta a \nla primera carta del mazo de robo y mostrársela a todos. A \nesta carta se la denomina carta desenfundada.\nSi el símbolo y el valor de la carta desenfundada (que se encuentran en la parte inferior \nizquierda de la carta) coinciden con los de la carta que intentas usar, has desenfundado \ncon éxito, y el efecto se aplica. Si el palo o el valor de la carta desenfundada no coinciden \ncon los especifi  cados en la carta que quieres usar, el efecto de esta última carta no \nse aplica... ¡mala suerte! En cualquiera de los dos casos, la carta desenfundada se \ndescarta sin tener en cuenta sus posibles efectos. \n descartar una carta \nIndios!\nTodos los demás jugadores \ndeben descartar un ¡BANG! \no perder un punto de vida.\nDuelo\nCon esta carta puedes desafi  ar a cualquier jugador \na un duelo (mirándole fi  jamente a los ojos), \nindependientemente de la distancia que te separe \nde él. El jugador desafi  ado \n¡BANG!\nDuelo\nUn jugador descarta un \n¡BANG!, después lo haces tú, \netc. El primero de los dos \nque no descarte un ¡BANG! \npierde un punto de vida.\nMustang\n+1 a la distancia a la que te \nven los demás jugadores.\nMira Telescópica\nSi tienes en juego una \ntodos los demás jugadores se reduce en 1. Sin embargo, los demás \njugadores te ven a ti a la distancia normal. Cualquier distancia \ninferior a 1 se considera de 1.\nEjemplo: en la fi  gura que vimos antes, si Ana (A) tiene una \nMira \ntelesco\n’\npica\n-1 a la distancia a la que \nves a los demás jugadores.\nSi en una carta se muestra un rango de valores, la carta desenfundada debe \nmostrar un valor que coincida o esté incluido en ese rango de valores (incluyendo \nlos valores impresos). Además, su palo debe coincidir con el de la carta que se \npretende usar (en el ejemplo cualquier carta comprendida entre el 2 de picas y el \n9 de picas -ambos incluidos- sería valida para desenfundar con éxito).\nLa secuencia de valores en las cartas es la siguiente: 2-3-4-5-6-7-8-9-10-J-Q-K-A.\nBarril\nEl Barril te permite “desenfundar” cuando seas objetivo de un ¡BANG!:\n• Si desenfundas una carta de corazones, no eres alcanzado \n(exactamente igual que si hubieras jugado una carta ¡Fallaste!).\n• En cualquier otro caso no sucede nada, y se te aplican los \nefectos del ¡BANG!.\nEjemplo: eres el objetivo de un ¡BANG! de otro \njugador y tienes un Barril en juego, lo que te \npermite desenfundar y anular un ¡BANG!  en \nel caso de que desenfundes una carta de corazones. Así que le \ndas la vuelta a la primera carta del mazo de robo y la colocas \ndirectamente en la pila de descartes. ¡Es un 4 de corazones! El \nuso del Barril tiene éxito, y el ¡BANG! se cancela. Si la carta desenfundada hubiera sido \nde un palo diferente, el Barril no habría tenido efecto. En este caso, aún podrías librarte \ndel ¡BANG! si tuvieras en tu mano una oportuna carta ¡Fallaste!...\nCárcel\nJuega esta carta sobre otro jugador independientemente de la \ndistancia que te separe de él, y colócala en la mesa junto a su tablero \nde juego. ¡Lo has encarcelado!\nSi estás en la cárcel debes desenfundar justo antes de empezar tu \nturno:\n• Si desenfundas una carta de corazones, escapas de la cárcel: \ndescarta la carta de Cárcel y continúa tu turno con normalidad.\n• Si la carta no es de corazones, pierdes tu turno y descartas la \ncarta de Cárcel.\nAunque un jugador en la Cárcel puede seguir siendo el objetivo de cartas ¡BANG! y \npuede seguir jugando cartas en respuesta (como ¡Fallaste! y Cerveza) fuera de turno si es \nnecesario.\nNo se puede jugar la Cárcel contra el Sheriff.",
+    "id": "chunk_024"
+  },
+  {
+    "seccion": "Las cartas",
+    "titulo": "Dinamita",
+    "texto": "Dinamita\nPon esta carta en juego y colócala en la mesa frente a ti. La Dinamita\npermanecerá un turno entero ahí. Al comienzo de tu siguiente turno (ya \ntienes la Dinamita en juego) debes desenfundar antes de la primera fase:\n• Si desenfundas una carta de picas cuyo número esté entre el 2 y \nel 9 (ambos incluidos), la Dinamita  explota. Descártala y pierde \n3 puntos de vida.\n• En cualquier otro caso, pasa la carta Dinamita al jugador a tu \nizquierda, que tendrá que repetir este proceso (desenfundar una \ncarta, etc....) en su propio turno. \nBarril\nCárcel\nJuega esta carta sobre otro jugador independientemente de la \ndistancia que te separe de él, y colócala en la mesa junto a su tablero \nde juego. ¡Lo has encarcelado!\nSi estás en la cárcel debes desenfundar justo antes de empezar tu \nturno:\nCa\n’\nrcel\nDescarta la Cárcel y \njuega con normalidad. \nEn cualquier otro \ncaso, descarta la Cárcel \ny pierde tu turno.\nDinamita\nPierde 3 puntos de \nvida. En cualquier \notro caso, pasa la \nDinamita al jugador \nde tu izquierda.\nDinamita\nPierde 3 puntos de \nvida. En cualquier \notro caso, pasa la \nDinamita al jugador \na tu izquierda.\nEste proceso continúa hasta que explote, o sea descartada o robada por una carta \n¡Pánico! o La Ingenua Explosiva. Si tienes en juego la Dinamita y la Cárcel, debes \ndesenfundar primero para la Dinamita. Si recibes daño (o incluso eres eliminado) debido \na la Dinamita, no se considera que ese daño haya sido causado por ningún jugador.",
+    "id": "chunk_025"
+  },
+  {
+    "seccion": "Los Personajes",
+    "titulo": "Bart Cassidy",
+    "texto": "Bart Cassidy (4 puntos de vida): cada vez que pierde un punto de \nvida, roba inmediatamente una carta del mazo de robo.",
+    "id": "chunk_026"
+  },
+  {
+    "seccion": "Los Personajes",
+    "titulo": "Black Jack",
+    "texto": "Black Jack (4 puntos de vida): durante la primera fase de su \nturno, debe mostrar la segunda carta robada. Si es de corazones o \ndiamantes, roba una carta adicional del mazo de robo.",
+    "id": "chunk_027"
+  },
+  {
+    "seccion": "Los Personajes",
+    "titulo": "Calamity Janet",
+    "texto": "Calamity Janet (4 puntos de vida): puede usar las cartas ¡BANG!\ncomo cartas ¡Fallaste! y las cartas ¡Fallaste! como cartas ¡BANG!. Si \nCalamity Janet usa una carta ¡Fallaste! como carta ¡BANG!, no puede \njugar ningún otro ¡BANG! en el turno (a menos que tenga en juego \nuna Volcanic).",
+    "id": "chunk_028"
+  },
+  {
+    "seccion": "Los Personajes",
+    "titulo": "El Gringo",
+    "texto": "El Gringo (3 puntos de vida): cada vez que pierda un punto de vida \ndebido a una carta jugada por otro jugador, roba al azar una carta de \nla mano de ese jugador. Si a éste no le quedan cartas, es una lástima, \npero te quedas sin robar. Recuerda que los daños causados por la \nDinamita no son causados por ningún jugador.",
+    "id": "chunk_029"
+  },
+  {
+    "seccion": "Los Personajes",
+    "titulo": "Jesse Jones",
+    "texto": "Jesse Jones (4 puntos de vida): durante la fase 1 de su turno, puede \nrobar la primera de sus dos cartas del mazo de robo, o puede robarla \nal azar de la mano de otro jugador. La segunda carta la roba del \nmazo, en cualquier caso.",
+    "id": "chunk_030"
+  },
+  {
+    "seccion": "Los Personajes",
+    "titulo": "Jourdonnais",
+    "texto": "Jourdonnais (4 puntos de vida): se considera que tiene siempre un \nBarril en juego. Siempre que sea el objetivo de un ¡BANG! puede \ndesenfundar, y si sale una carta de corazones se cancela el ¡BANG!. \nSi Jourdonnais tiene un Barril en juego, tendrá dos oportunidades de \ncancelar el ¡BANG! en lugar de una. Si las dos fallan, siempre puede \nusar un ¡Fallaste!.",
+    "id": "chunk_031"
+  },
+  {
+    "seccion": "Los Personajes",
+    "titulo": "Kit Carlson",
+    "texto": "Kit Carlson (4 puntos de vida): durante la fase 1 de su turno, mira las \ntres primeras cartas del mazo de robo, se queda con dos, y devuelve \nla carta restante a la parte superior del mazo de robo, boca abajo.",
+    "id": "chunk_032"
+  },
+  {
+    "seccion": "Los Personajes",
+    "titulo": "Lucky Duke",
+    "texto": "Lucky Duke (4 puntos de vida): cada vez que tenga que desenfundar, \nle da la vuelta a las dos primeras cartas de la parte superior del mazo, \ny elige el resultado que prefi  era. Las dos cartas se descartan.",
+    "id": "chunk_033"
+  },
+  {
+    "seccion": "Los Personajes",
+    "titulo": "Paul Regret",
+    "texto": "Paul Regret (3 puntos de vida): se considera que siempre tiene en \njuego un Mustang. Todos los demás jugadores deben sumar 1 a la \ndistancia a la que lo ven. Si Paul Regret tiene además un Mustang\nen juego, los efectos de los dos se suman y la distancia a la que los \ndemás ven a Paul Regret se incrementa en 2.",
+    "id": "chunk_034"
+  },
+  {
+    "seccion": "Los Personajes",
+    "titulo": "Pedro Ramírez",
+    "texto": "Pedro Ramírez (4 puntos de vida): durante la fase 1 de su turno, \npuede robar la primera de sus cartas del mazo de robo, o puede robar \nen su lugar la primera carta de la pila de descartes. La segunda carta \nla roba del mazo de robo, en cualquier caso.",
+    "id": "chunk_035"
+  },
+  {
+    "seccion": "Los Personajes",
+    "titulo": "Rose Dolan",
+    "texto": "Rose Dolan (4 puntos de vida): se considera que siempre tiene en \njuego una Mira Telescópica. Rose ve a todos los demás jugadores \na una distancia reducida en 1. Si Rose tiene además una Mira \nTelescópica en juego, los efectos de las dos se suman y reducen la \ndistancia a la que Rose ve a los demás en 2.",
+    "id": "chunk_036"
+  },
+  {
+    "seccion": "Los Personajes",
+    "titulo": "Sid Ketchum",
+    "texto": "Sid Ketchum (4 puntos de vida): en cualquier momento, puede \ndescartar dos cartas de su mano y recuperar 1 punto de vida. Puede \nhacer esto todas las veces que quiera seguidas, siempre que tenga \ncartas que descartar. Debes tener en cuenta que no se pueden tener \nmás puntos de vida por encima de los iniciales.",
+    "id": "chunk_037"
+  },
+  {
+    "seccion": "Los Personajes",
+    "titulo": "Slab “el Asesino”",
+    "texto": "Slab “el Asesino” (4 puntos de vida): los jugadores que intenten \nanular un ¡BANG! que haya sido jugado por Slab, tienen que jugar \ndos ¡Fallaste!. El Barril , si se usa con éxito, sólo cuenta como un \n¡Fallaste!.",
+    "id": "chunk_038"
+  },
+  {
+    "seccion": "Los Personajes",
+    "titulo": "Suzy Lafayette",
+    "texto": "Suzy Lafayette (4 puntos de vida): en el momento en que se quede \nsin cartas, roba una carta del mazo de robo.",
+    "id": "chunk_039"
+  },
+  {
+    "seccion": "Los Personajes",
+    "titulo": "“Buitre” Sam",
+    "texto": "“Buitre” Sam (4 puntos de vida): cuando un Personaje sea eliminado \nde la partida, Sam añade a su mano todas las cartas que ese jugador \ntuviera en su mano y en juego.",
+    "id": "chunk_040"
+  },
+  {
+    "seccion": "Los Personajes",
+    "titulo": "Willy “el Niño”",
+    "texto": "Willy “el Niño” (4 puntos de vida): puede jugar tantas cartas ¡BANG!\ncomo quiera en su turno.",
+    "id": "chunk_041"
+  },
+  {
+    "seccion": "Y recuerda",
+    "titulo": "Y recuerda",
+    "texto": "Cualquier carta con un símbolo de ¡Fallaste!\n  puede usarse para cancelar el efecto \nde una carta con un símbolo de ¡BANG! \n¡Fallaste!\n.\nSólo puedes jugar una carta ¡BANG! por turno, pero puedes jugar cualquier número de \nlas demás cartas que tengan el símbolo\n por turno, pero puedes jugar cualquier número de \n.\nNo puedes tener en juego más de una carta con el mismo nombre frente a ti.\nSólo puedes tener un Arma en juego, pero siempre tendrás al menos tu Colt .45.\nLas Armas no cambian las distancias entre jugadores. Sólo representan tu alcance \nde disparo.\nLas Cervezas no tienen efecto cuando sólo quedan 2 jugadores en la partida.\nSi pierdes tu último punto de vida, puedes usar una Cerveza, pero no un Saloon.",
+    "id": "chunk_042"
+  },
+  {
+    "seccion": "Nota",
+    "titulo": "Nota",
+    "texto": "Para llevar la cuenta de tus puntos de vida, puedes usar una de las cartas \nde Personaje que no están en juego. Dale la vuelta y colócala por el lado de \nlas balas, y cubre y descubre las balas con tu carta de Personaje para llevar \nla cuenta de tus puntos de vida.\nA Jesse Jones le quedan 3 puntos de vida en este ejemplo.",
+    "id": "chunk_043"
+  },
+  {
+    "seccion": "Créditos",
+    "titulo": "Créditos",
+    "texto": "Concepto: Emiliano Sciarra\nDesarrollo: Roberto Corbelli y Domenico Giorgio\nTraducción: José Luis Herrera\nEdición: Darío Aguilar Pereira\nIlustraciones: Alessandro Pierangelini\nDirector artístico: Stefano de Fazi\nLocalización y diseño adicional: Edge Studio\nEditores: Roberto Corbelli, Andrés J. Voicu\nOrigins Awards 2003:\n• Best Traditional Game\n• Best Card Design\nLucca Games 2002:\n• Best Italian Game\nBang!®, Copyright © MMVIII daVinci Editrice S.r.l., Via S. Penna, 24. 06132 Perugia, Italia. Todos los derechos reservados. \nLa idea del juego, desarrollo, diseño, ilustraciones, empaquetado, nombre y logotipo de BANG!, y el nombre y logotipo \nde dVGIOCHI, tienen todos copyright, o son marca comercial o marca comercial registrada, de daVinci Editrice S.r.l. \nEdición en español de Edge Entertainment. Distribuido por Asmodee Spain, Petróleo 24, 28918 Leganés (Madrid), \nEspaña y Asmodee Chile, Dr. Manuel Barros Borgoño 160 oficina 306, Providencia, Santiago, Chile — www.asmodee.es \n— www.asmodee.cl Conserve esta información para su referencia. Los componentes de la caja pueden variar de los \nmostrados. Fabricado en Bélgica.  ATENCIÓN: No apropiado para niños menores de 3 años por contener piezas pequeñas. \nPeligro de Asfixia. \nPuede robar su primera \ncarta de la mano de \notro jugador.\nJesse Jones\nMás información en \nwww.EdgeEnt.com",
+    "id": "chunk_044"
+  }
+]
