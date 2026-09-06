@@ -50,3 +50,6 @@ dataset_shards/
 sim/modelo_rl_final.zip
 sim/rl_checkpoints/
 sim/rl_tensorboard/
+
+# Chat RAG: índice vectorial regenerable con `python scripts/ingest_rules.py`
+data/chroma/
