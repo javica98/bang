@@ -1,2 +1,14 @@
 flask>=3.0.0
 pygame>=2.6.0
+requests>=2.31.0
+
+# Fase 4 (DL supervisado) / Fase 5 (Deep RL) del estudio de IA en sim/
+numpy>=1.26.0
+pandas>=2.1.0
+scikit-learn>=1.8.0
+joblib>=1.5.0
+torch>=2.3.0
+stable-baselines3>=2.9.0
+sb3-contrib>=2.9.0
+gymnasium>=1.3.0
+tensorboard>=2.21.0

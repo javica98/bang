@@ -420,6 +420,8 @@ class Juego:
                 print(f"\n🎁 {atacante.nombre} ha eliminado a un Forajido y roba 3 cartas de recompensa.\n")
                 for _ in range(3):
                     self.recibe_carta(id_atacante)
+                if hasattr(self.io, 'observar'):
+                    self.io.observar('ataca_forajido', id_atacante)
 
         self.comprobar_victoria()
 
@@ -522,6 +524,8 @@ class Juego:
     def infligir_dano(self, id_jugador, cantidad=1, id_atacante=None):
         """Inflige `cantidad` puntos de daño y gestiona la muerte si ocurre."""
         jugador = self.jugadores[id_jugador]
+        if id_atacante is not None and jugador.rol == "Sheriff" and hasattr(self.io, 'observar'):
+            self.io.observar('ataca_sheriff', id_atacante)
         if cantidad > 1:
             atacante_nombre = self.jugadores[id_atacante].nombre if id_atacante is not None else "la dinamita"
             print(f"💥 {jugador.nombre} recibe {cantidad} daño de {atacante_nombre}")
@@ -906,6 +910,8 @@ class Juego:
             return
         origen, indice = id_carta_rival
         self.perder_carta(id_jugador, id_carta)
+        if rival.rol == "Sheriff" and hasattr(self.io, 'observar'):
+            self.io.observar('roba_a_sheriff', id_jugador)
         if origen == "mano":
             carta_robada = self.robar_carta_mano(id_enemigo, indice, id_jugador)
             print(f"🤚 {self.jugadores[id_jugador].nombre} roba una carta de la mano de {rival.nombre}")
@@ -1063,6 +1069,8 @@ class Juego:
                 rival.pierdeCarta(indice)
                 jugador.recibeCarta(carta)
                 print(f"Jesse Jones roba una carta al azar de {rival.nombre}.")
+                if rival.rol == "Sheriff" and hasattr(self.io, 'observar'):
+                    self.io.observar('roba_a_sheriff', id_jugador)
             else:
                 self.recibe_carta(id_jugador)
             self.recibe_carta(id_jugador)
@@ -1147,7 +1155,17 @@ class Juego:
         jugador.contBang = 0
         print(f"--- Turno de {jugador.nombre} ({jugador.personaje.nombre}) ---")
         self._fase_robo(id_jugador)
+        self._resto_turno(id_jugador)
 
+    def _resto_turno(self, id_jugador):
+        """Bucle de juego (usar cartas o FIN) y descarte final de un turno.
+
+        Asume que la dinamita, la cárcel y la fase de robo ya se resolvieron.
+        Separado de `turno_jugador` para poder reanudar un turno a mitad de
+        camino sobre un clon del estado (usado por el bot MCTS para simular
+        el resto del turno actual antes de continuar con `partida(continuar=True)`).
+        """
+        jugador = self.jugadores[id_jugador]
         while True:
             opciones = [str(i + 1) for i in range(len(jugador.cartasMano))]
 
@@ -1187,13 +1205,17 @@ class Juego:
                 continue
             print("Escribe un índice de carta válido")
 
-    def partida(self):
+    def partida(self, continuar=False):
         """Bucle principal de la partida: reparte turnos en orden circular hasta que game_over sea True.
 
-        El turno siempre empieza por el Sheriff. Al terminar llama a io.mostrar_game_over si está disponible.
+        El turno siempre empieza por el Sheriff, salvo que `continuar=True`
+        (usado por el bot MCTS para seguir una partida clonada a partir de
+        `self.turno` tal cual está, sin reiniciar el orden de turno).
+        Al terminar llama a io.mostrar_game_over si está disponible.
         """
         sheriff = next((j for j in self.jugadores if j.rol == "Sheriff"), self.jugadores[0])
-        self.turno = sheriff.idJugador
+        if not continuar:
+            self.turno = sheriff.idJugador
         while not self.game_over:
             self.turno %= len(self.jugadores)
             if self.turno == sheriff.idJugador:

@@ -19,6 +19,13 @@ env/
 .vscode/
 .idea/
 *.code-workspace
+.claude/
+
+# Node
+node_modules/
+
+# Capturas de QA manual (no forman parte del código fuente)
+screenshots/
 
 # OS
 .DS_Store
@@ -30,3 +37,16 @@ instance/
 
 # Logs
 *.log
+
+# Fase 4: modelos entrenados y datasets generados (artefactos pesados,
+# regenerables con sim/collect_dataset.py + sim/train_sklearn.py / train_torch.py)
+sim/modelo_sklearn.joblib*
+sim/modelo_torch.pt*
+sim/modelo_xgboost.json*
+dataset_shards/
+*.npz
+
+# Fase 5: checkpoints y logs de entrenamiento RL (regenerables con sim/train_rl.py)
+sim/modelo_rl_final.zip
+sim/rl_checkpoints/
+sim/rl_tensorboard/

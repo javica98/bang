@@ -330,12 +330,13 @@ class FlaskIO:
         return int(resp)
 
     def elegir_robo_pedro(self, jugador, carta_top):
-        self._asking_id = jugador.idJugador
         """Pedro Ramírez: ofrece coger la carta superior del descarte o robar del mazo.
 
         Returns:
             bool: True si elige coger del descarte.
         """
+        self._asking_id = jugador.idJugador
+        self.current_jugador = jugador
         resp = self._ask({
             "tipo": "elegir_robo_pedro",
             "jugador_id": jugador.idJugador,
