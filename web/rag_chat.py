@@ -1,9 +1,10 @@
 """Lógica del chat RAG: recupera fragmentos relevantes del reglamento
-(indexados por scripts/ingest_rules.py) y genera la respuesta con Claude.
+(indexados por scripts/ingest_rules.py, recuperados por retrieval.py) y
+genera la respuesta con Claude.
 
-Carga perezosa (lazy) del modelo de embeddings y de la colección de Chroma:
-la primera pregunta tarda un poco más (se carga el modelo en memoria), las
-siguientes son instantáneas porque quedan cacheados a nivel de módulo.
+La recuperación en sí (BM25 + vectorial + RRF + reranking) vive en
+retrieval.py, compartido con scripts/eval_retrieval.py — así el chat en
+producción y el script de evaluación usan siempre el mismo pipeline.
 """
 import os
 import sys
@@ -12,7 +13,7 @@ from pathlib import Path
 import anthropic
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from rag_config import CHROMA_DIR, COLLECTION_NAME, EMBEDDING_MODEL
+import retrieval
 
 MODEL = "claude-haiku-4-5"
 TOP_K = 4
@@ -34,47 +35,6 @@ las reglas de BANG! y no contestes esa pregunta.
 vez de adivinar.
 - Responde en español, de forma breve y clara, como si le explicaras la regla a un \
 jugador en mitad de la partida."""
-
-_embedder = None
-_collection = None
-
-
-def _get_embedder():
-    global _embedder
-    if _embedder is None:
-        from sentence_transformers import SentenceTransformer
-        _embedder = SentenceTransformer(EMBEDDING_MODEL)
-    return _embedder
-
-
-def _get_collection():
-    global _collection
-    if _collection is None:
-        import chromadb
-        if not CHROMA_DIR.exists():
-            raise RuntimeError(
-                "No existe el índice de reglas. Ejecuta 'python scripts/ingest_rules.py' primero."
-            )
-        client = chromadb.PersistentClient(path=str(CHROMA_DIR))
-        _collection = client.get_collection(COLLECTION_NAME)
-    return _collection
-
-
-def _recuperar_contexto(pregunta: str, k: int = TOP_K) -> list[dict]:
-    """Busca en Chroma los k fragmentos del reglamento más relevantes para la pregunta."""
-    # Comprueba primero que el índice existe (local, sin red) antes de cargar
-    # el modelo de embeddings (que sí puede necesitar descargar pesos).
-    coleccion = _get_collection()
-    embedder = _get_embedder()
-    query_embedding = embedder.encode([pregunta]).tolist()
-    resultados = coleccion.query(query_embeddings=query_embedding, n_results=k)
-
-    documentos = resultados["documents"][0]
-    metadatas = resultados["metadatas"][0]
-    return [
-        {"titulo": meta["titulo"], "seccion": meta["seccion"], "texto": doc}
-        for doc, meta in zip(documentos, metadatas)
-    ]
 
 
 def responder_pregunta(pregunta: str, historial: list[dict] | None = None) -> dict:
@@ -98,9 +58,14 @@ def responder_pregunta(pregunta: str, historial: list[dict] | None = None) -> di
         }
 
     try:
-        fragmentos = _recuperar_contexto(pregunta)
+        fragmentos = retrieval.recuperar(pregunta, k_final=TOP_K)
     except RuntimeError as e:
         return {"respuesta": str(e), "fuentes": []}
+    except Exception:
+        return {
+            "respuesta": "No se ha podido buscar en el reglamento (¿fallo de red al cargar algún modelo?). Inténtalo de nuevo.",
+            "fuentes": [],
+        }
 
     contexto = "\n\n---\n\n".join(f"[{f['titulo']}]\n{f['texto']}" for f in fragmentos)
     mensaje_usuario = (

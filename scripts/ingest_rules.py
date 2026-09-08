@@ -41,9 +41,9 @@ CARD_SUBHEADERS = [
     "Armas",
     "Volcanic",
     "¡BANG! y ¡Fallaste!",
-    "Los símbolos de las cartas",
     "Cerveza",
     "Saloon",
+    "Los símbolos de las cartas",
     "Diligencia y Wells Fargo",
     "Almacén",
     "¡Pánico!",
@@ -118,11 +118,49 @@ def dividir_seccion_cartas(contenido: str) -> list[tuple[str, str]]:
     menciona "¡Pánico!"), y buscar sin cursor encontraría esa mención
     cruzada en vez del encabezado real, desordenando los fragmentos.
     """
+    MIN_PALABRAS = 10  # por debajo de esto, es casi seguro una mención cruzada
+    VENTANA = 400       # caracteres que se miran para decidir si es "corto"
+    # "¡Desenfunda!" menciona a "Barril" y "Cárcel" como ejemplo a las pocas
+    # palabras de su propio encabezado ("En algunas cartas (Barril, Cárcel)
+    # ..."), así que para este título en concreto el chequeo de "¿hay
+    # suficiente contenido detrás?" daría un falso negativo sobre su propio
+    # encabezado real. Se exime del chequeo y se acepta su primera aparición.
+    SIN_CHEQUEO = {"¡Desenfunda!"}
+
+    def _es_mencion_corta(pos_fin: int) -> bool:
+        """True si, justo tras esta coincidencia, viene muy poco texto antes
+        de tropezar con OTRO título conocido — señal de que no es el
+        encabezado real sino una mención de pasada (p. ej. "Y recuerda"
+        menciona de pasada "...puedes usar una Cerveza, pero no un Saloon").
+        """
+        ventana = contenido[pos_fin:pos_fin + VENTANA]
+        siguiente = len(ventana)
+        for otro in CARD_SUBHEADERS:
+            j = ventana.find(otro)
+            if j != -1:
+                siguiente = min(siguiente, j)
+        return len(ventana[:siguiente].split()) < MIN_PALABRAS
+
     posiciones = []
     cursor = 0
     for titulo in CARD_SUBHEADERS:
-        idx = contenido.find(titulo, cursor)
-        if idx != -1:
+        buscar_desde = cursor
+        idx = None
+        while True:
+            candidato = contenido.find(titulo, buscar_desde)
+            if candidato == -1:
+                break
+            pos_fin = candidato + len(titulo)
+            if (
+                titulo in SIN_CHEQUEO
+                or pos_fin >= len(contenido)
+                or not _es_mencion_corta(pos_fin)
+            ):
+                idx = candidato
+                break
+            buscar_desde = pos_fin  # mención cruzada: prueba la siguiente aparición
+
+        if idx is not None:
             posiciones.append((idx, titulo))
             cursor = idx + len(titulo)
 

@@ -61,6 +61,30 @@ El chat solo responde preguntas relacionadas con BANG! y se basa únicamente en
 los fragmentos del reglamento recuperados para cada pregunta (RAG), no en
 conocimiento general del modelo.
 
+**Cómo recupera el contexto** (`retrieval.py`), inspirado en el curso
+[Retrieval Augmented Generation](https://www.deeplearning.ai/courses/retrieval-augmented-generation)
+de DeepLearning.AI:
+
+1. **Búsqueda híbrida**: BM25 (léxica, acierta nombres propios exactos como
+   "Barril") + embeddings (semántica, entiende paráfrasis como "¿cómo
+   recupero vida?" → Cerveza).
+2. **Reciprocal Rank Fusion (RRF)**: combina ambos rankings sin ponderarlos
+   a mano.
+3. **Reranking** con un cross-encoder: relee cada candidato junto a la
+   pregunta para ordenar con más precisión antes de quedarnos con los 4
+   fragmentos que van al LLM.
+
+Para comprobar el efecto real de cada técnica (en vez de solo intuirlo) hay
+un script de evaluación con un set de preguntas de prueba:
+
+```bash
+python scripts/eval_retrieval.py
+```
+
+Compara `hit-rate@k` (¿está el fragmento correcto entre los k recuperados?)
+y `MRR` (en qué posición) para los tres modos: solo vectorial, híbrido, e
+híbrido con reranking.
+
 ### Versión Pygame
 
 ```bash
@@ -79,15 +103,17 @@ bang/
 ├── personajes.txt        # Definición de los 16 personajes
 ├── roles.txt             # Roles por número de jugadores
 ├── rag_config.py         # Constantes compartidas del chat RAG (rutas, modelo)
+├── retrieval.py          # Recuperación híbrida: BM25 + vectorial + RRF + reranking
 ├── docs/
 │   └── rules_source.pdf  # Reglamento oficial (fuente del chat de reglas)
 ├── scripts/
-│   └── ingest_rules.py   # Extrae, trocea e indexa el PDF en Chroma
+│   ├── ingest_rules.py   # Extrae, trocea e indexa el PDF en Chroma
+│   └── eval_retrieval.py # Mide hit-rate/MRR del retrieval con preguntas de prueba
 ├── data/                 # Índice vectorial generado (data/chroma/, gitignored)
 ├── web/
 │   ├── server.py         # Servidor Flask
 │   ├── flask_io.py       # Adaptador IO para la web
-│   ├── rag_chat.py       # Recuperación + llamada a Claude para el chat de reglas
+│   ├── rag_chat.py       # Prompt + llamada a Claude para el chat de reglas
 │   └── templates/
 │       └── index.html    # Frontend (HTML + CSS + JS)
 ├── bang_pygame_io.py     # Adaptador IO para Pygame
